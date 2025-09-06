@@ -1,0 +1,27 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyc
+
+# Virtual environments
+.env
+.venv/
+venv/
+env/
+
+# IDE
+.vscode/
+.idea/
+
+# Project-specific runtime data
+cache/
+chroma_db/
+*.log
+*.npy
+*.pkl
+*.pickle
+*.sqlite3
+
+# OS files
+.DS_Store
+Thumbs.db
