@@ -150,7 +150,7 @@ class RAGSystem:
             chunks_hash_file = os.path.join(cache_dir, "chunks_hash.txt")
             
             # Calculate hash of current chunks to check if cache is still valid
-            chunks_content = "".join([chunk.content + str(chunk.metadata) for chunk in self.chunks])
+            chunks_content = "".join([chunk.content for chunk in self.chunks])
             current_hash = hashlib.md5(chunks_content.encode()).hexdigest()
             
             # Try to load cached embeddings if they exist and hash matches
@@ -247,6 +247,11 @@ class RAGSystem:
         def _perform_search():
             current_query = query  # Store the original query
             
+            detected_language = language
+            if not detected_language:
+                detected_language = self._detect_language(query)
+                logger.info(f"Auto-detected language: {detected_language} for original query: '{query}'")
+            
             # Use Gemma to intelligently classify and enhance the query
             if self.use_query_enhancement and self.query and hasattr(self.query, 'available') and self.query.available:
                 enhanced_query = self.query.enhance_query(current_query, self.conversation_context)
@@ -261,8 +266,9 @@ class RAGSystem:
             query_embedding = self.embedder.get_single_embedding(current_query)
             
             filter_metadata = None
-            if language:
-                filter_metadata = {"language": language}
+            if detected_language:
+                filter_metadata = {"language": detected_language}
+                logger.info(f"Applying language filter: {detected_language} (based on original query)")
             
             similarities, indices = self.vector_store.search(query_embedding, top_k=top_k, filter_metadata=filter_metadata)
             
