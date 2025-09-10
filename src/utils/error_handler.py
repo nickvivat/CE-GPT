@@ -157,35 +157,6 @@ def handle_errors(error_type: ErrorType, fallback_value: Any = None,
     return decorator
 
 
-def safe_execute(func: Callable, *args, default_return: Any = None, 
-                error_context: str = "", **kwargs) -> Any:
-    """Safely execute a function with error handling."""
-    try:
-        return func(*args, **kwargs)
-    except Exception as e:
-        logger.error(f"Error in {error_context or func.__name__}: {e}")
-        return default_return
-
-
-def validate_inputs(*validators: Callable[[Any], bool], 
-                   error_message: str = "Input validation failed") -> Callable:
-    """Decorator for input validation."""
-    def decorator(func: Callable) -> Callable:
-        @functools.wraps(func)
-        def wrapper(*args, **kwargs):
-            # Validate positional arguments
-            for i, (arg, validator) in enumerate(zip(args, validators)):
-                if not validator(arg):
-                    raise ValueError(f"{error_message}: argument {i} failed validation")
-            
-            # Validate keyword arguments if needed
-            # This is a simplified version - you can extend it
-            
-            return func(*args, **kwargs)
-        return wrapper
-    return decorator
-
-
 # Common validators
 def is_positive_number(value: Any) -> bool:
     """Check if value is a positive number."""
@@ -195,11 +166,6 @@ def is_positive_number(value: Any) -> bool:
 def is_valid_language(value: Any) -> bool:
     """Check if value is a valid language code."""
     return isinstance(value, str) and value in ["en", "th"]
-
-
-def is_valid_batch_size(value: Any) -> bool:
-    """Check if value is a valid batch size."""
-    return isinstance(value, int) and 1 <= value <= 128
 
 
 def is_valid_similarity_threshold(value: Any) -> bool:
