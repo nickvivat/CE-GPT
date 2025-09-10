@@ -4,7 +4,7 @@ Core RAG system components
 """
 
 from .rag import RAGSystem
-from .data_processor import DataProcessor
+from ..preprocess.data_processor import DataProcessor
 from .embedder import Embedder
 from .reranker import Reranker
 from .query import Query

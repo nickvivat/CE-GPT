@@ -1,11 +1,15 @@
+#!/usr/bin/env python3
+"""
+Course Data Processor for the RAG System
+Handles course-specific data processing and chunking
+"""
+
 import json
 import re
-from typing import List, Dict, Any, Optional
+from typing import List, Dict, Any
 from dataclasses import dataclass
 import logging
-from ..utils.config import config
 
-logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 @dataclass
@@ -15,56 +19,41 @@ class CourseChunk:
     chunk_id: str
     original_index: int
 
-class DataProcessor:
+class CourseDataProcessor:
     def __init__(self):
         """Initialize the course data processor with course-based chunking"""
         pass
-        
-    def load_course_data(self, file_path: str) -> List[Dict[str, Any]]:
-        """Load course data from JSON file"""
-        try:
-            with open(file_path, 'r', encoding='utf-8') as f:
-                data = json.load(f)
-            logger.info(f"Loaded {len(data)} course entries from {file_path}")
-            return data
-        except Exception as e:
-            logger.error(f"Error loading course data: {e}")
-            return []
     
     def clean_text(self, text: str) -> str:
         """Clean and normalize text content"""
-        # Remove extra whitespace
         text = re.sub(r'\s+', ' ', text)
-        # Remove special characters but keep Thai and English
         text = re.sub(r'[^\w\s\u0e00-\u0e7f\-\.\,\:\;\(\)]', '', text)
         return text.strip()
     
-    def split_text_into_chunks(self, text: str, metadata: Dict[str, Any], 
-                              original_index: int) -> List[CourseChunk]:
-        """Create a single chunk per course (no text splitting)"""
-        # Clean the text but keep the entire course content as one chunk
-        cleaned_text = self.clean_text(text)
+    def create_chunk(self, course: Dict[str, Any], chunk_id: str, 
+                     original_index: int) -> List[CourseChunk]:
+        """Create chunks from a single course"""
+        chunks = []
         
+        # Create main chunk with course information
         chunk = CourseChunk(
-            content=cleaned_text,
-            metadata=metadata.copy(),
-            chunk_id=f"{metadata.get('course_code', 'unknown')}_{original_index}",
+            content=self.clean_text(course.get('content', '')),
+            metadata=course.get('metadata', {}),
+            chunk_id=chunk_id,
             original_index=original_index
         )
+        chunks.append(chunk)
         
-        return [chunk]
+        return chunks
     
     def process_courses(self, courses: List[Dict[str, Any]]) -> List[CourseChunk]:
-        """Process all courses into chunks"""
+        """Process a list of courses into chunks"""
         all_chunks = []
         
         for i, course in enumerate(courses):
-            content = course.get('content', '')
-            metadata = course.get('metadata', {})
-            
-            if content:
-                chunks = self.split_text_into_chunks(content, metadata, i)
-                all_chunks.extend(chunks)
+            chunk_id = f"course_{i+1:03d}"
+            chunks = self.create_chunk(course, chunk_id, i)
+            all_chunks.extend(chunks)
         
         logger.info(f"Processed {len(courses)} courses into {len(all_chunks)} chunks")
         return all_chunks
@@ -90,43 +79,38 @@ class DataProcessor:
         return [chunk for chunk in chunks if career_track in chunk.metadata.get('career_tracks', [])]
     
     def search_chunks_by_keyword(self, chunks: List[CourseChunk], keyword: str) -> List[CourseChunk]:
-        """Search chunks by keyword (case-insensitive)"""
+        """Search chunks by keyword in content"""
         keyword_lower = keyword.lower()
         return [chunk for chunk in chunks if keyword_lower in chunk.content.lower()]
     
     def get_statistics(self, chunks: List[CourseChunk]) -> Dict[str, Any]:
-        """Get statistics about the processed chunks"""
+        """Get statistics about processed chunks"""
         if not chunks:
             return {}
         
+        total_chunks = len(chunks)
         languages = {}
         focus_areas = {}
         career_tracks = {}
-        course_codes = set()
         
         for chunk in chunks:
-            # Language statistics
+            # Count languages
             lang = chunk.metadata.get('language', 'unknown')
             languages[lang] = languages.get(lang, 0) + 1
             
-            # Focus area statistics
+            # Count focus areas
             for area in chunk.metadata.get('focus_areas', []):
                 focus_areas[area] = focus_areas.get(area, 0) + 1
             
-            # Career track statistics
+            # Count career tracks
             for track in chunk.metadata.get('career_tracks', []):
                 career_tracks[track] = career_tracks.get(track, 0) + 1
-            
-            # Course codes
-            course_codes.add(chunk.metadata.get('course_code', 'unknown'))
         
         return {
-            'total_chunks': len(chunks),
-            'unique_courses': len(course_codes),
+            'total_chunks': total_chunks,
             'languages': languages,
             'focus_areas': focus_areas,
-            'career_tracks': career_tracks,
-            'avg_chunk_length': sum(len(chunk.content) for chunk in chunks) / len(chunks)
+            'career_tracks': career_tracks
         }
     
     def save_processed_chunks(self, chunks: List[CourseChunk], file_path: str):

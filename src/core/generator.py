@@ -5,6 +5,7 @@ Generates contextual responses using retrieved data and system prompts
 """
 
 import os
+import time
 import requests
 import json
 from typing import List, Dict, Any, Optional
@@ -23,6 +24,10 @@ class ResponseGenerator:
 		self.model_name = model_name or config.models.ollama_model
 		self.ollama_url = config.models.ollama_url
 		self.chat_history = []
+		self.cache = {}  # Simple cache for responses
+		self.cache_max_size = 100
+		self.retry_count = 3
+		self.retry_delay = 1.0
 	
 	def _detect_language(self, text: str) -> str:
 		"""Detect if text contains any Thai character; if so, respond in Thai, else English"""
@@ -31,37 +36,97 @@ class ResponseGenerator:
 				return "th"
 		return "en"
 	
+	def _clean_content(self, content: str) -> str:
+		"""Clean and normalize content for better readability"""
+		if not content:
+			return ""
+		
+		# Replace newlines and multiple spaces with single space
+		cleaned = content.replace('\n', ' ').replace('\r', ' ')
+		cleaned = ' '.join(cleaned.split())
+		
+		# Remove excessive punctuation and normalize
+		cleaned = cleaned.strip()
+		
+		return cleaned
+	
 	def _format_context(self, results: List[Dict[str, Any]]) -> str:
 		"""Format retrieved results into context for the LLM"""
 		if not results:
 			return "No relevant information found."
 		
+		# Limit results to prevent context overflow
+		max_results = 6  # 3 courses + 3 professors max
+		results = results[:max_results]
+		
 		context_parts = []
-		context_parts.append("RETRIEVED COURSE INFORMATION:")
-		context_parts.append("=" * 50)
 		
-		for i, result in enumerate(results, 1):
-			metadata = result.get('metadata', {})
-			content = result.get('content', '')
-			
-			context_part = f"\nCOURSE {i}:"
-			context_part += f"\n- Course Name: {metadata.get('course_name', 'N/A')}"
-			context_part += f"\n- Course Code: {metadata.get('course_code', 'N/A')}"
-			context_part += f"\n- Language: {metadata.get('language', 'N/A')}"
-			
-			if metadata.get('focus_areas'):
-				context_part += f"\n- Focus Areas: {', '.join(metadata['focus_areas'])}"
-			
-			if metadata.get('career_tracks'):
-				context_part += f"\n- Career Tracks: {', '.join(metadata['career_tracks'])}"
-			
-			if content:
-				clean_content = content.replace('\n', ' ').strip()
-				context_part += f"\n- Description: {clean_content}"
-			
-			context_parts.append(context_part)
+		# Separate courses and professors
+		courses = []
+		professors = []
 		
-		context_parts.append("\n" + "=" * 50)
+		for result in results:
+			data_type = result.get('data_type', result.get('metadata', {}).get('data_type', 'course'))
+			if data_type == 'professor':
+				professors.append(result)
+			else:
+				courses.append(result)
+		
+		# Format course information
+		if courses:
+			context_parts.append("COURSES:")
+			context_parts.append("-" * 30)
+			
+			for i, result in enumerate(courses, 1):
+				metadata = result.get('metadata', {})
+				content = result.get('content', '')
+				
+				# Create concise course entry
+				course_name = metadata.get('course_name', 'N/A')
+				course_code = metadata.get('course_code', 'N/A')
+				
+				context_part = f"{i}. {course_name} ({course_code})"
+				
+				# Add focus areas if available
+				if metadata.get('focus_areas'):
+					focus_areas = ', '.join(metadata['focus_areas'][:2])  # Limit to 2 areas
+					context_part += f" - {focus_areas}"
+				
+				# Add truncated description
+				if content:
+					clean_content = self._clean_content(content)
+				
+				context_parts.append(context_part)
+		
+		# Format professor information
+		if professors:
+			context_parts.append("\nPROFESSORS:")
+			context_parts.append("-" * 30)
+			
+			for i, result in enumerate(professors, 1):
+				metadata = result.get('metadata', {})
+				content = result.get('content', '')
+				
+				# Create concise professor entry
+				name = metadata.get('name', 'N/A')
+				context_part = f"{i}. {name}"
+				
+				# Add research areas if available
+				if metadata.get('research_areas'):
+					research_areas = ', '.join(metadata['research_areas'])
+					context_part += f" - {research_areas}"
+				
+				# Add teaching subjects if available
+				if metadata.get('teaching_subjects'):
+					subjects = ', '.join(metadata['teaching_subjects'])
+					context_part += f"\n   Teaches: {subjects}"
+				
+				# Add truncated description
+				if content:
+					clean_content = self._clean_content(content)
+					context_part += f"\n   {clean_content}"
+				
+				context_parts.append(context_part)
 		
 		return "\n".join(context_parts)
 	
@@ -106,20 +171,10 @@ class ResponseGenerator:
 			detected_lang = user_language or self._detect_language(query)
 			
 			# Build context section
-			context_section = f"**Context:**\n{context}"
-			
-			chat_history_section = ""
-			if self.chat_history:
-				chat_history_section = "\n**Recent Conversation:**\n"
-				for i, (user_msg, assistant_msg) in enumerate(self.chat_history[-3:], 1):
-					chat_history_section += f"{i}. User: {user_msg}\n   Assistant: {assistant_msg}\n"
-				chat_history_section += "\n"
+			system_prompt = system_prompt.replace("{context}", context)
 
 			full_prompt = system_prompt.format(
-				chat_history=chat_history_section,
-				query=query,
-				context=context_section,
-				num_results=len(results)
+				query=query
 			)
 			
 			# Generate response using Ollama
@@ -220,23 +275,11 @@ class ResponseGenerator:
 			
 			# Format context from retrieved results
 			context = self._format_context(results)
-			
-			# Build context section
-			context_section = f"**Context:**\n{context}"
-			
-			# Build response prompt with chat history
-			chat_history_section = ""
-			if self.chat_history:
-				chat_history_section = "\n**Recent Conversation:**\n"
-				for i, (user_msg, assistant_msg) in enumerate(self.chat_history[-3:], 1):
-					chat_history_section += f"{i}. User: {user_msg}\n   Assistant: {assistant_msg}\n"
-				chat_history_section += "\n"
+
+			system_prompt = system_prompt.replace("{context}", context)
 
 			full_prompt = system_prompt.format(
-				chat_history=chat_history_section,
-				query=query,
-				context=context_section,
-				num_results=len(results)
+				query=query
 			)
 			
 			# Generate streaming response using Ollama
@@ -286,22 +329,10 @@ class ResponseGenerator:
 			# Format context from retrieved results
 			context = self._format_context(results)
 			
-			# Build context section
-			context_section = f"**Context:**\n{context}"
-			
-			# Build response prompt with chat history
-			chat_history_section = ""
-			if self.chat_history:
-				chat_history_section = "\n**Recent Conversation:**\n"
-				for i, (user_msg, assistant_msg) in enumerate(self.chat_history[-3:], 1):
-					chat_history_section += f"{i}. User: {user_msg}\n   Assistant: {assistant_msg}\n"
-				chat_history_section += "\n"
+			system_prompt = system_prompt.replace("{context}", context)
 
 			full_prompt = system_prompt.format(
-				chat_history=chat_history_section,
-				query=query,
-				context=context_section,
-				num_results=len(results)
+				query=query
 			)
 			
 			# Generate streaming response using Ollama with real-time streaming
@@ -338,76 +369,114 @@ class ResponseGenerator:
 			yield fallback_response
 	
 	def _call_ollama(self, prompt: str, temperature: float = 0.7, stream: bool = False) -> Optional[str]:
-		"""Call Ollama API with the given prompt"""
-		try:
-			# Check Ollama service health
+		"""Call Ollama API with the given prompt with retry logic and caching"""
+		# Check cache first for non-streaming requests
+		if not stream:
+			cache_key = f"{prompt}_{temperature}"
+			if cache_key in self.cache:
+				logger.debug("Using cached response")
+				return self.cache[cache_key]
+		
+		for attempt in range(self.retry_count):
 			try:
-				health_response = requests.get(f"{self.ollama_url}/api/tags", timeout=5)
-				if health_response.status_code != 200:
-					logger.error(f"Ollama service not responding: {health_response.status_code}")
-					return None
-				
-				# Check if model is available
-				models_response = requests.get(f"{self.ollama_url}/api/tags", timeout=5)
-				if models_response.status_code == 200:
-					available_models = models_response.json().get('models', [])
-					model_names = [model.get('name', '') for model in available_models]
-					if self.model_name not in model_names:
-						logger.error(f"Model {self.model_name} not available. Available models: {model_names}")
-						return None
-					logger.info(f"Model {self.model_name} is available")
-				else:
-					logger.warning("Could not verify model availability")
-					
-			except requests.exceptions.RequestException as e:
-				logger.error(f"Ollama service health check failed: {e}")
-				return None
-			
-			payload = {
-				"model": self.model_name,
-				"prompt": prompt,
-				"stream": stream,
-				"temperature": 0.3
-			}
-			
-			if stream:
-				# Handle streaming response
-				response = requests.post(f"{self.ollama_url}/api/generate", json=payload, stream=True, timeout=60)
-				if response.status_code != 200:
-					logger.error(f"Ollama API error: {response.status_code}")
-					return None
-				
-				response_text = ""
-				for line in response.iter_lines():
-					if line:
-						try:
-							data = json.loads(line.decode('utf-8'))
-							if 'response' in data:
-								response_text += data['response']
-						except json.JSONDecodeError:
+				# Check Ollama service health
+				try:
+					health_response = requests.get(f"{self.ollama_url}/api/tags", timeout=5)
+					if health_response.status_code != 200:
+						logger.error(f"Ollama service not responding: {health_response.status_code}")
+						if attempt < self.retry_count - 1:
+							time.sleep(self.retry_delay * (attempt + 1))
 							continue
-				
-				return response_text if response_text else None
-			else:
-				# Handle non-streaming response
-				response = requests.post(f"{self.ollama_url}/api/generate", json=payload, timeout=60)
-				if response.status_code != 200:
-					logger.error(f"Ollama API error: {response.status_code}")
+						return None
+					
+					# Check if model is available
+					models_response = requests.get(f"{self.ollama_url}/api/tags", timeout=5)
+					if models_response.status_code == 200:
+						available_models = models_response.json().get('models', [])
+						model_names = [model.get('name', '') for model in available_models]
+						if self.model_name not in model_names:
+							logger.error(f"Model {self.model_name} not available. Available models: {model_names}")
+							if attempt < self.retry_count - 1:
+								time.sleep(self.retry_delay * (attempt + 1))
+								continue
+							return None
+						logger.info(f"Model {self.model_name} is available")
+					else:
+						logger.warning("Could not verify model availability")
+						
+				except requests.exceptions.RequestException as e:
+					logger.error(f"Ollama service health check failed: {e}")
+					if attempt < self.retry_count - 1:
+						time.sleep(self.retry_delay * (attempt + 1))
+						continue
 					return None
 				
-				response_data = response.json()
-				response_text = response_data.get('response', '')
+				payload = {
+					"model": self.model_name,
+					"prompt": prompt,
+					"stream": stream,
+					"temperature": temperature
+				}
 				
-				# Check for short/generic responses
-				if len(response_text) < 50:
-					logger.warning(f"Ollama response too short ({len(response_text)} chars): {response_text[:100]}")
-					return None
-				
-				return response_text
-				
-		except Exception as e:
-			logger.error(f"Error calling Ollama: {e}")
-			return None
+				if stream:
+					# Handle streaming response
+					response = requests.post(f"{self.ollama_url}/api/generate", json=payload, stream=True, timeout=60)
+					if response.status_code != 200:
+						logger.error(f"Ollama API error: {response.status_code}")
+						if attempt < self.retry_count - 1:
+							time.sleep(self.retry_delay * (attempt + 1))
+							continue
+						return None
+					
+					response_text = ""
+					for line in response.iter_lines():
+						if line:
+							try:
+								data = json.loads(line.decode('utf-8'))
+								if 'response' in data:
+									response_text += data['response']
+							except json.JSONDecodeError:
+								continue
+					
+					return response_text if response_text else None
+				else:
+					# Handle non-streaming response
+					response = requests.post(f"{self.ollama_url}/api/generate", json=payload, timeout=60)
+					if response.status_code != 200:
+						logger.error(f"Ollama API error: {response.status_code}")
+						if attempt < self.retry_count - 1:
+							time.sleep(self.retry_delay * (attempt + 1))
+							continue
+						return None
+					
+					response_data = response.json()
+					response_text = response_data.get('response', '')
+					
+					# Check for short/generic responses
+					if len(response_text) < 50:
+						logger.warning(f"Ollama response too short ({len(response_text)} chars): {response_text[:100]}")
+						if attempt < self.retry_count - 1:
+							time.sleep(self.retry_delay * (attempt + 1))
+							continue
+						return None
+					
+					# Cache the result
+					if len(self.cache) >= self.cache_max_size:
+						# Remove oldest entry
+						oldest_key = next(iter(self.cache))
+						del self.cache[oldest_key]
+					
+					self.cache[cache_key] = response_text
+					return response_text
+					
+			except Exception as e:
+				logger.error(f"Error calling Ollama (attempt {attempt + 1}): {e}")
+				if attempt < self.retry_count - 1:
+					time.sleep(self.retry_delay * (attempt + 1))
+					continue
+				return None
+		
+		return None
 	
 	def _call_ollama_stream(self, prompt: str, temperature: float = 0.3):
 		"""Call Ollama API with streaming and return a generator for real-time chunks"""

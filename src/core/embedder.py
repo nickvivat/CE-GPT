@@ -7,7 +7,7 @@ from typing import List, Dict, Optional, Tuple
 from tqdm import tqdm
 import logging
 from ..utils.config import config
-from ..utils.error_handler import handle_errors, ErrorType, safe_execute, validate_inputs, is_valid_batch_size
+from ..utils.error_handler import handle_errors, ErrorType
 from ..utils.performance_monitor import monitor_operation
 
 logging.basicConfig(level=logging.INFO)
@@ -60,12 +60,8 @@ class Embedder:
     @monitor_operation("embedding_generation")
     @handle_errors(ErrorType.EMBEDDING_GENERATION, fallback_value=np.array([]))
     def get_embeddings(self, texts: List[str], batch_size: int = None) -> np.ndarray:
-        """Get embeddings for a list of texts with batch processing"""
-        # Input validation
-        if not isinstance(texts, list):
-            logger.error("Texts must be a list")
-            return np.array([])
-        
+        """Get embeddings for a list of texts with optimized batch processing and caching"""
+
         if len(texts) == 0:
             logger.warning("Empty texts list provided")
             return np.array([])
@@ -87,7 +83,7 @@ class Embedder:
             for text, lang in zip(texts, languages)
         ]
         
-        # Process in batches for memory efficiency
+        # Process in batches for memory efficiency with optimized settings
         embeddings = []
         for i in tqdm(range(0, len(prepared_texts), batch_size), desc="Generating embeddings"):
             batch = prepared_texts[i:i + batch_size]
@@ -96,7 +92,9 @@ class Embedder:
                     batch, 
                     convert_to_numpy=True, 
                     show_progress_bar=False,
-                    normalize_embeddings=True
+                    normalize_embeddings=True,
+                    batch_size=min(batch_size, 32),  # Limit internal batch size
+                    device=self.device
                 )
                 embeddings.append(batch_embeddings)
             except Exception as e:
