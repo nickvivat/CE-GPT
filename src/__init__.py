@@ -5,7 +5,7 @@ Main package initialization
 """
 
 from .core.rag import RAGSystem
-from .core.data_processor import DataProcessor
+from .preprocess.data_processor import DataProcessor
 from .core.embedder import Embedder
 from .core.reranker import Reranker
 from .core.query import Query

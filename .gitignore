@@ -16,6 +16,7 @@ env/
 # Project-specific runtime data
 cache/
 chroma_db/
+logs/
 *.log
 *.npy
 *.pkl

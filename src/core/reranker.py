@@ -11,6 +11,9 @@ class Reranker:
     def __init__(self, model_name: str = None):
         self.model_name = model_name or config.models.reranker_model
         self.device = "cuda" if torch.cuda.is_available() else "cpu"
+        self.cache = {}  # Simple cache for reranking results
+        self.cache_max_size = 50
+        self.batch_size = 16  # Optimized batch size for reranking
         
         logger.info(f"Loading reranker model: {self.model_name}")
         self.model = CrossEncoder(self.model_name, device=self.device)
@@ -23,7 +26,7 @@ class Reranker:
     def rerank(self, query: str, passages: List[str], scores: List[float] = None, 
                top_k: int = None) -> List[Tuple[int, float, str]]:
         """
-        Rerank passages based on query relevance
+        Rerank passages based on query relevance with caching and batch processing
         
         Args:
             query: The search query
@@ -37,11 +40,26 @@ class Reranker:
         if not passages:
             return []
         
+        # Check cache first
+        cache_key = f"{query}_{hash(tuple(passages))}"
+        if cache_key in self.cache:
+            logger.debug("Using cached reranking result")
+            return self.cache[cache_key][:top_k] if top_k else self.cache[cache_key]
+        
         # Prepare query-passage pairs
         pairs = self.prepare_query_passage_pairs(query, passages)
         
-        # Get reranking scores
-        rerank_scores = self.model.predict(pairs)
+        # Process in batches for better performance
+        rerank_scores = []
+        for i in range(0, len(pairs), self.batch_size):
+            batch_pairs = pairs[i:i + self.batch_size]
+            try:
+                batch_scores = self.model.predict(batch_pairs)
+                rerank_scores.extend(batch_scores)
+            except Exception as e:
+                logger.error(f"Error processing reranking batch {i//self.batch_size + 1}: {e}")
+                # Fill with zeros for failed batch
+                rerank_scores.extend([0.0] * len(batch_pairs))
         
         # Create list of (index, score, passage) tuples
         results = [(i, score, passage) for i, (score, passage) in enumerate(zip(rerank_scores, passages))]
@@ -49,8 +67,16 @@ class Reranker:
         # Sort by reranking score (descending)
         results.sort(key=lambda x: x[1], reverse=True)
         
+        # Cache the result
+        if len(self.cache) >= self.cache_max_size:
+            # Remove oldest entry
+            oldest_key = next(iter(self.cache))
+            del self.cache[oldest_key]
+        
+        self.cache[cache_key] = results
+        
         # Return top_k results
-        return results[:top_k]
+        return results[:top_k] if top_k else results
     
     def rerank_with_metadata(self, query: str, passages: List[Dict], 
                             top_k: int = None) -> List[Tuple[int, float, Dict]]:

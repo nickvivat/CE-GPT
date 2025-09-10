@@ -1,0 +1,615 @@
+[
+  {
+    "metadata": {
+      "name": "อ. สรยุทธ กลมกล่อม",
+      "research_areas": [
+        "Cyber-Physical Systems",
+        "Embedded System",
+        "Hardware",
+        "Internet of Things",
+        "Software Codesign"
+      ],
+      "teaching_subjects": [
+        "Computer Architecture",
+        "Computer Programming",
+        "Computer Interfacing"
+      ],
+      "textbooks": [],
+      "degrees": [
+        "วศ.บ. (วิศวกรรมคอมพิวเตอร์) สถาบันเทคโนโลยีพระจอมเกล้าเจ้าคุณทหารลาดกระบัง, 2544",
+        "วศ.ม. (วิศวกรรมคอมพิวเตอร์) สถาบันเทคโนโลยีพระจอมเกล้าเจ้าคุณทหารลาดกระบัง, 2554"
+      ],
+      "language": "en",
+      "data_type": "professor"
+    },
+    "chunk_id": "professor_0_อ._สรยุทธ_กลมกล่อม",
+    "original_index": 0
+  },
+  {
+    "metadata": {
+      "name": "อ. วิบูลย์ พร้อมพานิชย์",
+      "research_areas": [
+        "GIS",
+        "Object Technology",
+        "Software Engineering",
+        "Database Systems"
+      ],
+      "teaching_subjects": [
+        "Computer Programming 1",
+        "Computer Programming 2"
+      ],
+      "textbooks": [],
+      "degrees": [
+        "M.Eng. (Computer Technology) Asian Institute of Technology, Thailand, 2534",
+        "วศ.บ. (วิศวกรรมไฟฟ้า) สถาบันเทคโนโลยีพระจอมเกล้าเจ้าคุณทหารลาดกระบัง, 2527"
+      ],
+      "language": "en",
+      "data_type": "professor"
+    },
+    "chunk_id": "professor_1_อ._วิบูลย์_พร้อมพานิชย์",
+    "original_index": 1
+  },
+  {
+    "metadata": {
+      "name": "ผศ.อัครเดช วัชระภูพงษ์",
+      "research_areas": [
+        "Computer Security",
+        "Network Security"
+      ],
+      "teaching_subjects": [
+        "Computer Programming 1",
+        "Theory of Computational"
+      ],
+      "textbooks": [],
+      "degrees": [
+        "วศ.บ. (วิศวกรรมคอมพิวเตอร์) สถาบันเทคโนโลยีพระจอมเกล้าเจ้าคุณทหารลาดกระบัง, 2540",
+        "วศ.ม. (วิศวกรรมคอมพิวเตอร์) สถาบันเทคโนโลยีพระจอมเกล้าเจ้าคุณทหารลาดกระบัง, 2557"
+      ],
+      "language": "en",
+      "data_type": "professor"
+    },
+    "chunk_id": "professor_2_ผศ.อัครเดช_วัชระภูพงษ์",
+    "original_index": 2
+  },
+  {
+    "metadata": {
+      "name": "ผศ.ดร.ธนัญชัย ตรีภาค",
+      "research_areas": [
+        "Computer Networks",
+        "Network Security",
+        "Optical Computing"
+      ],
+      "teaching_subjects": [
+        "Network Security",
+        "Computer Programming"
+      ],
+      "textbooks": [
+        "Computers and Programming C and Java"
+      ],
+      "degrees": [
+        "วศ.บ. (วิศวกรรมคอมพิวเตอร์) (เกียรตินิยม) สถาบันเทคโนโลยีพระจอมเกล้าเจ้าคุณทหารลาดกระบัง, 2542",
+        "วศ.ม. (วิศวกรรมคอมพิวเตอร์) สถาบันเทคโนโลยีพระจอมเกล้าเจ้าคุณทหารลาดกระบัง, 2546",
+        "วศ.ด. (วิศวกรรมไฟฟ้า) สถาบันเทคโนโลยีพระจอมเกล้าเจ้าคุณทหารลาดกระบัง, 2554"
+      ],
+      "language": "en",
+      "data_type": "professor"
+    },
+    "chunk_id": "professor_3_ผศ.ดร.ธนัญชัย_ตรีภาค",
+    "original_index": 3
+  },
+  {
+    "metadata": {
+      "name": "ผศ.ดร.ชมพูนุท จินจาคาม",
+      "research_areas": [
+        "Human Computer Interaction",
+        "Virtual Reality"
+      ],
+      "teaching_subjects": [
+        "Computer Programming",
+        "Human Computer Interaction"
+      ],
+      "textbooks": [],
+      "degrees": [
+        "D.Eng. (Science and Technology) Tokai University, Japan, 2556",
+        "วศ.ม. (วิศวกรรมอิเล็กทรอนิกส์) สถาบันเทคโนโลยีพระจอมเกล้าเจ้าคุณทหารลาดกระบัง, 2544",
+        "วศ.บ. (วิศวกรรมอิเล็กทรอนิกส์) สถาบันเทคโนโลยีพระจอมเกล้าเจ้าคุณทหารลาดกระบัง, 2542"
+      ],
+      "language": "en",
+      "data_type": "professor"
+    },
+    "chunk_id": "professor_4_ผศ.ดร.ชมพูนุท_จินจาคาม",
+    "original_index": 4
+  },
+  {
+    "metadata": {
+      "name": "รศ.ดร.บุญธีร์ เครือตราชู",
+      "research_areas": [
+        "Machine Learning",
+        "Pattern Recognition"
+      ],
+      "teaching_subjects": [],
+      "textbooks": [],
+      "degrees": [
+        "Ph.D. (Electrical and Computer Engineering) Oregon State University, USA, 2530",
+        "M.S. (Electrical and Computer Engineering) Oregon State University, USA, 2527",
+        "วศ.บ. (วิศวกรรมไฟฟ้า) มหาวิทยาลัยเกษตรศาสตร์, 2524"
+      ],
+      "language": "en",
+      "data_type": "professor"
+    },
+    "chunk_id": "professor_5_รศ.ดร.บุญธีร์_เครือตราชู",
+    "original_index": 5
+  },
+  {
+    "metadata": {
+      "name": "รศ.ดร.สมศักดิ์ มิตะถา",
+      "research_areas": [
+        "Computer System Design",
+        "Embedded System Application",
+        "Microcontroller Application",
+        "Optical Logic Gate",
+        "Pattern Recognition"
+      ],
+      "teaching_subjects": [],
+      "textbooks": [
+        "การออกแบบวงจรดิจิตอลและวงจรตรรก"
+      ],
+      "degrees": [
+        "วศ.ด. (วิศวกรรมไฟฟ้า) สถาบันเทคโนโลยีพระจอมเกล้าเจ้าคุณทหารลาดกระบัง, 2552",
+        "วศ.ม. (วิศวกรรมไฟฟ้า) สถาบันเทคโนโลยีพระจอมเกล้าเจ้าคุณทหารลาดกระบัง, 2538",
+        "อส.บ. (เทคโนโลยีโทรทัศน์) สถาบันเทคโนโลยีพระจอมเกล้าเจ้าคุณทหารลาดกระบัง, 2530"
+      ],
+      "language": "en",
+      "data_type": "professor"
+    },
+    "chunk_id": "professor_6_รศ.ดร.สมศักดิ์_มิตะถา",
+    "original_index": 6
+  },
+  {
+    "metadata": {
+      "name": "รศ.ดร.อรฉัตร จิตต์โสภักตร์",
+      "research_areas": [
+        "3D Reconstruction and Modelling",
+        "Image Registration",
+        "Image Retrieval and Indexing",
+        "Image and Video Compression",
+        "Parallel Processing GPU",
+        "Text Mining"
+      ],
+      "teaching_subjects": [],
+      "textbooks": [
+        "Digital Image Processing (ทฤษฎีการประมวลผลภาพ)"
+      ],
+      "degrees": [
+        "Ph.D. (Computer Engineering) University of Texas at Arlington, USA, 2544 - Visual Analytics",
+        "M.S. (Computer Engineering) Arizona State University, USA, 2540",
+        "วศ.บ. (วิศวกรรมอิเล็กทรอนิกส์) สถาบันเทคโนโลยีพระจอมเกล้าเจ้าคุณทหารลาดกระบัง, 2534"
+      ],
+      "language": "en",
+      "data_type": "professor"
+    },
+    "chunk_id": "professor_7_รศ.ดร.อรฉัตร_จิตต์โสภักตร์",
+    "original_index": 7
+  },
+  {
+    "metadata": {
+      "name": "รศ.ดร.เกียรติกูล เจียรนัยธนะกิจ",
+      "research_areas": [
+        "Artificial neural networks",
+        "Genetic Algorithms",
+        "Particle Swarm Optimization"
+      ],
+      "teaching_subjects": [],
+      "textbooks": [
+        "ทฤษฎีการคำนวณ (Theory of computation)"
+      ],
+      "degrees": [
+        "วศ.ด. (วิศวกรรมไฟฟ้า) สถาบันเทคโนโลยีพระจอมเกล้าเจ้าคุณทหารลาดกระบัง, 2552",
+        "M.S. (Computer Science) Oregon State University, USA, 2542",
+        "วศ.บ. (วิศวกรรมคอมพิวเตอร์) สถาบันเทคโนโลยีพระจอมเกล้าเจ้าคุณทหารลาดกระบัง, 2538"
+      ],
+      "language": "en",
+      "data_type": "professor"
+    },
+    "chunk_id": "professor_8_รศ.ดร.เกียรติกูล_เจียรนัยธนะกิจ",
+    "original_index": 8
+  },
+  {
+    "metadata": {
+      "name": "รศ.ดร.เจริญ วงษ์ชุ่มเย็น",
+      "research_areas": [
+        "Computer System Design",
+        "Embedded System",
+        "Microcontroller Application",
+        "Optical Communication"
+      ],
+      "teaching_subjects": [],
+      "textbooks": [
+        "การออกแบบไอซีดิจิตอลด้วย FPGA และ CPLD ภาคปฏิบัติโดยใช้ภาษา VHDL"
+      ],
+      "degrees": [
+        "วศ.ด. (วิศวกรรมไฟฟ้า) สถาบันเทคโนโลยีพระจอมเกล้าเจ้าคุณทหารลาดกระบัง",
+        "วศ.บ. (วิศวกรรมคอมพิวเตอร์) (เกียรตินิยม) สถาบันเทคโนโลยีพระจอมเกล้าเจ้าคุณทหารลาดกระบัง, 2541",
+        "วศ.ม. (วิศวกรรมไฟฟ้า) สถาบันเทคโนโลยีพระจอมเกล้าเจ้าคุณทหารลาดกระบัง, 2544"
+      ],
+      "language": "en",
+      "data_type": "professor"
+    },
+    "chunk_id": "professor_9_รศ.ดร.เจริญ_วงษ์ชุ่มเย็น",
+    "original_index": 9
+  },
+  {
+    "metadata": {
+      "name": "รศ.ดร.ศักดิ์ชัย ทิพย์จักษุรัตน์",
+      "research_areas": [
+        "Computer Networks",
+        "Mobile Communications",
+        "Queuing Theory",
+        "Wireless Information Networks"
+      ],
+      "teaching_subjects": [],
+      "textbooks": [],
+      "degrees": [
+        "Ph.D. (Electronics and Computer Engineering) Gunma University, Japan, 2545",
+        "วศ.ม. (วิศวกรรมไฟฟ้า) สถาบันเทคโนโลยีพระจอมเกล้าเจ้าคุณทหารลาดกระบัง, 2539",
+        "วท.บ. (สถิติ) มหาวิทยาลัยศรีนครินทรวิโรฒประสานมิตร, 2531"
+      ],
+      "language": "en",
+      "data_type": "professor"
+    },
+    "chunk_id": "professor_10_รศ.ดร.ศักดิ์ชัย_ทิพย์จักษุรัตน์",
+    "original_index": 10
+  },
+  {
+    "metadata": {
+      "name": "ผศ.ดร.สมศักดิ์ วลัยรัชต์",
+      "research_areas": [
+        "Computer Graphics",
+        "Multimedia Systems",
+        "Virtual Reality"
+      ],
+      "teaching_subjects": [],
+      "textbooks": [],
+      "degrees": [
+        "Ph.D. (Computational Intelligence and Systems Science) Tokyo Institute of Technology, Japan, 2544",
+        "วศ.ม. (วิศวกรรมไฟฟ้า) สถาบันเทคโนโลยีพระจอมเกล้าเจ้าคุณทหารลาดกระบัง, 2537",
+        "วท.บ. (คณิตศาสตร์) มหาวิทยาลัยรามคำแหง, 2528"
+      ],
+      "language": "en",
+      "data_type": "professor"
+    },
+    "chunk_id": "professor_11_ผศ.ดร.สมศักดิ์_วลัยรัชต์",
+    "original_index": 11
+  },
+  {
+    "metadata": {
+      "name": "ผศ.ดร.วิศิษฏ์ หิรัญกิตติ",
+      "research_areas": [
+        "Artificial Intelligence",
+        "Software Engineering",
+        "Semantic Web",
+        "Intelligent Agent"
+      ],
+      "teaching_subjects": [],
+      "textbooks": [],
+      "degrees": [
+        "Ph.D. (Computer Science), DIC, Imperial College of Science, Technology and Medicine, University of London, UK, 2541 - Intelligent Transportation System",
+        "วศ.บ. (วิศวกรรมคอมพิวเตอร์) (เกียรตินิยม) สถาบันเทคโนโลยีพระจอมเกล้าเจ้าคุณทหารลาดกระบัง, 2532"
+      ],
+      "language": "en",
+      "data_type": "professor"
+    },
+    "chunk_id": "professor_12_ผศ.ดร.วิศิษฏ์_หิรัญกิตติ",
+    "original_index": 12
+  },
+  {
+    "metadata": {
+      "name": "ผศ.ดร.อรัญญา วลัยรัชต์",
+      "research_areas": [
+        "Artificial Intelligence",
+        "Genetic Algorithm",
+        "Machine Translation"
+      ],
+      "teaching_subjects": [],
+      "textbooks": [
+        "หลักการเขียนโปรแกรม Win32 และ MFC"
+      ],
+      "degrees": [
+        "D.Eng. (Electronics) Tokai University, Japan, 2545",
+        "วศ.ม. (วิศวกรรมไฟฟ้า) สถาบันเทคโนโลยีพระจอมเกล้าเจ้าคุณทหารลาดกระบัง, 2537",
+        "วท.บ. (ฟิสิกส์) (เกียรตินิยม) มหาวิทยาลัยศรีนครินทรวิโรฒบางแสน, 2532"
+      ],
+      "language": "en",
+      "data_type": "professor"
+    },
+    "chunk_id": "professor_13_ผศ.ดร.อรัญญา_วลัยรัชต์",
+    "original_index": 13
+  },
+  {
+    "metadata": {
+      "name": "ผศ.ดร.ชุติเมษฏ์ ศรีนิลทา",
+      "research_areas": [
+        "Data Analytics",
+        "Data Mining",
+        "Machine Learning"
+      ],
+      "teaching_subjects": [],
+      "textbooks": [],
+      "degrees": [
+        "Ph.D. (Computer Engineering) Syracuse University, USA, 2541",
+        "M.S. (Computer Engineering) Syracuse University, USA, 2539",
+        "วศ.บ. (วิศวกรรมไฟฟ้า) มหาวิทยาลัยเกษตรศาสตร์, 2533"
+      ],
+      "language": "en",
+      "data_type": "professor"
+    },
+    "chunk_id": "professor_14_ผศ.ดร.ชุติเมษฏ์_ศรีนิลทา",
+    "original_index": 14
+  },
+  {
+    "metadata": {
+      "name": "ผศ.ดร.สุรินทร์ กิตติธรกุล",
+      "research_areas": [
+        "Computer Architecture",
+        "High-Level Synthesis",
+        "Reconfigurable Computing"
+      ],
+      "teaching_subjects": [],
+      "textbooks": [
+        "ระบบปฏิบัติการคอมพิวเตอร์"
+      ],
+      "degrees": [
+        "Ph.D.E.E. (Computer Engineering) University of Wisconsin, USA, 2545 - VLSI/FPGA Design - Video/Image Processing",
+        "M.S.E.E. (Computer Engineering) University of Wisconsin, USA, 2540",
+        "วศ.ม. (วิศวกรรมโทรคมนาคม) สถาบันเทคโนโลยีแห่งเอเชีย, 2538",
+        "วศ.บ. (วิศวกรรมอิเล็กทรอนิกส์) สถาบันเทคโนโลยีพระจอมเกล้าเจ้าคุณทหารลาดกระบัง, 2535"
+      ],
+      "language": "en",
+      "data_type": "professor"
+    },
+    "chunk_id": "professor_15_ผศ.ดร.สุรินทร์_กิตติธรกุล",
+    "original_index": 15
+  },
+  {
+    "metadata": {
+      "name": "ผศ.ดร.ปกรณ์ วัฒนจตุรพร",
+      "research_areas": [
+        "Distributed Computing",
+        "Image Processing",
+        "Pattern Recognition",
+        "Remote Sensing"
+      ],
+      "teaching_subjects": [],
+      "textbooks": [
+        "Advanced Image Processing Techniques for Remote Sensed Hyperspectral Data. Springer-Verlag, 2004"
+      ],
+      "degrees": [
+        "Ph.D. (Computer Engineering) Syracuse University, USA, 2548",
+        "วศ.บ. (วิศวกรรมคอมพิวเตอร์) (เกียรตินิยม) สถาบันเทคโนโลยีพระจอมเกล้าเจ้าคุณทหารลาดกระบัง, 2537"
+      ],
+      "language": "en",
+      "data_type": "professor"
+    },
+    "chunk_id": "professor_16_ผศ.ดร.ปกรณ์_วัฒนจตุรพร",
+    "original_index": 16
+  },
+  {
+    "metadata": {
+      "name": "ผศ.ดร.อำนาจ ขาวเน",
+      "research_areas": [
+        "Computer Networks",
+        "Image Processing"
+      ],
+      "teaching_subjects": [],
+      "textbooks": [],
+      "degrees": [
+        "D.Eng. (Science and Technology) Tokai University, Japan, 2545",
+        "วศ.ม. (วิศวกรรมไฟฟ้า) สถาบันเทคโนโลยีพระจอมเกล้าเจ้าคุณทหารลาดกระบัง, 2545",
+        "วศ.บ. (วิศวกรรมโทรคมนาคม) สถาบันเทคโนโลยีพระจอมเกล้าเจ้าคุณทหารลาดกระบัง, 2541"
+      ],
+      "language": "en",
+      "data_type": "professor"
+    },
+    "chunk_id": "professor_17_ผศ.ดร.อำนาจ_ขาวเน",
+    "original_index": 17
+  },
+  {
+    "metadata": {
+      "name": "ผศ.ดร.รัฐชัย ชาวอุทัย",
+      "research_areas": [
+        "Data Science",
+        "User Experience"
+      ],
+      "teaching_subjects": [],
+      "textbooks": [],
+      "degrees": [
+        "Ph.D. (Informatics), SOKENDAI, Japan, 2559",
+        "M.Eng. (Information Management), Asian Institute of Technology, 2555",
+        "วศ.บ. (วิศวกรรมคอมพิวเตอร์) สถาบันเทคโนโลยีพระจอมเกล้าเจ้าคุณทหารลาดกระบัง, 2531"
+      ],
+      "language": "en",
+      "data_type": "professor"
+    },
+    "chunk_id": "professor_18_ผศ.ดร.รัฐชัย_ชาวอุทัย",
+    "original_index": 18
+  },
+  {
+    "metadata": {
+      "name": "ผศ.ธนา หงษ์สุวรรณ",
+      "research_areas": [
+        "Embedded Systems",
+        "Internet of Things"
+      ],
+      "teaching_subjects": [],
+      "textbooks": [],
+      "degrees": [
+        "วศ.ม. (วิศวกรรมคอมพิวเตอร์) สถาบันเทคโนโลยีพระจอมเกล้าเจ้าคุณทหารลาดกระบัง, 2538",
+        "วศ.บ. (วิศวกรรมคอมพิวเตอร์) สถาบันเทคโนโลยีพระจอมเกล้าเจ้าคุณทหารลาดกระบัง, 2531"
+      ],
+      "language": "en",
+      "data_type": "professor"
+    },
+    "chunk_id": "professor_19_ผศ.ธนา_หงษ์สุวรรณ",
+    "original_index": 19
+  },
+  {
+    "metadata": {
+      "name": "ผศ.บัณฑิต พัสยา",
+      "research_areas": [
+        "Information Retrieval"
+      ],
+      "teaching_subjects": [],
+      "textbooks": [],
+      "degrees": [
+        "วศ.ม. (วิศวกรรมไฟฟ้า) สถาบันเทคโนโลยีพระจอมเกล้าเจ้าคุณทหารลาดกระบัง, 2544",
+        "วท.บ. (คณิตศาสตร์) สถาบันเทคโนโลยีพระจอมเกล้าเจ้าคุณทหารลาดกระบัง, 2534"
+      ],
+      "language": "en",
+      "data_type": "professor"
+    },
+    "chunk_id": "professor_20_ผศ.บัณฑิต_พัสยา",
+    "original_index": 20
+  },
+  {
+    "metadata": {
+      "name": "ผศ.วัจนพงศ์ เกษมศิริ",
+      "research_areas": [
+        "Pattern Recognition"
+      ],
+      "teaching_subjects": [],
+      "textbooks": [],
+      "degrees": [
+        "วศ.ม. (วิศวกรรมไฟฟ้า) สถาบันเทคโนโลยีพระจอมเกล้าเจ้าคุณทหารลาดกระบัง, 2546",
+        "วศ.บ. (วิศวกรรมไฟฟ้า) มหาวิทยาลัยธรรมศาสตร์, 2541"
+      ],
+      "language": "en",
+      "data_type": "professor"
+    },
+    "chunk_id": "professor_21_ผศ.วัจนพงศ์_เกษมศิริ",
+    "original_index": 21
+  },
+  {
+    "metadata": {
+      "name": "ดร.วัชระ ฉัตรวิริยะ",
+      "research_areas": [
+        "Business Intelligence",
+        "Embedded Systems",
+        "Pattern Recognition"
+      ],
+      "teaching_subjects": [],
+      "textbooks": [
+        "เรียนรู้แอสเซมบลีสู่หลักการเขียนโปรแกรม"
+      ],
+      "degrees": [
+        "Ph.D. (Computer Engineering) West Virginia University, USA, 2546",
+        "วศ.ม. (วิศวกรรมคอมพิวเตอร์) สถาบันเทคโนโลยีพระจอมเกล้าเจ้าคุณทหารลาดกระบัง, 2536",
+        "วศ.บ. (วิศวกรรมคอมพิวเตอร์) สถาบันเทคโนโลยีพระจอมเกล้าเจ้าคุณทหารลาดกระบัง, 2529"
+      ],
+      "language": "en",
+      "data_type": "professor"
+    },
+    "chunk_id": "professor_22_ดร.วัชระ_ฉัตรวิริยะ",
+    "original_index": 22
+  },
+  {
+    "metadata": {
+      "name": "ดร.อักฤทธิ์ สังข์เพ็ชร",
+      "research_areas": [
+        "Cloud Computing",
+        "Distributed System",
+        "Smart System"
+      ],
+      "teaching_subjects": [],
+      "textbooks": [],
+      "degrees": [
+        "B.S. (Computer Science) Carnegie Mellon University, USA, 2548",
+        "B.Eng. (Electrical and Computer Engineering) Carnegie Mellon University, USA, 2548",
+        "M.Eng. (Electrical and Computer Engineering) Carnegie Mellon University, USA, 2553",
+        "Ph.D. (Electrical and Computer Engineering) Carnegie Mellon University, USA, 2556"
+      ],
+      "language": "en",
+      "data_type": "professor"
+    },
+    "chunk_id": "professor_23_ดร.อักฤทธิ์_สังข์เพ็ชร",
+    "original_index": 23
+  },
+  {
+    "metadata": {
+      "name": "ดร.จิระศักดิ์ สิทธิกร",
+      "research_areas": [
+        "Image Processing"
+      ],
+      "teaching_subjects": [],
+      "textbooks": [],
+      "degrees": [
+        "วศ.ด. (วิศวกรรมไฟฟ้า) สถาบันเทคโนโลยีพระจอมเกล้าเจ้าคุณทหารลาดกระบัง, 2558",
+        "วศ.ม. (วิศวกรรมโทรคมนาคม) สถาบันเทคโนโลยีพระจอมเกล้าเจ้าคุณทหารลาดกระบัง, 2546",
+        "วศ.บ. (วิศวกรรมโทรคมนาคม) มหาวิทยาลัยเทคโนโลยีสุรนารี, 2544"
+      ],
+      "language": "en",
+      "data_type": "professor"
+    },
+    "chunk_id": "professor_24_ดร.จิระศักดิ์_สิทธิกร",
+    "original_index": 24
+  },
+  {
+    "metadata": {
+      "name": "ดร.อรทัย สังข์เพ็ชร",
+      "research_areas": [
+        "Cloud Computing",
+        "Cyber Security",
+        "Smart System"
+      ],
+      "teaching_subjects": [
+        "Operating Systems",
+        "Unix Operating Systems",
+        "Cloud Computing"
+      ],
+      "textbooks": [],
+      "degrees": [
+        "B.Eng.-M.Eng. Electrical and Computer Engineering Carnegie Mellon University, USA, 2548",
+        "Ph.D. Electrical and Computer Engineering Carnegie Mellon University, USA, 2556"
+      ],
+      "language": "en",
+      "data_type": "professor"
+    },
+    "chunk_id": "professor_25_ดร.อรทัย_สังข์เพ็ชร",
+    "original_index": 25
+  },
+  {
+    "metadata": {
+      "name": "อ.คณัฐ ตังติสานนท์",
+      "research_areas": [
+        "Analysis of Algorithms"
+      ],
+      "teaching_subjects": [],
+      "textbooks": [],
+      "degrees": [
+        "M.S. (Computer Science) University of New South Wales, Australia, 2544",
+        "วศ.บ. (อิเล็กทรอนิกส์) สถาบันเทคโนโลยีพระจอมเกล้าเจ้าคุณทหารลาดกระบัง, 2530"
+      ],
+      "language": "en",
+      "data_type": "professor"
+    },
+    "chunk_id": "professor_26_อ.คณัฐ_ตังติสานนท์",
+    "original_index": 26
+  },
+  {
+    "metadata": {
+      "name": "อ.เกียรติณรงค์ ทองประเสริฐ",
+      "research_areas": [
+        "Information Retrieval"
+      ],
+      "teaching_subjects": [],
+      "textbooks": [],
+      "degrees": [
+        "วศ.บ. (วิศวกรรมคอมพิวเตอร์) สถาบันเทคโนโลยีพระจอมเกล้าเจ้าคุณทหารลาดกระบัง, 2542",
+        "วศ.ม. (วิศวกรรมคอมพิวเตอร์) สถาบันเทคโนโลยีพระจอมเกล้าเจ้าคุณทหารลาดกระบัง, 2548"
+      ],
+      "language": "en",
+      "data_type": "professor"
+    },
+    "chunk_id": "professor_27_อ.เกียรติณรงค์_ทองประเสริฐ",
+    "original_index": 27
+  }
+]

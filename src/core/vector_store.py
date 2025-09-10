@@ -60,8 +60,14 @@ class ChromaVectorStore(VectorStore):
 			# Convert numpy arrays to lists for ChromaDB
 			embeddings_list = embeddings.tolist()
 			
-			# Create IDs for each embedding
-			ids = [f"course_{i}" for i in range(len(embeddings_list))]
+			# Create IDs for each embedding based on data type
+			ids = []
+			for i, meta in enumerate(metadata):
+				data_type = meta.get('data_type', 'course')
+				if data_type == 'professor':
+					ids.append(f"professor_{i}")
+				else:
+					ids.append(f"course_{i}")
 			
 			# Convert metadata to ChromaDB-compatible format
 			chroma_metadata = []
@@ -107,11 +113,16 @@ class ChromaVectorStore(VectorStore):
 				return np.array([]), []
 			
 			# Perform similarity search
-			results = self.collection.query(
-				query_embeddings=[query_embedding_list],
-				n_results=top_k,
-				where=filter_metadata
-			)
+			query_params = {
+				"query_embeddings": [query_embedding_list],
+				"n_results": top_k
+			}
+			
+			# Only add where clause if filter_metadata is provided
+			if filter_metadata is not None:
+				query_params["where"] = filter_metadata
+			
+			results = self.collection.query(**query_params)
 			
 			if results['ids'] and results['ids'][0]:
 				# Extract similarities and indices
@@ -120,8 +131,7 @@ class ChromaVectorStore(VectorStore):
 				
 				for id_str in results['ids'][0]:
 					try:
-						# Handle both "course_123" and plain numeric IDs
-						if id_str.startswith('course_'):
+						if id_str.startswith('course_') or id_str.startswith('professor_'):
 							idx = int(id_str.split('_')[1])
 						else:
 							idx = int(id_str)

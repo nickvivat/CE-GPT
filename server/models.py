@@ -19,7 +19,7 @@ class LanguageEnum(str, Enum):
 class SearchRequest(BaseModel):
     """Request model for course search."""
     query: str = Field(..., min_length=1, max_length=500, description="Search query")
-    top_k: int = Field(default=5, ge=1, le=50, description="Number of results to return")
+    top_k: int = Field(default=5, ge=1, le=10, description="Number of results to return")
     language: LanguageEnum = Field(default=LanguageEnum.AUTO, description="Language preference")
     use_reranking: bool = Field(default=True, description="Whether to use reranking")
     include_metadata: bool = Field(default=True, description="Include course metadata in results")
@@ -41,16 +41,29 @@ class CourseMetadata(BaseModel):
     career_tracks: List[str] = Field(default_factory=list, description="Career tracks")
     credits: Optional[int] = Field(None, description="Course credits")
     semester: Optional[str] = Field(None, description="Offered semester")
+    data_type: str = Field(default="course", description="Data type")
+
+
+class ProfessorMetadata(BaseModel):
+    """Professor metadata information."""
+    data_type: str = Field(default="professor", description="Data type")
+    name: str = Field(..., description="Professor name")
+    research_areas: List[str] = Field(default_factory=list, description="Research areas")
+    teaching_subjects: List[str] = Field(default_factory=list, description="Teaching subjects")
+    textbooks: List[str] = Field(default_factory=list, description="Textbooks")
+    degrees: List[str] = Field(default_factory=list, description="Academic degrees")
+    language: str = Field(default="en", description="Language")
 
 
 class SearchResult(BaseModel):
     """Individual search result."""
-    content: str = Field(..., description="Course content/chunk")
-    metadata: CourseMetadata = Field(..., description="Course metadata")
+    content: str = Field(..., description="Content/chunk")
+    metadata: Union[CourseMetadata, ProfessorMetadata] = Field(..., description="Metadata")
     similarity_score: float = Field(..., ge=0.0, le=1.0, description="Similarity score")
     rerank_score: Optional[float] = Field(None, ge=0.0, le=1.0, description="Reranking score")
     chunk_id: str = Field(..., description="Unique chunk identifier")
     original_index: int = Field(..., description="Original chunk index")
+    data_type: str = Field(..., description="Data type (course or professor)")
 
 
 class SearchResponse(BaseModel):
@@ -65,7 +78,7 @@ class SearchResponse(BaseModel):
 
 class GenerateRequest(BaseModel):
     query: str = Field(..., description="User query for response generation")
-    top_k: int = Field(default=5, ge=1, le=20, description="Number of sources to retrieve")
+    top_k: int = Field(default=5, ge=1, le=10, description="Number of sources to retrieve")
     language: str = Field(default="auto", description="Language preference (auto, en, th)")
     use_reranking: bool = Field(default=True, description="Whether to use reranking for better results")
     include_sources: bool = Field(default=True, description="Whether to include source information")

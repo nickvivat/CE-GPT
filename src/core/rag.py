@@ -12,7 +12,7 @@ import numpy as np
 from typing import List, Dict, Any, Optional
 
 # Core components
-from .data_processor import DataProcessor
+from ..preprocess.data_processor import DataProcessor, DataChunk
 from .embedder import Embedder
 from .reranker import Reranker
 from .query import Query
@@ -28,16 +28,59 @@ from ..utils.error_handler import (
     CircuitBreaker
 )
 from ..utils.performance_monitor import monitor_operation, performance_monitor
+from ..utils.performance_logger import csv_logger
 
 logger = get_logger(__name__)
+
+def get_chunk_content(chunk) -> str:
+    """Get content from chunk, handling both course and professor data"""
+    if hasattr(chunk, 'content') and chunk.content:
+        return chunk.content
+    elif hasattr(chunk, 'metadata') and chunk.metadata.get('data_type') == 'professor':
+        # Generate content from professor metadata
+        content_parts = []
+        
+        # Add name
+        name = chunk.metadata.get('name', '')
+        if name:
+            content_parts.append(f"Professor: {name}")
+        
+        # Add degrees
+        degrees = chunk.metadata.get('degrees', [])
+        if degrees:
+            degrees_text = " ".join(degrees)
+            content_parts.append(f"Education: {degrees_text}")
+        
+        # Add research areas
+        research_areas = chunk.metadata.get('research_areas', [])
+        if research_areas:
+            research_text = ", ".join(research_areas)
+            content_parts.append(f"Research Areas: {research_text}")
+        
+        # Add teaching subjects
+        teaching = chunk.metadata.get('teaching_subjects', [])
+        if teaching:
+            teaching_text = ", ".join(teaching)
+            content_parts.append(f"Teaching: {teaching_text}")
+        
+        # Add textbooks
+        textbooks = chunk.metadata.get('textbooks', [])
+        if textbooks:
+            textbook_text = ", ".join(textbooks)
+            content_parts.append(f"Textbooks: {textbook_text}")
+        
+        return " | ".join(content_parts)
+    else:
+        return ""
 
 class RAGSystem:
     """Main RAG system for multilingual course search and generation"""
     
-    def __init__(self, use_reranker: bool = True, use_query_enhancement: bool = True):
+    def __init__(self, use_reranker: bool = True, use_query_enhancement: bool = True, auto_load_data: bool = True):
         """Initialize the RAG system"""
         self.use_reranker = use_reranker
         self.use_query_enhancement = use_query_enhancement
+        self.auto_load_data = auto_load_data
         
         # Initialize error handling components
         self.circuit_breaker = CircuitBreaker(failure_threshold=3, recovery_timeout=30.0)
@@ -95,17 +138,53 @@ class RAGSystem:
         self.last_query = ""
         self.last_results = []
         
+        # Auto-load data if enabled
+        if self.auto_load_data:
+            self._auto_load_data()
+    
+    def _auto_load_data(self):
+        """Auto-load both course and professor data"""
+        try:
+            logger.info("Auto-loading course and professor data...")
+            
+            # Define data sources
+            data_sources = [
+                {'file_path': 'data/raw/course_detail.json', 'data_type': 'course'},
+                {'file_path': 'data/raw/professor_detail.json', 'data_type': 'professor'}
+            ]
+            
+            # Load multiple data sources
+            success = self.load_multiple_data_sources(data_sources)
+            
+            if success:
+                # Build vector index
+                self.build_vector_index()
+                logger.info("Auto-loading completed successfully")
+            else:
+                logger.warning("Auto-loading failed, but system will continue")
+                
+        except Exception as e:
+            logger.error(f"Error during auto-loading: {e}")
+            logger.warning("System will continue without auto-loaded data")
+        
     @monitor_operation("data_loading")
     @handle_errors(ErrorType.DATA_PROCESSING, fallback_value=False)
-    def load_and_process_data(self, data_file: str) -> bool:
-        """Load and process course data"""
-        logger.info("Loading and processing course data...")
+    def load_and_process_data(self, data_file: str, data_type: str = "course") -> bool:
+        """Load and process data using unified processor"""
+        logger.info(f"Loading and processing {data_type} data...")
         
         # Try to load from cache first
-        base_name = os.path.splitext(os.path.basename(data_file))[0]  # Extract base filename without extension
-        processed_dir = os.path.join(os.path.dirname(os.path.dirname(data_file)), "processed")  # Go up to data/ then into processed/
-        os.makedirs(processed_dir, exist_ok=True)  # Ensure processed directory exists
-        cache_file = os.path.join(processed_dir, f"{base_name}_processed.json")
+        base_name = os.path.splitext(os.path.basename(data_file))[0]
+        processed_dir = os.path.join(os.path.dirname(os.path.dirname(data_file)), "processed")
+        os.makedirs(processed_dir, exist_ok=True)
+        
+        # Use consistent naming: course_detail_processed.json and professor_detail_processed.json
+        if data_type == "course":
+            cache_file = os.path.join(processed_dir, "course_detail_processed.json")
+        elif data_type == "professor":
+            cache_file = os.path.join(processed_dir, "professor_detail_processed.json")
+        else:
+            cache_file = os.path.join(processed_dir, f"{base_name}_{data_type}_processed.json")
         
         if os.path.exists(cache_file):
             logger.info("Loading preprocessed chunks from cache...")
@@ -117,14 +196,9 @@ class RAGSystem:
                 return True
         
         # Process data if cache not available
-        if not self.data_processor.load_course_data(data_file):
-            logger.error("Failed to load course data")
-            return False
-            
-        courses = self.data_processor.load_course_data(data_file)
-        self.chunks = self.data_processor.process_courses(courses)
+        self.chunks = self.data_processor.process_file(data_file, data_type)
         if not self.chunks:
-            logger.error("Failed to process course data")
+            logger.error(f"Failed to process {data_type} data")
             return False
             
         # Save to cache
@@ -134,6 +208,73 @@ class RAGSystem:
         logger.info(f"Data statistics: {stats}")
         
         return True
+    
+    def load_multiple_data_sources(self, data_sources: List[Dict[str, str]]) -> bool:
+        """Load multiple data sources of different types with caching"""
+        logger.info(f"Loading {len(data_sources)} data sources...")
+        
+        all_chunks = []
+        
+        for source in data_sources:
+            file_path = source.get('file_path')
+            data_type = source.get('data_type', 'course')
+            
+            if not file_path or not os.path.exists(file_path):
+                logger.warning(f"File not found: {file_path}")
+                continue
+            
+            # Try to load from cache first
+            base_name = os.path.splitext(os.path.basename(file_path))[0]
+            processed_dir = os.path.join(os.path.dirname(os.path.dirname(file_path)), "processed")
+            os.makedirs(processed_dir, exist_ok=True)
+            
+            # Use consistent naming: course_detail_processed.json and professor_detail_processed.json
+            if data_type == "course":
+                cache_file = os.path.join(processed_dir, "course_detail_processed.json")
+            elif data_type == "professor":
+                cache_file = os.path.join(processed_dir, "professor_detail_processed.json")
+            else:
+                cache_file = os.path.join(processed_dir, f"{base_name}_processed.json")
+            
+            chunks = []
+            if os.path.exists(cache_file):
+                logger.info(f"Loading preprocessed {data_type} chunks from cache...")
+                chunks = self.data_processor.load_processed_chunks(cache_file)
+                if chunks:
+                    logger.info(f"Loaded {len(chunks)} processed {data_type} chunks from cache")
+            
+            # Process data if cache not available
+            if not chunks:
+                logger.info(f"Processing {data_type} data from {file_path}...")
+                chunks = self.data_processor.process_file(file_path, data_type)
+                if chunks:
+                    # Save to cache
+                    self.data_processor.save_processed_chunks(chunks, cache_file)
+                    logger.info(f"Saved {len(chunks)} processed {data_type} chunks to cache")
+                else:
+                    logger.warning(f"Failed to process {data_type} data from {file_path}")
+                    continue
+            
+            all_chunks.extend(chunks)
+            logger.info(f"Added {len(chunks)} {data_type} chunks to combined dataset")
+        
+        if not all_chunks:
+            logger.error("No data loaded from any source")
+            return False
+        
+        self.chunks = all_chunks
+        stats = self.data_processor.get_statistics(self.chunks)
+        logger.info(f"Combined data statistics: {stats}")
+        
+        return True
+    
+    def find_links_between_data_types(self, source_type: str, target_type: str) -> Dict[str, List[Dict[str, Any]]]:
+        """Find links between different data types"""
+        if not self.chunks:
+            logger.error("No data loaded")
+            return {}
+        
+        return self.data_processor.find_links(self.chunks, source_type, target_type)
     
     def build_vector_index(self) -> bool:
         """Build vector index from processed chunks"""
@@ -153,45 +294,54 @@ class RAGSystem:
             chunks_content = "".join([chunk.content for chunk in self.chunks])
             current_hash = hashlib.md5(chunks_content.encode()).hexdigest()
             
-            # Try to load cached embeddings if they exist and hash matches
-            if (os.path.exists(embeddings_cache_file) and 
-                os.path.exists(chunks_hash_file) and
-                os.path.getsize(embeddings_cache_file) > 0):
-                
+            # Check if data has changed by comparing with cached hash
+            data_changed = True
+            if (os.path.exists(chunks_hash_file)):
                 try:
                     with open(chunks_hash_file, 'r') as f:
                         cached_hash = f.read().strip()
                     
                     if cached_hash == current_hash:
+                        data_changed = False
+                        logger.info("Data has not changed, checking existing cache...")
+                    else:
+                        logger.info("Data has changed, will regenerate embeddings...")
+                except Exception as e:
+                    logger.warning(f"Failed to read cached hash: {e}, will regenerate...")
+            
+            # If data hasn't changed, check if we can use existing cache
+            if not data_changed:
+                # Check if vector store already has data
+                if self.vector_store.get_count() > 0:
+                    logger.info("Vector store already contains embeddings and data unchanged, skipping rebuild")
+                    return True
+                
+                # Try to load cached embeddings if they exist
+                if (os.path.exists(embeddings_cache_file) and 
+                    os.path.getsize(embeddings_cache_file) > 0):
+                    try:
                         logger.info("Loading embeddings from cache...")
                         self.embeddings = np.load(embeddings_cache_file)
                         logger.info(f"Loaded {len(self.embeddings)} embeddings from cache")
-                        
-                        # Check if vector store already has data
-                        if self.vector_store.get_count() > 0:
-                            logger.info("Vector store already contains embeddings, skipping rebuild")
-                            return True
-                        else:
-                            logger.info("Vector store empty, adding cached embeddings...")
-                    else:
-                        logger.info("Data changed, regenerating embeddings...")
+                    except Exception as e:
+                        logger.warning(f"Failed to load cached embeddings: {e}, regenerating...")
                         self.embeddings = None
-                except Exception as e:
-                    logger.warning(f"Failed to load cached embeddings: {e}, regenerating...")
+                else:
+                    logger.info("No embedding cache found, generating embeddings...")
                     self.embeddings = None
             else:
-                logger.info("No embedding cache found, generating embeddings...")
+                logger.info("Data changed, regenerating embeddings...")
                 self.embeddings = None
             
             # Generate embeddings if not loaded from cache
             if self.embeddings is None:
-                chunk_texts = self.data_processor.get_chunk_texts(self.chunks)
+                chunk_texts = [get_chunk_content(chunk) for chunk in self.chunks]
                 self.embeddings = self.embedder.get_embeddings(chunk_texts)
                 if self.embeddings is None or getattr(self.embeddings, "size", 0) == 0:
                     logger.error("Failed to generate embeddings")
                     return False
                 
-                # Save embeddings to cache
+                # Save embeddings to cache (only when generating new embeddings)
                 try:
                     os.makedirs(cache_dir, exist_ok=True)
                     np.save(embeddings_cache_file, self.embeddings)
@@ -201,11 +351,15 @@ class RAGSystem:
                 except Exception as e:
                     logger.warning(f"Failed to save embeddings cache: {e}")
             
-            # Add to vector store
-            chunk_metadata = self.data_processor.get_chunk_metadata(self.chunks)
-            if not self.vector_store.add_embeddings(self.embeddings, chunk_metadata):
-                logger.error("Failed to add embeddings to vector store")
-                return False
+            # Add to vector store only if it's empty
+            if self.vector_store.get_count() == 0:
+                chunk_metadata = [chunk.metadata for chunk in self.chunks]
+                if not self.vector_store.add_embeddings(self.embeddings, chunk_metadata):
+                    logger.error("Failed to add embeddings to vector store")
+                    return False
+                logger.info("Added embeddings to vector store")
+            else:
+                logger.info("Vector store already contains embeddings, skipping addition")
                 
             logger.info("Vector index built successfully")
             return True
@@ -218,59 +372,125 @@ class RAGSystem:
     @handle_errors(ErrorType.VECTOR_SEARCH, fallback_value=[])
     def search(self, query: str, top_k: int = 5, language: str = None, 
                use_reranking: bool = True) -> List[Dict[str, Any]]:
-        """Search for relevant courses"""
-        # Only skip truly conversational queries, not valid search terms
-        conversational_queries = ['hi', 'hello', 'hey', 'สวัสดี', 'how are you', 'how are you doing']
+        """Search for relevant courses and professors with detailed performance logging"""
+        start_time = time.time()
         query_lower = query.lower().strip()
+        logger.info(f"Processing query: '{query}'")
         
-        if query_lower in conversational_queries:
-            logger.info(f"Query '{query}' classified as conversational, skipping search")
-            return []
+        # Detect professor-related queries and increase top_k to ensure professor results are included
+        professor_keywords = ['who', 'teach', 'teaches', 'instructor', 'professor', 'อาจารย์', 'สอน']
+        is_professor_query = any(keyword in query_lower for keyword in professor_keywords)
         
-        # Check if it's a legitimate course-related query
-        course_keywords = [
-            'calculus', 'math', 'mathematics', 'programming', 'coding', 'software', 
-            'hardware', 'circuit', 'electronics', 'ai', 'artificial intelligence', 
-            'machine learning', 'แคลคูลัส', 'คณิตศาสตร์', 'เขียนโปรแกรม', 'ซอฟต์แวร์',
-            'ฮาร์ดแวร์', 'วงจร', 'อิเล็กทรอนิกส์', 'ปัญญาประดิษฐ์', 'การเรียนรู้ของเครื่อง'
-        ]
-        
-        # If the query contains course-related keywords, it's definitely not conversational
-        contains_course_keywords = any(keyword in query_lower for keyword in course_keywords)
-        
-        if contains_course_keywords:
-            logger.info(f"Query '{query}' contains course keywords, proceeding with search")
-        else:
-            logger.info(f"Query '{query}' proceeding with search (may be conversational but allowing search)")
+        # Log all professor data for debugging
+        if is_professor_query:
+            professor_chunks = [chunk for chunk in self.chunks if getattr(chunk, 'data_type', chunk.metadata.get('data_type', 'unknown')) == 'professor']
         
         # Use circuit breaker for critical operations
         def _perform_search():
             current_query = query  # Store the original query
+            enhanced_query = None
+            classification = None
+            detected_language = None
             
-            detected_language = language
-            if not detected_language:
-                detected_language = self._detect_language(query)
-                logger.info(f"Auto-detected language: {detected_language} for original query: '{query}'")
-            
-            # Use Gemma to intelligently classify and enhance the query
-            if self.use_query_enhancement and self.query and hasattr(self.query, 'available') and self.query.available:
-                enhanced_query = self.query.enhance_query(current_query, self.conversation_context)
+            # Step 1: Query Enhancement with timing
+            query_enhancement_start = time.time()
+            try:
+                if self.use_query_enhancement and self.query and hasattr(self.query, 'available') and self.query.available:
+                    enhanced_query = self.query.enhance_query(current_query, self.conversation_context)
+                    
+                    # Check if query was classified as conversational or external
+                    if enhanced_query == current_query:
+                        # Query was classified as 'pass' or 'external', return empty results
+                        logger.info("Query classified as conversational or external, returning empty results")
+                        classification = "pass"
+                        return []
+                    
+                    # Query was enhanced, use the enhanced version
+                    current_query = enhanced_query
+                    classification = "enhanced"
                 
-                # Don't skip based on length - let the search work
-                current_query = enhanced_query
+                query_enhancement_duration = time.time() - query_enhancement_start
+                csv_logger.log_query_enhancement(
+                    query=query,
+                    duration=query_enhancement_duration,
+                    success=True,
+                    original_query=query,
+                    enhanced_query=enhanced_query,
+                    classification=classification,
+                    language=detected_language,
+                    model_name=getattr(self.query, 'model_name', 'gemma3:4b-it-qat') if self.query else None
+                )
+                
+            except Exception as e:
+                query_enhancement_duration = time.time() - query_enhancement_start
+                csv_logger.log_query_enhancement(
+                    query=query,
+                    duration=query_enhancement_duration,
+                    success=False,
+                    error_message=str(e),
+                    original_query=query,
+                    enhanced_query=enhanced_query,
+                    classification=classification,
+                    language=detected_language,
+                    model_name=getattr(self.query, 'model_name', 'gemma3:4b-it-qat') if self.query else None
+                )
+                logger.error(f"Query enhancement failed: {e}")
             
-            self.last_query = current_query
-            if self.conversation_context:
-                self.conversation_context = f"Last query: {self.last_query}. Previous results: {len(self.last_results)} courses found."
+            # Step 2: Language Detection
+            if is_professor_query:
+                detected_language = None  # Disable language filtering for professor queries
+                logger.info("Professor query detected, disabling language filtering for better cross-language matching")
+            else:
+                detected_language = language
+                if not detected_language:
+                    detected_language = self._detect_language(query)
+                    logger.info(f"Auto-detected language: {detected_language} for original query: '{query}'")
             
-            query_embedding = self.embedder.get_single_embedding(current_query)
-            
-            filter_metadata = None
-            if detected_language:
-                filter_metadata = {"language": detected_language}
-                logger.info(f"Applying language filter: {detected_language} (based on original query)")
-            
-            similarities, indices = self.vector_store.search(query_embedding, top_k=top_k, filter_metadata=filter_metadata)
+            # Step 3: Embedding and Vector Search with timing
+            embedding_search_start = time.time()
+            try:
+                self.last_query = current_query
+                if self.conversation_context:
+                    self.conversation_context = f"Last query: {self.last_query}. Previous results: {len(self.last_results)} courses found."
+                
+                query_embedding = self.embedder.get_single_embedding(current_query)
+                
+                filter_metadata = None
+                if detected_language:
+                    filter_metadata = {"language": detected_language}
+                    logger.info(f"Applying language filter: {detected_language} (based on original query)")
+                else:
+                    logger.info("No language filter applied - searching all data")
+                
+                similarities, indices = self.vector_store.search(query_embedding, top_k=top_k, filter_metadata=filter_metadata)
+                
+                embedding_search_duration = time.time() - embedding_search_start
+                csv_logger.log_embedding_search(
+                    query=query,
+                    duration=embedding_search_duration,
+                    success=True,
+                    top_k=top_k,
+                    results_count=len(similarities) if similarities.size > 0 else 0,
+                    language_filter=detected_language,
+                    embedding_model=getattr(self.embedder, 'model_name', 'sentence-transformers/all-MiniLM-L6-v2'),
+                    vector_store_type=self.vector_store.__class__.__name__
+                )
+                
+            except Exception as e:
+                embedding_search_duration = time.time() - embedding_search_start
+                csv_logger.log_embedding_search(
+                    query=query,
+                    duration=embedding_search_duration,
+                    success=False,
+                    error_message=str(e),
+                    top_k=top_k,
+                    results_count=0,
+                    language_filter=detected_language,
+                    embedding_model=getattr(self.embedder, 'model_name', 'sentence-transformers/all-MiniLM-L6-v2'),
+                    vector_store_type=self.vector_store.__class__.__name__
+                )
+                logger.error(f"Embedding search failed: {e}")
+                return []
             
             if not similarities.size:
                 logger.warning("No results found in vector store")
@@ -281,21 +501,49 @@ class RAGSystem:
                 if idx < len(self.chunks):
                     chunk = self.chunks[idx]
                     result = {
-                        'content': chunk.content,
+                        'content': get_chunk_content(chunk),
                         'metadata': chunk.metadata,
                         'similarity_score': float(similarity),
                         'chunk_id': chunk.chunk_id,
-                        'original_index': chunk.original_index
+                        'original_index': chunk.original_index,
+                        'data_type': chunk.metadata.get('data_type', 'unknown')
                     }
                     results.append(result)
             
+            # Step 4: Reranking with timing
             if use_reranking and self.use_reranker and self.reranker:
-                logger.info("Applying reranking...")
-                reranked_results = self.reranker.rerank_with_metadata(current_query, results)
-                results = []
-                for _, score, result_dict in reranked_results:
-                    result_dict['rerank_score'] = float(score)
-                    results.append(result_dict)
+                reranking_start = time.time()
+                try:
+                    logger.info("Applying reranking...")
+                    input_count = len(results)
+                    reranked_results = self.reranker.rerank_with_metadata(current_query, results)
+                    results = []
+                    for _, score, result_dict in reranked_results:
+                        result_dict['rerank_score'] = float(score)
+                        results.append(result_dict)
+                    
+                    reranking_duration = time.time() - reranking_start
+                    csv_logger.log_reranking(
+                        query=query,
+                        duration=reranking_duration,
+                        success=True,
+                        input_count=input_count,
+                        output_count=len(results),
+                        reranker_model=getattr(self.reranker, 'model_name', 'cross-encoder/ms-marco-MiniLM-L-6-v2')
+                    )
+                    
+                except Exception as e:
+                    reranking_duration = time.time() - reranking_start
+                    csv_logger.log_reranking(
+                        query=query,
+                        duration=reranking_duration,
+                        success=False,
+                        error_message=str(e),
+                        input_count=len(results),
+                        output_count=0,
+                        reranker_model=getattr(self.reranker, 'model_name', 'cross-encoder/ms-marco-MiniLM-L-6-v2')
+                    )
+                    logger.error(f"Reranking failed: {e}")
             
             logger.info(f"Search completed, returned {len(results)} results")
             return results
@@ -303,21 +551,57 @@ class RAGSystem:
         # Execute with circuit breaker and retry logic
         try:
             results = self.circuit_breaker.call(_perform_search)
+            total_duration = time.time() - start_time
+            
+            # Log overall search performance
+            csv_logger.log_overall_rag(
+                query=query,
+                duration=total_duration,
+                success=True,
+                total_steps=4,  # query_enhancement, embedding_search, reranking, overall
+                total_duration=total_duration
+            )
+            
             logger.info(f"Search completed, returned {len(results)} results")
             return results
         except Exception as e:
+            total_duration = time.time() - start_time
+            csv_logger.log_overall_rag(
+                query=query,
+                duration=total_duration,
+                success=False,
+                error_message=str(e),
+                total_steps=4,
+                total_duration=total_duration
+            )
             logger.error(f"Search failed: {e}")
             return []
     
     def generate_response(self, query: str, top_k: int = 5, language: str = None, 
                          use_reranking: bool = True, stream: bool = False, search_results: List[Dict[str, Any]] = None) -> str:
-        """Generate a contextual response based on retrieved data"""
+        """Generate a contextual response based on retrieved data with performance logging"""
+        response_generation_start = time.time()
+        
         try:
             if not self.response_generator:
                 logger.warning("Response generator not available, falling back to search results")
                 if not search_results:
                     search_results = self.search(query, top_k=top_k, language=language, use_reranking=use_reranking)
-                return self.response_generator._format_fallback_response(query, search_results)
+                
+                response_duration = time.time() - response_generation_start
+                
+                csv_logger.log_response_generation(
+                    query=query,
+                    duration=response_duration,
+                    success=True,
+                    response_length=len(response) if response else 0,
+                    language=language or self._detect_language(query),
+                    model_name="fallback",
+                    streaming=stream,
+                    context_length=len(search_results) if search_results else 0
+                )
+                
+                return response
             
             if language is None:
                 language = self._detect_language(query)
@@ -328,16 +612,58 @@ class RAGSystem:
             
             if not search_results:
                 logger.warning(f"No search results found for query: '{query}'")
-                return self.response_generator.generate_conversational_response(query)
+                response = self.response_generator.generate_conversational_response(query)
+                response_duration = time.time() - response_generation_start
+                
+                csv_logger.log_response_generation(
+                    query=query,
+                    duration=response_duration,
+                    success=True,
+                    response_length=len(response) if response else 0,
+                    language=language,
+                    model_name=getattr(self.response_generator, 'model_name', 'gemma3:4b-it-qat'),
+                    streaming=stream,
+                    context_length=0
+                )
+                
+                return response
             
             # Use streaming if requested
             if stream:
-                return self.response_generator.generate_response_stream(query, search_results, language)
+                response = self.response_generator.generate_response_stream(query, search_results, language)
             else:
-                return self.response_generator.generate_response(query, search_results, language)
+                response = self.response_generator.generate_response(query, search_results, language)
+            
+            response_duration = time.time() - response_generation_start
+            csv_logger.log_response_generation(
+                query=query,
+                duration=response_duration,
+                success=True,
+                response_length=len(response) if response else 0,
+                language=language,
+                model_name=getattr(self.response_generator, 'model_name', 'gemma3:4b-it-qat'),
+                streaming=stream,
+                context_length=len(search_results)
+            )
+            
+            return response
                 
         except Exception as e:
+            response_duration = time.time() - response_generation_start
             logger.error(f"Error generating response: {e}")
+            
+            csv_logger.log_response_generation(
+                query=query,
+                duration=response_duration,
+                success=False,
+                error_message=str(e),
+                response_length=0,
+                language=language or self._detect_language(query),
+                model_name=getattr(self.response_generator, 'model_name', 'gemma3:4b-it-qat'),
+                streaming=stream,
+                context_length=len(search_results) if search_results else 0
+            )
+            
             # Fallback to search results only
             try:
                 if not search_results:
@@ -419,6 +745,14 @@ class RAGSystem:
     def export_performance_data(self, filepath: str):
         """Export performance data to file."""
         performance_monitor.export_metrics(filepath)
+    
+    def get_csv_performance_summary(self, step: str = None, hours: int = 24) -> Dict[str, Any]:
+        """Get performance summary from CSV logs"""
+        return csv_logger.get_performance_summary(step, hours)
+    
+    def export_performance_data_csv(self, output_file: str = None, hours: int = 24) -> str:
+        """Export all performance data to CSV"""
+        return csv_logger.export_data(output_file, hours)
     
     def clear_conversation_context(self):
         """Clear conversation context"""

@@ -12,7 +12,8 @@
         "AI & Data Science",
         "Research & Academia",
         "Software Development & Engineering"
-      ]
+      ],
+      "data_type": "course"
     },
     "chunk_id": "01076140_0",
     "original_index": 0
@@ -30,7 +31,8 @@
         "AI & Data Science",
         "Research & Academia",
         "Software Development & Engineering"
-      ]
+      ],
+      "data_type": "course"
     },
     "chunk_id": "01076140_1",
     "original_index": 1
@@ -50,7 +52,8 @@
         "Hardware & Embedded Systems",
         "Research & Academia",
         "Systems & Cloud Infrastructure"
-      ]
+      ],
+      "data_type": "course"
     },
     "chunk_id": "01076141_2",
     "original_index": 2
@@ -70,7 +73,8 @@
         "Hardware & Embedded Systems",
         "Research & Academia",
         "Systems & Cloud Infrastructure"
-      ]
+      ],
+      "data_type": "course"
     },
     "chunk_id": "01076141_3",
     "original_index": 3
@@ -89,7 +93,8 @@
         "AI & Data Science",
         "Hardware & Embedded Systems",
         "Research & Academia"
-      ]
+      ],
+      "data_type": "course"
     },
     "chunk_id": "01076032_4",
     "original_index": 4
@@ -108,7 +113,8 @@
         "AI & Data Science",
         "Hardware & Embedded Systems",
         "Research & Academia"
-      ]
+      ],
+      "data_type": "course"
     },
     "chunk_id": "01076032_5",
     "original_index": 5
@@ -129,7 +135,8 @@
         "Research & Academia",
         "Software Development & Engineering",
         "Systems & Cloud Infrastructure"
-      ]
+      ],
+      "data_type": "course"
     },
     "chunk_id": "01006004_6",
     "original_index": 6
@@ -150,7 +157,8 @@
         "Research & Academia",
         "Software Development & Engineering",
         "Systems & Cloud Infrastructure"
-      ]
+      ],
+      "data_type": "course"
     },
     "chunk_id": "01006004_7",
     "original_index": 7
@@ -169,7 +177,8 @@
         "Hardware & Embedded Systems",
         "Software Development & Engineering",
         "Systems & Cloud Infrastructure"
-      ]
+      ],
+      "data_type": "course"
     },
     "chunk_id": "01076107_8",
     "original_index": 8
@@ -188,7 +197,8 @@
         "Hardware & Embedded Systems",
         "Software Development & Engineering",
         "Systems & Cloud Infrastructure"
-      ]
+      ],
+      "data_type": "course"
     },
     "chunk_id": "01076107_9",
     "original_index": 9
@@ -205,7 +215,8 @@
       "career_tracks": [
         "Hardware & Embedded Systems",
         "Software Development & Engineering"
-      ]
+      ],
+      "data_type": "course"
     },
     "chunk_id": "01076108_10",
     "original_index": 10
@@ -222,7 +233,8 @@
       "career_tracks": [
         "Hardware & Embedded Systems",
         "Software Development & Engineering"
-      ]
+      ],
+      "data_type": "course"
     },
     "chunk_id": "01076108_11",
     "original_index": 11
@@ -240,7 +252,8 @@
         "AI & Data Science",
         "Research & Academia",
         "Software Development & Engineering"
-      ]
+      ],
+      "data_type": "course"
     },
     "chunk_id": "01076253_12",
     "original_index": 12
@@ -258,7 +271,8 @@
         "AI & Data Science",
         "Research & Academia",
         "Software Development & Engineering"
-      ]
+      ],
+      "data_type": "course"
     },
     "chunk_id": "01076253_13",
     "original_index": 13
@@ -275,7 +289,8 @@
       ],
       "career_tracks": [
         "Software Development & Engineering"
-      ]
+      ],
+      "data_type": "course"
     },
     "chunk_id": "01076103_14",
     "original_index": 14
@@ -292,7 +307,8 @@
       ],
       "career_tracks": [
         "Software Development & Engineering"
-      ]
+      ],
+      "data_type": "course"
     },
     "chunk_id": "01076103_15",
     "original_index": 15
@@ -309,7 +325,8 @@
       ],
       "career_tracks": [
         "Software Development & Engineering"
-      ]
+      ],
+      "data_type": "course"
     },
     "chunk_id": "01076104_16",
     "original_index": 16
@@ -326,7 +343,8 @@
       ],
       "career_tracks": [
         "Software Development & Engineering"
-      ]
+      ],
+      "data_type": "course"
     },
     "chunk_id": "01076104_17",
     "original_index": 17
@@ -348,7 +366,8 @@
         "Research & Academia",
         "Software Development & Engineering",
         "Systems & Cloud Infrastructure"
-      ]
+      ],
+      "data_type": "course"
     },
     "chunk_id": "01076016_18",
     "original_index": 18
@@ -370,7 +389,8 @@
         "Research & Academia",
         "Software Development & Engineering",
         "Systems & Cloud Infrastructure"
-      ]
+      ],
+      "data_type": "course"
     },
     "chunk_id": "01076016_19",
     "original_index": 19
@@ -388,7 +408,8 @@
       "career_tracks": [
         "Hardware & Embedded Systems",
         "Software Development & Engineering"
-      ]
+      ],
+      "data_type": "course"
     },
     "chunk_id": "01076101_20",
     "original_index": 20
@@ -406,7 +427,8 @@
       "career_tracks": [
         "Hardware & Embedded Systems",
         "Software Development & Engineering"
-      ]
+      ],
+      "data_type": "course"
     },
     "chunk_id": "01076101_21",
     "original_index": 21
@@ -426,7 +448,8 @@
         "AI & Data Science",
         "Research & Academia",
         "Software Development & Engineering"
-      ]
+      ],
+      "data_type": "course"
     },
     "chunk_id": "01076105_22",
     "original_index": 22
@@ -446,7 +469,8 @@
         "AI & Data Science",
         "Research & Academia",
         "Software Development & Engineering"
-      ]
+      ],
+      "data_type": "course"
     },
     "chunk_id": "01076105_23",
     "original_index": 23
@@ -466,7 +490,8 @@
         "AI & Data Science",
         "Research & Academia",
         "Software Development & Engineering"
-      ]
+      ],
+      "data_type": "course"
     },
     "chunk_id": "01076106_24",
     "original_index": 24
@@ -486,7 +511,8 @@
         "AI & Data Science",
         "Research & Academia",
         "Software Development & Engineering"
-      ]
+      ],
+      "data_type": "course"
     },
     "chunk_id": "01076106_25",
     "original_index": 25
@@ -506,7 +532,8 @@
         "AI & Data Science",
         "Research & Academia",
         "Software Development & Engineering"
-      ]
+      ],
+      "data_type": "course"
     },
     "chunk_id": "01076109_26",
     "original_index": 26
@@ -526,7 +553,8 @@
         "AI & Data Science",
         "Research & Academia",
         "Software Development & Engineering"
-      ]
+      ],
+      "data_type": "course"
     },
     "chunk_id": "01076109_27",
     "original_index": 27
@@ -546,7 +574,8 @@
         "AI & Data Science",
         "Research & Academia",
         "Software Development & Engineering"
-      ]
+      ],
+      "data_type": "course"
     },
     "chunk_id": "01076110_28",
     "original_index": 28
@@ -566,7 +595,8 @@
         "AI & Data Science",
         "Research & Academia",
         "Software Development & Engineering"
-      ]
+      ],
+      "data_type": "course"
     },
     "chunk_id": "01076110_29",
     "original_index": 29
@@ -588,7 +618,8 @@
         "Hardware & Embedded Systems",
         "Research & Academia",
         "Systems & Cloud Infrastructure"
-      ]
+      ],
+      "data_type": "course"
     },
     "chunk_id": "01076112_30",
     "original_index": 30
@@ -610,7 +641,8 @@
         "Hardware & Embedded Systems",
         "Research & Academia",
         "Systems & Cloud Infrastructure"
-      ]
+      ],
+      "data_type": "course"
     },
     "chunk_id": "01076112_31",
     "original_index": 31
@@ -632,7 +664,8 @@
         "Hardware & Embedded Systems",
         "Research & Academia",
         "Systems & Cloud Infrastructure"
-      ]
+      ],
+      "data_type": "course"
     },
     "chunk_id": "01076113_32",
     "original_index": 32
@@ -654,7 +687,8 @@
         "Hardware & Embedded Systems",
         "Research & Academia",
         "Systems & Cloud Infrastructure"
-      ]
+      ],
+      "data_type": "course"
     },
     "chunk_id": "01076113_33",
     "original_index": 33
@@ -673,7 +707,8 @@
       "career_tracks": [
         "Hardware & Embedded Systems",
         "Software Development & Engineering"
-      ]
+      ],
+      "data_type": "course"
     },
     "chunk_id": "01076114_34",
     "original_index": 34
@@ -692,7 +727,8 @@
       "career_tracks": [
         "Hardware & Embedded Systems",
         "Software Development & Engineering"
-      ]
+      ],
+      "data_type": "course"
     },
     "chunk_id": "01076114_35",
     "original_index": 35
@@ -711,7 +747,8 @@
       "career_tracks": [
         "Hardware & Embedded Systems",
         "Software Development & Engineering"
-      ]
+      ],
+      "data_type": "course"
     },
     "chunk_id": "01076115_36",
     "original_index": 36
@@ -730,7 +767,8 @@
       "career_tracks": [
         "Hardware & Embedded Systems",
         "Software Development & Engineering"
-      ]
+      ],
+      "data_type": "course"
     },
     "chunk_id": "01076115_37",
     "original_index": 37
@@ -751,7 +789,8 @@
         "Hardware & Embedded Systems",
         "Software Development & Engineering",
         "Systems & Cloud Infrastructure"
-      ]
+      ],
+      "data_type": "course"
     },
     "chunk_id": "01076116_38",
     "original_index": 38
@@ -772,7 +811,8 @@
         "Hardware & Embedded Systems",
         "Software Development & Engineering",
         "Systems & Cloud Infrastructure"
-      ]
+      ],
+      "data_type": "course"
     },
     "chunk_id": "01076116_39",
     "original_index": 39
@@ -793,7 +833,8 @@
         "Hardware & Embedded Systems",
         "Software Development & Engineering",
         "Systems & Cloud Infrastructure"
-      ]
+      ],
+      "data_type": "course"
     },
     "chunk_id": "01076117_40",
     "original_index": 40
@@ -814,7 +855,8 @@
         "Hardware & Embedded Systems",
         "Software Development & Engineering",
         "Systems & Cloud Infrastructure"
-      ]
+      ],
+      "data_type": "course"
     },
     "chunk_id": "01076117_41",
     "original_index": 41
@@ -832,7 +874,8 @@
       "career_tracks": [
         "Cybersecurity & Privacy",
         "Systems & Cloud Infrastructure"
-      ]
+      ],
+      "data_type": "course"
     },
     "chunk_id": "01076011_42",
     "original_index": 42
@@ -850,7 +893,8 @@
       "career_tracks": [
         "Cybersecurity & Privacy",
         "Systems & Cloud Infrastructure"
-      ]
+      ],
+      "data_type": "course"
     },
     "chunk_id": "01076011_43",
     "original_index": 43
@@ -871,7 +915,8 @@
         "Research & Academia",
         "Software Development & Engineering",
         "Systems & Cloud Infrastructure"
-      ]
+      ],
+      "data_type": "course"
     },
     "chunk_id": "01076012_44",
     "original_index": 44
@@ -892,7 +937,8 @@
         "Research & Academia",
         "Software Development & Engineering",
         "Systems & Cloud Infrastructure"
-      ]
+      ],
+      "data_type": "course"
     },
     "chunk_id": "01076012_45",
     "original_index": 45
@@ -910,7 +956,8 @@
       "career_tracks": [
         "AI & Data Science",
         "Research & Academia"
-      ]
+      ],
+      "data_type": "course"
     },
     "chunk_id": "01076121_46",
     "original_index": 46
@@ -928,7 +975,8 @@
       "career_tracks": [
         "AI & Data Science",
         "Research & Academia"
-      ]
+      ],
+      "data_type": "course"
     },
     "chunk_id": "01076121_47",
     "original_index": 47
@@ -949,7 +997,8 @@
         "Cybersecurity & Privacy",
         "Software Development & Engineering",
         "Systems & Cloud Infrastructure"
-      ]
+      ],
+      "data_type": "course"
     },
     "chunk_id": "01076263_48",
     "original_index": 48
@@ -970,7 +1019,8 @@
         "Cybersecurity & Privacy",
         "Software Development & Engineering",
         "Systems & Cloud Infrastructure"
-      ]
+      ],
+      "data_type": "course"
     },
     "chunk_id": "01076263_49",
     "original_index": 49
@@ -989,7 +1039,8 @@
         "AI & Data Science",
         "Cybersecurity & Privacy",
         "Systems & Cloud Infrastructure"
-      ]
+      ],
+      "data_type": "course"
     },
     "chunk_id": "01076118_50",
     "original_index": 50
@@ -1008,7 +1059,8 @@
         "AI & Data Science",
         "Cybersecurity & Privacy",
         "Systems & Cloud Infrastructure"
-      ]
+      ],
+      "data_type": "course"
     },
     "chunk_id": "01076118_51",
     "original_index": 51
@@ -1028,7 +1080,8 @@
         "Cybersecurity & Privacy",
         "Software Development & Engineering",
         "Systems & Cloud Infrastructure"
-      ]
+      ],
+      "data_type": "course"
     },
     "chunk_id": "01076119_52",
     "original_index": 52
@@ -1048,7 +1101,8 @@
         "Cybersecurity & Privacy",
         "Software Development & Engineering",
         "Systems & Cloud Infrastructure"
-      ]
+      ],
+      "data_type": "course"
     },
     "chunk_id": "01076119_53",
     "original_index": 53
@@ -1068,7 +1122,8 @@
         "Cybersecurity & Privacy",
         "Software Development & Engineering",
         "Systems & Cloud Infrastructure"
-      ]
+      ],
+      "data_type": "course"
     },
     "chunk_id": "01076120_54",
     "original_index": 54
@@ -1088,7 +1143,8 @@
         "Cybersecurity & Privacy",
         "Software Development & Engineering",
         "Systems & Cloud Infrastructure"
-      ]
+      ],
+      "data_type": "course"
     },
     "chunk_id": "01076120_55",
     "original_index": 55
@@ -1107,7 +1163,8 @@
       "career_tracks": [
         "Hardware & Embedded Systems",
         "Software Development & Engineering"
-      ]
+      ],
+      "data_type": "course"
     },
     "chunk_id": "01076050_56",
     "original_index": 56
@@ -1126,7 +1183,8 @@
       "career_tracks": [
         "Hardware & Embedded Systems",
         "Software Development & Engineering"
-      ]
+      ],
+      "data_type": "course"
     },
     "chunk_id": "01076050_57",
     "original_index": 57
@@ -1145,7 +1203,8 @@
       "career_tracks": [
         "Hardware & Embedded Systems",
         "Software Development & Engineering"
-      ]
+      ],
+      "data_type": "course"
     },
     "chunk_id": "01076051_58",
     "original_index": 58
@@ -1164,7 +1223,8 @@
       "career_tracks": [
         "Hardware & Embedded Systems",
         "Software Development & Engineering"
-      ]
+      ],
+      "data_type": "course"
     },
     "chunk_id": "01076051_59",
     "original_index": 59
@@ -1186,7 +1246,8 @@
         "Hardware & Embedded Systems",
         "Software Development & Engineering",
         "Systems & Cloud Infrastructure"
-      ]
+      ],
+      "data_type": "course"
     },
     "chunk_id": "01076052_60",
     "original_index": 60
@@ -1208,7 +1269,8 @@
         "Hardware & Embedded Systems",
         "Software Development & Engineering",
         "Systems & Cloud Infrastructure"
-      ]
+      ],
+      "data_type": "course"
     },
     "chunk_id": "01076052_61",
     "original_index": 61
@@ -1228,7 +1290,8 @@
         "Hardware & Embedded Systems",
         "Interdisciplinary Tech",
         "Systems & Cloud Infrastructure"
-      ]
+      ],
+      "data_type": "course"
     },
     "chunk_id": "01076053_62",
     "original_index": 62
@@ -1248,7 +1311,8 @@
         "Hardware & Embedded Systems",
         "Interdisciplinary Tech",
         "Systems & Cloud Infrastructure"
-      ]
+      ],
+      "data_type": "course"
     },
     "chunk_id": "01076053_63",
     "original_index": 63
@@ -1270,7 +1334,8 @@
         "Product Design & UX/UI",
         "Software Development & Engineering",
         "Systems & Cloud Infrastructure"
-      ]
+      ],
+      "data_type": "course"
     },
     "chunk_id": "01076034_64",
     "original_index": 64
@@ -1292,7 +1357,8 @@
         "Product Design & UX/UI",
         "Software Development & Engineering",
         "Systems & Cloud Infrastructure"
-      ]
+      ],
+      "data_type": "course"
     },
     "chunk_id": "01076034_65",
     "original_index": 65
@@ -1312,7 +1378,8 @@
         "AI & Data Science",
         "Research & Academia",
         "Software Development & Engineering"
-      ]
+      ],
+      "data_type": "course"
     },
     "chunk_id": "01076035_66",
     "original_index": 66
@@ -1332,7 +1399,8 @@
         "AI & Data Science",
         "Research & Academia",
         "Software Development & Engineering"
-      ]
+      ],
+      "data_type": "course"
     },
     "chunk_id": "01076035_67",
     "original_index": 67
@@ -1345,13 +1413,16 @@
       "language": "th",
       "focus_areas": [
         "User Experience & User Interface Design",
+        "Human-Computer Interaction & Design",
         "Software Engineering & Development"
       ],
       "career_tracks": [
+        "AI & Data Science",
         "Product Design & UX/UI",
         "Research & Academia",
         "Software Development & Engineering"
-      ]
+      ],
+      "data_type": "course"
     },
     "chunk_id": "01076036_68",
     "original_index": 68
@@ -1364,13 +1435,16 @@
       "language": "en",
       "focus_areas": [
         "User Experience & User Interface Design",
+        "Human-Computer Interaction & Design",
         "Software Engineering & Development"
       ],
       "career_tracks": [
+        "AI & Data Science",
         "Product Design & UX/UI",
         "Research & Academia",
         "Software Development & Engineering"
-      ]
+      ],
+      "data_type": "course"
     },
     "chunk_id": "01076036_69",
     "original_index": 69
@@ -1383,13 +1457,16 @@
       "language": "th",
       "focus_areas": [
         "User Experience & User Interface Design",
+        "Human-Computer Interaction & Design",
         "Software Engineering & Development"
       ],
       "career_tracks": [
+        "AI & Data Science",
         "Product Design & UX/UI",
         "Research & Academia",
         "Software Development & Engineering"
-      ]
+      ],
+      "data_type": "course"
     },
     "chunk_id": "01076037_70",
     "original_index": 70
@@ -1402,13 +1479,16 @@
       "language": "en",
       "focus_areas": [
         "User Experience & User Interface Design",
+        "Human-Computer Interaction & Design",
         "Software Engineering & Development"
       ],
       "career_tracks": [
+        "AI & Data Science",
         "Product Design & UX/UI",
         "Research & Academia",
         "Software Development & Engineering"
-      ]
+      ],
+      "data_type": "course"
     },
     "chunk_id": "01076037_71",
     "original_index": 71
@@ -1430,7 +1510,8 @@
         "Research & Academia",
         "Software Development & Engineering",
         "Systems & Cloud Infrastructure"
-      ]
+      ],
+      "data_type": "course"
     },
     "chunk_id": "01076040_72",
     "original_index": 72
@@ -1452,13 +1533,14 @@
         "Research & Academia",
         "Software Development & Engineering",
         "Systems & Cloud Infrastructure"
-      ]
+      ],
+      "data_type": "course"
     },
     "chunk_id": "01076040_73",
     "original_index": 73
   },
   {
-    "content": "01076042 ความมั่นคงข้อมูลและคอมพิวเตอร์ วิชาบังคับก่อน: 01076116 เครือข่ายคอมพิวเตอร์ ภาพรวมทฤษฎี หลักการ และความรู้เกี่ยวกับการรักษาความมั่นคง สารสนเทศ การ บริหารความเสี่ยง การควบคุมการเข้าถึง การเข้าและถอดรหัสลับ การรักษาความปลอดภัยทางกายภาพ สถาปัตยกรรมเพื่อการรักษาความปลอดภัย แผนการดําเนินธุรกิจต่อเนื่อง ความปลอดภัยของแอพพลิเคชัน การป้องกันในระบบปฏิบัติการและแพลตฟอร์มให้บริการ ภัยคุกคามและมัลแวร์ ความปลอดภัยเครือข่ายพื้นฐาน ความเป็นส่วนตัว จริยธรรม และกฎหมายที่เกี่ยวข้อง",
+    "content": "01076042 ความมั่นคงข้อมูลและคอมพิวเตอร์ วิชาบังคับก่อน: 01076018 เครือข่ายคอมพิวเตอร์ หรือ 01076116 เครือข่ายคอมพิวเตอร์ ภาพรวมทฤษฎี หลักการ และความรู้เกี่ยวกับการรักษาความมั่นคง สารสนเทศ การ บริหารความเสี่ยง การควบคุมการเข้าถึง การเข้าและถอดรหัสลับ การรักษาความปลอดภัยทางกายภาพ สถาปัตยกรรมเพื่อการรักษาความปลอดภัย แผนการดําเนินธุรกิจต่อเนื่อง ความปลอดภัยของแอพพลิเคชัน การป้องกันในระบบปฏิบัติการและแพลตฟอร์มให้บริการ ภัยคุกคามและมัลแวร์ ความปลอดภัยเครือข่ายพื้นฐาน ความเป็นส่วนตัว จริยธรรม และกฎหมายที่เกี่ยวข้อง",
     "metadata": {
       "course_name": "ความมั่นคงข้อมูลและคอมพิวเตอร์",
       "course_code": "01076042",
@@ -1474,13 +1556,14 @@
         "Research & Academia",
         "Software Development & Engineering",
         "Systems & Cloud Infrastructure"
-      ]
+      ],
+      "data_type": "course"
     },
     "chunk_id": "01076042_74",
     "original_index": 74
   },
   {
-    "content": "01076042 INFORMATION AND COMPUTER SECURITY PREREQUISITE: 01076116 COMPUTER NETWORKS Overview of theories, principles, and knowledge in information security; Risk management, Access control; Encryption and Decryption; Physical security; Security architecture; Business continuity plan; Application security; Operating system and Service platform protections; Threats and Malwares; Basis of network security; Privacy, Ethical, and Legal issues",
+    "content": "01076042 INFORMATION AND COMPUTER SECURITY PREREQUISITE: 01076018 COMPUTER NETWORKS OR 01076116 COMPUTER NETWORKS Overview of theories, principles, and knowledge in information security; Risk management, Access control; Encryption and Decryption; Physical security; Security architecture; Business continuity plan; Application security; Operating system and Service platform protections; Threats and Malwares; Basis of network security; Privacy, Ethical, and Legal issues",
     "metadata": {
       "course_name": "INFORMATION AND COMPUTER SECURITY",
       "course_code": "01076042",
@@ -1497,7 +1580,8 @@
         "Research & Academia",
         "Software Development & Engineering",
         "Systems & Cloud Infrastructure"
-      ]
+      ],
+      "data_type": "course"
     },
     "chunk_id": "01076042_75",
     "original_index": 75
@@ -1517,7 +1601,8 @@
         "Cybersecurity & Privacy",
         "Software Development & Engineering",
         "Systems & Cloud Infrastructure"
-      ]
+      ],
+      "data_type": "course"
     },
     "chunk_id": "01076043_76",
     "original_index": 76
@@ -1537,7 +1622,8 @@
         "Cybersecurity & Privacy",
         "Software Development & Engineering",
         "Systems & Cloud Infrastructure"
-      ]
+      ],
+      "data_type": "course"
     },
     "chunk_id": "01076043_77",
     "original_index": 77
@@ -1557,7 +1643,8 @@
         "Cybersecurity & Privacy",
         "Software Development & Engineering",
         "Systems & Cloud Infrastructure"
-      ]
+      ],
+      "data_type": "course"
     },
     "chunk_id": "01076044_78",
     "original_index": 78
@@ -1577,7 +1664,8 @@
         "Cybersecurity & Privacy",
         "Software Development & Engineering",
         "Systems & Cloud Infrastructure"
-      ]
+      ],
+      "data_type": "course"
     },
     "chunk_id": "01076044_79",
     "original_index": 79
@@ -1598,7 +1686,8 @@
         "Research & Academia",
         "Software Development & Engineering",
         "Systems & Cloud Infrastructure"
-      ]
+      ],
+      "data_type": "course"
     },
     "chunk_id": "01076311_80",
     "original_index": 80
@@ -1619,7 +1708,8 @@
         "Research & Academia",
         "Software Development & Engineering",
         "Systems & Cloud Infrastructure"
-      ]
+      ],
+      "data_type": "course"
     },
     "chunk_id": "01076311_81",
     "original_index": 81
@@ -1640,7 +1730,8 @@
         "Research & Academia",
         "Software Development & Engineering",
         "Systems & Cloud Infrastructure"
-      ]
+      ],
+      "data_type": "course"
     },
     "chunk_id": "01076312_82",
     "original_index": 82
@@ -1661,7 +1752,8 @@
         "Research & Academia",
         "Software Development & Engineering",
         "Systems & Cloud Infrastructure"
-      ]
+      ],
+      "data_type": "course"
     },
     "chunk_id": "01076312_83",
     "original_index": 83
@@ -1682,7 +1774,8 @@
         "Research & Academia",
         "Software Development & Engineering",
         "Systems & Cloud Infrastructure"
-      ]
+      ],
+      "data_type": "course"
     },
     "chunk_id": "01006029_84",
     "original_index": 84
@@ -1703,7 +1796,8 @@
         "Research & Academia",
         "Software Development & Engineering",
         "Systems & Cloud Infrastructure"
-      ]
+      ],
+      "data_type": "course"
     },
     "chunk_id": "01006029_85",
     "original_index": 85
@@ -1724,7 +1818,8 @@
         "Research & Academia",
         "Software Development & Engineering",
         "Systems & Cloud Infrastructure"
-      ]
+      ],
+      "data_type": "course"
     },
     "chunk_id": "01006005_86",
     "original_index": 86
@@ -1745,7 +1840,8 @@
         "Research & Academia",
         "Software Development & Engineering",
         "Systems & Cloud Infrastructure"
-      ]
+      ],
+      "data_type": "course"
     },
     "chunk_id": "01006005_87",
     "original_index": 87
@@ -1766,7 +1862,8 @@
         "Hardware & Embedded Systems",
         "Software Development & Engineering",
         "Systems & Cloud Infrastructure"
-      ]
+      ],
+      "data_type": "course"
     },
     "chunk_id": "01076411_88",
     "original_index": 88
@@ -1787,7 +1884,8 @@
         "Hardware & Embedded Systems",
         "Software Development & Engineering",
         "Systems & Cloud Infrastructure"
-      ]
+      ],
+      "data_type": "course"
     },
     "chunk_id": "01076411_89",
     "original_index": 89
@@ -1808,7 +1906,8 @@
         "Hardware & Embedded Systems",
         "Software Development & Engineering",
         "Systems & Cloud Infrastructure"
-      ]
+      ],
+      "data_type": "course"
     },
     "chunk_id": "01076418_90",
     "original_index": 90
@@ -1829,7 +1928,8 @@
         "Hardware & Embedded Systems",
         "Software Development & Engineering",
         "Systems & Cloud Infrastructure"
-      ]
+      ],
+      "data_type": "course"
     },
     "chunk_id": "01076418_91",
     "original_index": 91
@@ -1850,7 +1950,8 @@
         "Hardware & Embedded Systems",
         "Software Development & Engineering",
         "Systems & Cloud Infrastructure"
-      ]
+      ],
+      "data_type": "course"
     },
     "chunk_id": "01076420_92",
     "original_index": 92
@@ -1871,7 +1972,8 @@
         "Hardware & Embedded Systems",
         "Software Development & Engineering",
         "Systems & Cloud Infrastructure"
-      ]
+      ],
+      "data_type": "course"
     },
     "chunk_id": "01076420_93",
     "original_index": 93
@@ -1891,7 +1993,8 @@
         "Cybersecurity & Privacy",
         "Hardware & Embedded Systems",
         "Systems & Cloud Infrastructure"
-      ]
+      ],
+      "data_type": "course"
     },
     "chunk_id": "01076421_94",
     "original_index": 94
@@ -1911,7 +2014,8 @@
         "Cybersecurity & Privacy",
         "Hardware & Embedded Systems",
         "Systems & Cloud Infrastructure"
-      ]
+      ],
+      "data_type": "course"
     },
     "chunk_id": "01076421_95",
     "original_index": 95
@@ -1935,7 +2039,8 @@
         "Research & Academia",
         "Software Development & Engineering",
         "Systems & Cloud Infrastructure"
-      ]
+      ],
+      "data_type": "course"
     },
     "chunk_id": "01076414_96",
     "original_index": 96
@@ -1959,7 +2064,8 @@
         "Research & Academia",
         "Software Development & Engineering",
         "Systems & Cloud Infrastructure"
-      ]
+      ],
+      "data_type": "course"
     },
     "chunk_id": "01076414_97",
     "original_index": 97
@@ -1976,7 +2082,8 @@
       "career_tracks": [
         "Cybersecurity & Privacy",
         "Systems & Cloud Infrastructure"
-      ]
+      ],
+      "data_type": "course"
     },
     "chunk_id": "01076513_98",
     "original_index": 98
@@ -1993,7 +2100,8 @@
       "career_tracks": [
         "Cybersecurity & Privacy",
         "Systems & Cloud Infrastructure"
-      ]
+      ],
+      "data_type": "course"
     },
     "chunk_id": "01076513_99",
     "original_index": 99
@@ -2013,7 +2121,8 @@
         "AI & Data Science",
         "Research & Academia",
         "Software Development & Engineering"
-      ]
+      ],
+      "data_type": "course"
     },
     "chunk_id": "01076564_100",
     "original_index": 100
@@ -2033,7 +2142,8 @@
         "AI & Data Science",
         "Research & Academia",
         "Software Development & Engineering"
-      ]
+      ],
+      "data_type": "course"
     },
     "chunk_id": "01076564_101",
     "original_index": 101
@@ -2045,12 +2155,15 @@
       "course_code": "01076568",
       "language": "th",
       "focus_areas": [
+        "Hardware & Embedded Systems",
         "User Experience & User Interface Design",
         "Human-Computer Interaction & Design"
       ],
       "career_tracks": [
+        "Hardware & Embedded Systems",
         "Product Design & UX/UI"
-      ]
+      ],
+      "data_type": "course"
     },
     "chunk_id": "01076568_102",
     "original_index": 102
@@ -2062,12 +2175,15 @@
       "course_code": "01076568",
       "language": "en",
       "focus_areas": [
+        "Hardware & Embedded Systems",
         "User Experience & User Interface Design",
         "Human-Computer Interaction & Design"
       ],
       "career_tracks": [
+        "Hardware & Embedded Systems",
         "Product Design & UX/UI"
-      ]
+      ],
+      "data_type": "course"
     },
     "chunk_id": "01076568_103",
     "original_index": 103
@@ -2085,7 +2201,8 @@
       "career_tracks": [
         "AI & Data Science",
         "Systems & Cloud Infrastructure"
-      ]
+      ],
+      "data_type": "course"
     },
     "chunk_id": "01076589_104",
     "original_index": 104
@@ -2103,7 +2220,8 @@
       "career_tracks": [
         "AI & Data Science",
         "Systems & Cloud Infrastructure"
-      ]
+      ],
+      "data_type": "course"
     },
     "chunk_id": "01076589_105",
     "original_index": 105
@@ -2122,7 +2240,8 @@
         "Cybersecurity & Privacy",
         "Software Development & Engineering",
         "Systems & Cloud Infrastructure"
-      ]
+      ],
+      "data_type": "course"
     },
     "chunk_id": "01076599_106",
     "original_index": 106
@@ -2141,7 +2260,8 @@
         "Cybersecurity & Privacy",
         "Software Development & Engineering",
         "Systems & Cloud Infrastructure"
-      ]
+      ],
+      "data_type": "course"
     },
     "chunk_id": "01076599_107",
     "original_index": 107
@@ -2158,7 +2278,8 @@
       ],
       "career_tracks": [
         "Software Development & Engineering"
-      ]
+      ],
+      "data_type": "course"
     },
     "chunk_id": "01076596_108",
     "original_index": 108
@@ -2177,7 +2298,8 @@
         "Cybersecurity & Privacy",
         "Software Development & Engineering",
         "Systems & Cloud Infrastructure"
-      ]
+      ],
+      "data_type": "course"
     },
     "chunk_id": "01076034_109",
     "original_index": 109
@@ -2198,7 +2320,8 @@
         "Cybersecurity & Privacy",
         "Software Development & Engineering",
         "Systems & Cloud Infrastructure"
-      ]
+      ],
+      "data_type": "course"
     },
     "chunk_id": "01076558_110",
     "original_index": 110
@@ -2219,13 +2342,14 @@
         "Cybersecurity & Privacy",
         "Software Development & Engineering",
         "Systems & Cloud Infrastructure"
-      ]
+      ],
+      "data_type": "course"
     },
     "chunk_id": "01076558_111",
     "original_index": 111
   },
   {
-    "content": "01076559 สถาปัตยกรรมและการออกแบบซอฟต์แวร์ วิชาบังคับก่อน: 01076109 โครงสร้างข้อมูลเชิงวัตถุ วิชานี้แนะนำแนวคิดพื้นฐานและหลักการของการออกแบบซอฟต์แวร์และสถาปัตยกรรม ซอฟต์แวร์ โดยเริ่มจากประเด็นที่สำคัญในการออกแบบ และรูปแบบของการออกแบบ ภาพรวมของ โครงสร้างและรูปแบบของสถาปัตยกรรมซอฟต์แวร์ แนวทางปฏิบัติและขั้นตอนในการสร้างและวิเคราะห์ สถาปัตยกรรมซอฟต์แวร์ โดยให้ความสำคัญกับประเด็นเรื่องคุณภาพและสถาปัตยกรรมของซอฟต์แวร์ นักศึกษาจะได้ฝึกปฏิบัติในการออกแบบโปรแกรมประยุกต์และกรณีศึกษาของสถาปัตยกรรมซอฟต์แวร์",
+    "content": "01076559 สถาปัตยกรรมและการออกแบบซอฟต์แวร์ วิชาบังคับก่อน: 01076005 โครงสร้างข้อมูลและอัลกอริทึม หรือ 01076109 โครงสร้างข้อมูลเชิงวัตถุ วิชานี้แนะนำแนวคิดพื้นฐานและหลักการของการออกแบบซอฟต์แวร์และสถาปัตยกรรม ซอฟต์แวร์ โดยเริ่มจากประเด็นที่สำคัญในการออกแบบ และรูปแบบของการออกแบบ ภาพรวมของ โครงสร้างและรูปแบบของสถาปัตยกรรมซอฟต์แวร์ แนวทางปฏิบัติและขั้นตอนในการสร้างและวิเคราะห์ สถาปัตยกรรมซอฟต์แวร์ โดยให้ความสำคัญกับประเด็นเรื่องคุณภาพและสถาปัตยกรรมของซอฟต์แวร์ นักศึกษาจะได้ฝึกปฏิบัติในการออกแบบโปรแกรมประยุกต์และกรณีศึกษาของสถาปัตยกรรมซอฟต์แวร์",
     "metadata": {
       "course_name": "สถาปัตยกรรมและการออกแบบซอฟต์แวร์",
       "course_code": "01076559",
@@ -2239,13 +2363,14 @@
         "Cybersecurity & Privacy",
         "Software Development & Engineering",
         "Systems & Cloud Infrastructure"
-      ]
+      ],
+      "data_type": "course"
     },
     "chunk_id": "01076559_112",
     "original_index": 112
   },
   {
-    "content": "01076559 SOFTWARE ARCHITECTURE AND DESIGN PREREQUISITE : 01076109 OBJECT ORIENTED DATA STRUCTURES This course introduces basic concepts and principles about software design and software architecture. It starts with discussion on design issues, followed by coverage on design patterns. It then gives an overview of architectural structures and styles. Practical approaches and methods for creating and analyzing software architecture are presented. The emphasis is on the interaction between quality attributes and software architecture. Students will also gain experience with examples in design pattern application and case studies in software architecture.",
+    "content": "01076559 SOFTWARE ARCHITECTURE AND DESIGN PREREQUISITE : 01076005 DATA STRUCTURES AND ALGORITHM OR 01076109 OBJECT ORIENTED DATA STRUCTURES This course introduces basic concepts and principles about software design and software architecture. It starts with discussion on design issues, followed by coverage on design patterns. It then gives an overview of architectural structures and styles. Practical approaches and methods for creating and analyzing software architecture are presented. The emphasis is on the interaction between quality attributes and software architecture. Students will also gain experience with examples in design pattern application and case studies in software architecture.",
     "metadata": {
       "course_name": "SOFTWARE ARCHITECTURE AND DESIGN",
       "course_code": "01076559",
@@ -2259,7 +2384,8 @@
         "Cybersecurity & Privacy",
         "Software Development & Engineering",
         "Systems & Cloud Infrastructure"
-      ]
+      ],
+      "data_type": "course"
     },
     "chunk_id": "01076559_113",
     "original_index": 113
@@ -2280,7 +2406,8 @@
         "Research & Academia",
         "Software Development & Engineering",
         "Systems & Cloud Infrastructure"
-      ]
+      ],
+      "data_type": "course"
     },
     "chunk_id": "01076560_114",
     "original_index": 114
@@ -2301,7 +2428,8 @@
         "Research & Academia",
         "Software Development & Engineering",
         "Systems & Cloud Infrastructure"
-      ]
+      ],
+      "data_type": "course"
     },
     "chunk_id": "01076560_115",
     "original_index": 115
@@ -2319,7 +2447,8 @@
       "career_tracks": [
         "AI & Data Science",
         "Software Development & Engineering"
-      ]
+      ],
+      "data_type": "course"
     },
     "chunk_id": "01076574_116",
     "original_index": 116
@@ -2337,7 +2466,8 @@
       "career_tracks": [
         "AI & Data Science",
         "Software Development & Engineering"
-      ]
+      ],
+      "data_type": "course"
     },
     "chunk_id": "01076574_117",
     "original_index": 117
@@ -2360,7 +2490,8 @@
         "Research & Academia",
         "Software Development & Engineering",
         "Systems & Cloud Infrastructure"
-      ]
+      ],
+      "data_type": "course"
     },
     "chunk_id": "01076585_118",
     "original_index": 118
@@ -2383,7 +2514,8 @@
         "Research & Academia",
         "Software Development & Engineering",
         "Systems & Cloud Infrastructure"
-      ]
+      ],
+      "data_type": "course"
     },
     "chunk_id": "01076585_119",
     "original_index": 119
@@ -2402,7 +2534,8 @@
       "career_tracks": [
         "Software Development & Engineering",
         "Systems & Cloud Infrastructure"
-      ]
+      ],
+      "data_type": "course"
     },
     "chunk_id": "01076634_120",
     "original_index": 120
@@ -2421,7 +2554,8 @@
       "career_tracks": [
         "Software Development & Engineering",
         "Systems & Cloud Infrastructure"
-      ]
+      ],
+      "data_type": "course"
     },
     "chunk_id": "01076634_121",
     "original_index": 121
@@ -2441,7 +2575,8 @@
         "Research & Academia",
         "Software Development & Engineering",
         "Systems & Cloud Infrastructure"
-      ]
+      ],
+      "data_type": "course"
     },
     "chunk_id": "01076598_122",
     "original_index": 122
@@ -2461,7 +2596,8 @@
         "Research & Academia",
         "Software Development & Engineering",
         "Systems & Cloud Infrastructure"
-      ]
+      ],
+      "data_type": "course"
     },
     "chunk_id": "01076598_123",
     "original_index": 123
@@ -2478,7 +2614,8 @@
       "career_tracks": [
         "AI & Data Science",
         "Software Development & Engineering"
-      ]
+      ],
+      "data_type": "course"
     },
     "chunk_id": "01076567_124",
     "original_index": 124
@@ -2495,7 +2632,8 @@
       "career_tracks": [
         "AI & Data Science",
         "Software Development & Engineering"
-      ]
+      ],
+      "data_type": "course"
     },
     "chunk_id": "01076567_125",
     "original_index": 125
@@ -2511,7 +2649,8 @@
       ],
       "career_tracks": [
         "Software Development & Engineering"
-      ]
+      ],
+      "data_type": "course"
     },
     "chunk_id": "01076566_126",
     "original_index": 126
@@ -2527,7 +2666,8 @@
       ],
       "career_tracks": [
         "Software Development & Engineering"
-      ]
+      ],
+      "data_type": "course"
     },
     "chunk_id": "01076566_127",
     "original_index": 127
@@ -2548,7 +2688,8 @@
         "AI & Data Science",
         "Research & Academia",
         "Software Development & Engineering"
-      ]
+      ],
+      "data_type": "course"
     },
     "chunk_id": "01076583_128",
     "original_index": 128
@@ -2569,7 +2710,8 @@
         "AI & Data Science",
         "Research & Academia",
         "Software Development & Engineering"
-      ]
+      ],
+      "data_type": "course"
     },
     "chunk_id": "01076583_129",
     "original_index": 129
@@ -2588,7 +2730,8 @@
       "career_tracks": [
         "Product Design & UX/UI",
         "Software Development & Engineering"
-      ]
+      ],
+      "data_type": "course"
     },
     "chunk_id": "01076597_130",
     "original_index": 130
@@ -2607,7 +2750,8 @@
       "career_tracks": [
         "Product Design & UX/UI",
         "Software Development & Engineering"
-      ]
+      ],
+      "data_type": "course"
     },
     "chunk_id": "01076597_131",
     "original_index": 131
@@ -2629,7 +2773,8 @@
         "Research & Academia",
         "Software Development & Engineering",
         "Systems & Cloud Infrastructure"
-      ]
+      ],
+      "data_type": "course"
     },
     "chunk_id": "01076532_132",
     "original_index": 132
@@ -2651,7 +2796,8 @@
         "Research & Academia",
         "Software Development & Engineering",
         "Systems & Cloud Infrastructure"
-      ]
+      ],
+      "data_type": "course"
     },
     "chunk_id": "01076532_133",
     "original_index": 133
@@ -2671,7 +2817,8 @@
         "AI & Data Science",
         "Research & Academia",
         "Systems & Cloud Infrastructure"
-      ]
+      ],
+      "data_type": "course"
     },
     "chunk_id": "01076582_134",
     "original_index": 134
@@ -2691,7 +2838,8 @@
         "AI & Data Science",
         "Research & Academia",
         "Systems & Cloud Infrastructure"
-      ]
+      ],
+      "data_type": "course"
     },
     "chunk_id": "01076582_135",
     "original_index": 135
@@ -2711,7 +2859,8 @@
         "AI & Data Science",
         "Research & Academia",
         "Systems & Cloud Infrastructure"
-      ]
+      ],
+      "data_type": "course"
     },
     "chunk_id": "01076533_136",
     "original_index": 136
@@ -2731,7 +2880,8 @@
         "AI & Data Science",
         "Research & Academia",
         "Systems & Cloud Infrastructure"
-      ]
+      ],
+      "data_type": "course"
     },
     "chunk_id": "01076533_137",
     "original_index": 137
@@ -2749,7 +2899,8 @@
       "career_tracks": [
         "AI & Data Science",
         "Software Development & Engineering"
-      ]
+      ],
+      "data_type": "course"
     },
     "chunk_id": "01076595_138",
     "original_index": 138
@@ -2767,7 +2918,8 @@
       "career_tracks": [
         "AI & Data Science",
         "Software Development & Engineering"
-      ]
+      ],
+      "data_type": "course"
     },
     "chunk_id": "01076595_139",
     "original_index": 139
@@ -2786,7 +2938,8 @@
         "Cybersecurity & Privacy",
         "Software Development & Engineering",
         "Systems & Cloud Infrastructure"
-      ]
+      ],
+      "data_type": "course"
     },
     "chunk_id": "01076627_140",
     "original_index": 140
@@ -2805,7 +2958,8 @@
         "Cybersecurity & Privacy",
         "Software Development & Engineering",
         "Systems & Cloud Infrastructure"
-      ]
+      ],
+      "data_type": "course"
     },
     "chunk_id": "01076627_141",
     "original_index": 141
@@ -2822,7 +2976,8 @@
       "career_tracks": [
         "Cybersecurity & Privacy",
         "Systems & Cloud Infrastructure"
-      ]
+      ],
+      "data_type": "course"
     },
     "chunk_id": "01076628_142",
     "original_index": 142
@@ -2839,7 +2994,8 @@
       "career_tracks": [
         "Cybersecurity & Privacy",
         "Systems & Cloud Infrastructure"
-      ]
+      ],
+      "data_type": "course"
     },
     "chunk_id": "01076628_143",
     "original_index": 143
@@ -2859,7 +3015,8 @@
         "Cybersecurity & Privacy",
         "Software Development & Engineering",
         "Systems & Cloud Infrastructure"
-      ]
+      ],
+      "data_type": "course"
     },
     "chunk_id": "01076629_144",
     "original_index": 144
@@ -2879,7 +3036,8 @@
         "Cybersecurity & Privacy",
         "Software Development & Engineering",
         "Systems & Cloud Infrastructure"
-      ]
+      ],
+      "data_type": "course"
     },
     "chunk_id": "01076629_145",
     "original_index": 145
@@ -2899,7 +3057,8 @@
         "Cybersecurity & Privacy",
         "Software Development & Engineering",
         "Systems & Cloud Infrastructure"
-      ]
+      ],
+      "data_type": "course"
     },
     "chunk_id": "01076636_146",
     "original_index": 146
@@ -2919,13 +3078,14 @@
         "Cybersecurity & Privacy",
         "Software Development & Engineering",
         "Systems & Cloud Infrastructure"
-      ]
+      ],
+      "data_type": "course"
     },
     "chunk_id": "01076636_147",
     "original_index": 147
   },
   {
-    "content": "01076631 ซอฟต์แวร์กําหนดเครือข่าย วิชาบังคับก่อน: 01076116 เครือข่ายคอมพิวเตอร์ วิชานี้กล่าวถึงหลักการของซอฟต์แวร์กำหนดเครือข่าย โอเพ่นโฟลว์ ตัวควบคุมซอฟต์แวร์กำหนด เครือข่ายและการออกแบบสวิตช์ สถาปัตยกรรมเครือข่าย เครือข่ายแบบเสมือน ความปลอดภัยของซอฟต์แวร์ กำหนดเครือข่าย และหัวข้อในการวิจัย",
+    "content": "01076631 ซอฟต์แวร์กําหนดเครือข่าย วิชาบังคับก่อน: 01076018 เครือข่ายคอมพิวเตอร์ หรือ 01076116 เครือข่ายคอมพิวเตอร์ วิชานี้กล่าวถึงหลักการของซอฟต์แวร์กำหนดเครือข่าย โอเพ่นโฟลว์ ตัวควบคุมซอฟต์แวร์กำหนด เครือข่ายและการออกแบบสวิตช์ สถาปัตยกรรมเครือข่าย เครือข่ายแบบเสมือน ความปลอดภัยของซอฟต์แวร์ กำหนดเครือข่าย และหัวข้อในการวิจัย",
     "metadata": {
       "course_name": "ซอฟต์แวร์กําหนดเครือข่าย",
       "course_code": "01076631",
@@ -2939,13 +3099,14 @@
         "Cybersecurity & Privacy",
         "Software Development & Engineering",
         "Systems & Cloud Infrastructure"
-      ]
+      ],
+      "data_type": "course"
     },
     "chunk_id": "01076631_148",
     "original_index": 148
   },
   {
-    "content": "01076631 SOFTWARE DEFINED NETWORKING PREREQUISITE: 01076116 COMPUTER NETWORKS The course will cover software defined networking (SDN) principles; OpenFlow; controller and switch design; network architecture; network virtualization; SDN security; and SDN research topics.",
+    "content": "01076631 SOFTWARE DEFINED NETWORKING PREREQUISITE: 01076018 COMPUTER NETWORKS OR 01076116 COMPUTER NETWORKS The course will cover software defined networking (SDN) principles; OpenFlow; controller and switch design; network architecture; network virtualization; SDN security; and SDN research topics.",
     "metadata": {
       "course_name": "SOFTWARE DEFINED NETWORKING",
       "course_code": "01076631",
@@ -2959,13 +3120,14 @@
         "Cybersecurity & Privacy",
         "Software Development & Engineering",
         "Systems & Cloud Infrastructure"
-      ]
+      ],
+      "data_type": "course"
     },
     "chunk_id": "01076631_149",
     "original_index": 149
   },
   {
-    "content": "01076632 เทคโนโลยีเครือข่ายไร้สาย วิชาบังคับก่อน: 01076116 เครือข่ายคอมพิวเตอร์ แนะนำเทคโนโลยีของเครือข่ายไร้สาย การส่งข้อมูลแบบไร้สาย เสาอากาศ การควบคุมการเข้าถึง มาตรฐาน 801.11 การวางแผน การออกแบบ และการติดตั้งใช้งานเครือข่ายไร้สาย ความปลอดภัยของเครือข่ายไร้สาย",
+    "content": "01076632 เทคโนโลยีเครือข่ายไร้สาย วิชาบังคับก่อน: 01076018 เครือข่ายคอมพิวเตอร์ หรือ 01076116 เครือข่ายคอมพิวเตอร์ แนะนำเทคโนโลยีของเครือข่ายไร้สาย การส่งข้อมูลแบบไร้สาย เสาอากาศ การควบคุมการเข้าถึง มาตรฐาน 801.11 การวางแผน การออกแบบ และการติดตั้งใช้งานเครือข่ายไร้สาย ความปลอดภัยของเครือข่ายไร้สาย",
     "metadata": {
       "course_name": "เทคโนโลยีเครือข่ายไร้สาย",
       "course_code": "01076632",
@@ -2976,13 +3138,14 @@
       "career_tracks": [
         "Cybersecurity & Privacy",
         "Systems & Cloud Infrastructure"
-      ]
+      ],
+      "data_type": "course"
     },
     "chunk_id": "01076632_150",
     "original_index": 150
   },
   {
-    "content": "01076632 WIRELESS NETWORK TECHNOLOGY PREREQUISITE: 01076116 COMPUTER NETWORKS Introduction to wireless network technologies, wireless transmission, antenna, access control, 802.11 standard. Planning, design and deploying Wireless LAN, wireless network security.",
+    "content": "01076632 WIRELESS NETWORK TECHNOLOGY PREREQUISITE: 01076018 COMPUTER NETWORKS OR 01076116 COMPUTER NETWORKS Introduction to wireless network technologies, wireless transmission, antenna, access control, 802.11 standard. Planning, design and deploying Wireless LAN, wireless network security.",
     "metadata": {
       "course_name": "WIRELESS NETWORK TECHNOLOGY",
       "course_code": "01076632",
@@ -2993,13 +3156,14 @@
       "career_tracks": [
         "Cybersecurity & Privacy",
         "Systems & Cloud Infrastructure"
-      ]
+      ],
+      "data_type": "course"
     },
     "chunk_id": "01076632_151",
     "original_index": 151
   },
   {
-    "content": "01076635 เครือข่ายสวิตช์ไอพี วิชาบังคับก่อน: 01076116 เครือข่ายคอมพิวเตอร์ วิชานี้จะกล่าวถึงระบบเครือข่ายภายในองค์กร การสร้างระบบเครือข่ายภายในองค์กร โดยใช้ เทคโนโลยีสวิตช์แบบหลายชั้น ที่ทำงานผ่านระบบเครือข่ายอินเทอร์เน็ตความเร็วสูง วิชานี้จะกล่าวถึงทั้งแนวคิดใน เรื่องของการหาเส้นทางและการสวิตช์ โดยครอบคลุมทั้งการออกแบบโดยใช้เทคโนโลยีเครือข่ายในระดับชั้นที่ 2 และ 3 นักศึกษาจะได้ศึกษาการใช้งานเครือข่ายเสมือน สแปนนิ่งทรี การหาเส้นทางระหว่างเครือข่ายเสมือน เทคโนโลยี การซ้ำซ้อนของเกทเวย์ และความปลอดภัยในเครือข่าย",
+    "content": "01076635 เครือข่ายสวิตช์ไอพี วิชาบังคับก่อน: 01076018 เครือข่ายคอมพิวเตอร์ หรือ 01076116 เครือข่ายคอมพิวเตอร์ วิชานี้จะกล่าวถึงระบบเครือข่ายภายในองค์กร การสร้างระบบเครือข่ายภายในองค์กร โดยใช้ เทคโนโลยีสวิตช์แบบหลายชั้น ที่ทำงานผ่านระบบเครือข่ายอินเทอร์เน็ตความเร็วสูง วิชานี้จะกล่าวถึงทั้งแนวคิดใน เรื่องของการหาเส้นทางและการสวิตช์ โดยครอบคลุมทั้งการออกแบบโดยใช้เทคโนโลยีเครือข่ายในระดับชั้นที่ 2 และ 3 นักศึกษาจะได้ศึกษาการใช้งานเครือข่ายเสมือน สแปนนิ่งทรี การหาเส้นทางระหว่างเครือข่ายเสมือน เทคโนโลยี การซ้ำซ้อนของเกทเวย์ และความปลอดภัยในเครือข่าย",
     "metadata": {
       "course_name": "เครือข่ายสวิตช์ไอพี",
       "course_code": "01076635",
@@ -3012,13 +3176,14 @@
         "Cybersecurity & Privacy",
         "Software Development & Engineering",
         "Systems & Cloud Infrastructure"
-      ]
+      ],
+      "data_type": "course"
     },
     "chunk_id": "01076635_152",
     "original_index": 152
   },
   {
-    "content": "01076635 IP SWITCHED NETWORKS PREREQUISITE: 01076116 COMPUTER NETWORKS The main objective of this course is to provide an overview of a campus network, building a campus network using multilayer switching technologies over high-speed Ethernet. This course includes both routing and switching concepts, covering both layer 2 and layer 3 technologies. It also teaches students a virtual LAN, Spanning tree, inter-VLAN routing, gateway redundancy.",
+    "content": "01076635 IP SWITCHED NETWORKS PREREQUISITE: 01076018 COMPUTER NETWORKS OR 01076116 COMPUTER NETWORKS The main objective of this course is to provide an overview of a campus network, building a campus network using multilayer switching technologies over high-speed Ethernet. This course includes both routing and switching concepts, covering both layer 2 and layer 3 technologies. It also teaches students a virtual LAN, Spanning tree, inter-VLAN routing, gateway redundancy.",
     "metadata": {
       "course_name": "IP SWITCHED NETWORKS",
       "course_code": "01076635",
@@ -3031,7 +3196,8 @@
         "Cybersecurity & Privacy",
         "Software Development & Engineering",
         "Systems & Cloud Infrastructure"
-      ]
+      ],
+      "data_type": "course"
     },
     "chunk_id": "01076635_153",
     "original_index": 153

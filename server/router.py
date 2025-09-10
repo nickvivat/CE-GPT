@@ -13,7 +13,7 @@ from fastapi.responses import Response
 import asyncio
 
 from .models import (
-    SearchRequest, SearchResponse, SearchResult, CourseMetadata,
+    SearchRequest, SearchResponse, SearchResult, CourseMetadata, ProfessorMetadata,
     GenerateRequest, GenerateResponse, SystemStatus, 
     PerformanceMetrics, HealthCheck, ErrorResponse
 )
@@ -44,20 +44,12 @@ def initialize_rag_system():
     global rag_system
     try:
         logger.info("Initializing RAG system for API...")
-        rag_system = RAGSystem(use_reranker=True, use_query_enhancement=True)
+        # RAG system will auto-load data and build vector index
+        rag_system = RAGSystem(use_reranker=True, use_query_enhancement=True, auto_load_data=True)
         
-        # Load data
-        data_file = os.path.join(os.path.dirname(__file__), "..", "data", "raw", "course_detail.json")
-        if not os.path.exists(data_file):
-            logger.error(f"Data file not found: {data_file}")
-            raise Exception("Course data file not found")
-        
-        if not rag_system.load_and_process_data(data_file):
-            raise Exception("Failed to load course data")
-        
-        # Build vector index
-        if not rag_system.build_vector_index():
-            raise Exception("Failed to build vector index")
+        # Verify that data was loaded successfully
+        if not rag_system.chunks or len(rag_system.chunks) == 0:
+            raise Exception("No data loaded by RAG system")
         
         logger.info("RAG system initialized successfully for API")
         
@@ -134,23 +126,42 @@ async def search_courses(request: SearchRequest, rag: RAGSystem = Depends(get_ra
         api_results = []
         for result in results:
             metadata = result.get('metadata', {})
-            course_metadata = CourseMetadata(
-                course_code=metadata.get('course_code', 'N/A'),
-                course_name=metadata.get('course_name', 'N/A'),
-                language=metadata.get('language', 'en'),
-                focus_areas=metadata.get('focus_areas', []),
-                career_tracks=metadata.get('career_tracks', []),
-                credits=metadata.get('credits'),
-                semester=metadata.get('semester')
-            )
+            data_type = result.get('data_type', metadata.get('data_type', 'course'))
+            
+            if data_type == 'professor':
+                # Handle professor metadata
+                professor_metadata = ProfessorMetadata(
+                    data_type='professor',
+                    name=metadata.get('name', 'N/A'),
+                    research_areas=metadata.get('research_areas', []),
+                    teaching_subjects=metadata.get('teaching_subjects', []),
+                    textbooks=metadata.get('textbooks', []),
+                    degrees=metadata.get('degrees', []),
+                    language=metadata.get('language', 'en')
+                )
+                result_metadata = professor_metadata
+            else:
+                # Handle course metadata
+                course_metadata = CourseMetadata(
+                    course_code=metadata.get('course_code', 'N/A'),
+                    course_name=metadata.get('course_name', 'N/A'),
+                    language=metadata.get('language', 'en'),
+                    focus_areas=metadata.get('focus_areas', []),
+                    career_tracks=metadata.get('career_tracks', []),
+                    credits=metadata.get('credits'),
+                    semester=metadata.get('semester'),
+                    data_type='course'
+                )
+                result_metadata = course_metadata
             
             api_result = SearchResult(
                 content=result.get('content', ''),
-                metadata=course_metadata,
+                metadata=result_metadata,
                 similarity_score=result.get('similarity_score', 0.0),
                 rerank_score=result.get('rerank_score'),
                 chunk_id=result.get('chunk_id', ''),
-                original_index=result.get('original_index', 0)
+                original_index=result.get('original_index', 0),
+                data_type=data_type
             )
             api_results.append(api_result)
         
@@ -201,7 +212,7 @@ async def generate_response(request: GenerateRequest):
             language=request.language,
             use_reranking=request.use_reranking,
             stream=request.stream,
-            search_results=search_results
+            search_results=search_results,
         )
         
         generation_time = (time.time() - start_time) * 1000
