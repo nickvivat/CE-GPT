@@ -216,9 +216,6 @@ class ProfessorDataHandler(BaseDataTypeHandler):
                 if "operating" in subject.lower():
                     enhanced_teaching.append("operating systems")
                     enhanced_teaching.append("system software")
-                if "interaction" in subject.lower():
-                    enhanced_teaching.append("human computer interaction")
-                    enhanced_teaching.append("user interface")
                 if "image" in subject.lower():
                     enhanced_teaching.append("image processing")
                     enhanced_teaching.append("computer vision")

@@ -472,7 +472,7 @@
       "focus_areas": [
         "Computer Science Fundamentals",
         "Foundations of Mathematics & Logic",
-        "Human-Computer Interaction & Design"
+        "Software Engineering & Development"
       ],
       "career_tracks": [
         "AI & Data Science",
@@ -492,7 +492,7 @@
       "focus_areas": [
         "Computer Science Fundamentals",
         "Foundations of Mathematics & Logic",
-        "Human-Computer Interaction & Design"
+        "Software Engineering & Development"
       ],
       "career_tracks": [
         "AI & Data Science",
@@ -512,7 +512,7 @@
       "focus_areas": [
         "Computer Science Fundamentals",
         "Foundations of Mathematics & Logic",
-        "Human-Computer Interaction & Design"
+        "Software Engineering & Development"
       ],
       "career_tracks": [
         "AI & Data Science",
@@ -532,7 +532,7 @@
       "focus_areas": [
         "Computer Science Fundamentals",
         "Foundations of Mathematics & Logic",
-        "Human-Computer Interaction & Design"
+        "Software Engineering & Development"
       ],
       "career_tracks": [
         "AI & Data Science",
@@ -870,8 +870,7 @@
       "course_code": "01076121",
       "language": "th",
       "focus_areas": [
-        "Foundations of Mathematics & Logic",
-        "Human-Computer Interaction & Design"
+        "Foundations of Mathematics & Logic"
       ],
       "career_tracks": ["AI & Data Science", "Research & Academia"]
     },
@@ -885,8 +884,7 @@
       "course_code": "01076121",
       "language": "en",
       "focus_areas": [
-        "Foundations of Mathematics & Logic",
-        "Human-Computer Interaction & Design"
+        "Foundations of Mathematics & Logic"
       ],
       "career_tracks": ["AI & Data Science", "Research & Academia"]
     },
@@ -1209,7 +1207,6 @@
       "language": "th",
       "focus_areas": [
         "Computer Science Fundamentals",
-        "Human-Computer Interaction & Design",
         "Networks & Security",
         "Software Engineering & Development"
       ],
@@ -1231,7 +1228,6 @@
       "language": "en",
       "focus_areas": [
         "Computer Science Fundamentals",
-        "Human-Computer Interaction & Design",
         "Networks & Security",
         "Software Engineering & Development"
       ],
@@ -1293,7 +1289,6 @@
       "language": "th",
       "focus_areas": [
         "User Experience & User Interface Design",
-        "Human-Computer Interaction & Design",
         "Software Engineering & Development"
       ],
       "career_tracks": [
@@ -1314,7 +1309,6 @@
       "language": "en",
       "focus_areas": [
         "User Experience & User Interface Design",
-        "Human-Computer Interaction & Design",
         "Software Engineering & Development"
       ],
       "career_tracks": [
@@ -1335,7 +1329,6 @@
       "language": "th",
       "focus_areas": [
         "User Experience & User Interface Design",
-        "Human-Computer Interaction & Design",
         "Software Engineering & Development"
       ],
       "career_tracks": [
@@ -1356,7 +1349,6 @@
       "language": "en",
       "focus_areas": [
         "User Experience & User Interface Design",
-        "Human-Computer Interaction & Design",
         "Software Engineering & Development"
       ],
       "career_tracks": [
@@ -1983,8 +1975,7 @@
       "language": "th",
       "focus_areas": [
         "Hardware & Embedded Systems",
-        "User Experience & User Interface Design",
-        "Human-Computer Interaction & Design"
+        "User Experience & User Interface Design"
       ],
       "career_tracks": ["Hardware & Embedded Systems", "Product Design & UX/UI"]
     },
@@ -1999,8 +1990,7 @@
       "language": "en",
       "focus_areas": [
         "Hardware & Embedded Systems",
-        "User Experience & User Interface Design",
-        "Human-Computer Interaction & Design"
+        "User Experience & User Interface Design"
       ],
       "career_tracks": ["Hardware & Embedded Systems", "Product Design & UX/UI"]
     },
@@ -2456,8 +2446,7 @@
       "focus_areas": [
         "Computer Science Fundamentals",
         "Foundations of Mathematics & Logic",
-        "User Experience & User Interface Design",
-        "Human-Computer Interaction & Design"
+        "User Experience & User Interface Design"
       ],
       "career_tracks": [
         "AI & Data Science",
@@ -2477,8 +2466,7 @@
       "focus_areas": [
         "Computer Science Fundamentals",
         "Foundations of Mathematics & Logic",
-        "User Experience & User Interface Design",
-        "Human-Computer Interaction & Design"
+        "User Experience & User Interface Design"
       ],
       "career_tracks": [
         "AI & Data Science",
@@ -2497,7 +2485,6 @@
       "language": "th",
       "focus_areas": [
         "Computer Science Fundamentals",
-        "Human-Computer Interaction & Design",
         "Software Engineering & Development"
       ],
       "career_tracks": [
@@ -2516,7 +2503,6 @@
       "language": "en",
       "focus_areas": [
         "Computer Science Fundamentals",
-        "Human-Computer Interaction & Design",
         "Software Engineering & Development"
       ],
       "career_tracks": [
