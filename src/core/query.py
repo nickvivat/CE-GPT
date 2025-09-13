@@ -9,12 +9,37 @@ import os
 import time
 import requests
 import json
+import re
 from typing import List, Dict, Optional
 
 from ..utils.config import config
 from ..utils.logger import get_logger
 
 logger = get_logger(__name__)
+
+def detect_language_ascii(text: str) -> str:
+    """
+    Detect language based on ASCII character analysis.
+    Returns 'th' for Thai text, 'en' for English/other languages.
+    """
+    if not text or not text.strip():
+        return 'en'
+    
+    # Remove whitespace and punctuation for analysis
+    clean_text = re.sub(r'[^\w\s]', '', text.strip())
+    
+    if not clean_text:
+        return 'en'
+    
+    # Count Thai characters (Unicode range: U+0E00-U+0E7F)
+    thai_chars = len(re.findall(r'[\u0E00-\u0E7F]', clean_text))
+    total_chars = len(clean_text)
+    
+    # If more than 30% of characters are Thai, classify as Thai
+    if total_chars > 0 and (thai_chars / total_chars) > 0.3:
+        return 'th'
+    
+    return 'en'
 
 class Query:
     def __init__(self, ollama_url: str = None, model_name: str = None):
@@ -39,11 +64,20 @@ class Query:
             logger.warning("Query enhancement will be disabled. Please ensure Ollama is running.")
             self.available = False
 
-    RESPONSE_SCHEMA = {
+    # Schema for classification response
+    CLASSIFY_SCHEMA = {
         "type": "object",
         "properties": {
-            "language": {"type": "string", "enum": ["th", "en"]},
-            "class": {"type": "string", "enum": ["enhanced", "pass", "external"]},
+            "class": {"type": "string", "enum": ["enhanced", "pass", "external"]}
+        },
+        "required": ["class"],
+        "additionalProperties": False
+    }
+    
+    # Schema for enhancement response
+    ENHANCE_SCHEMA = {
+        "type": "object",
+        "properties": {
             "enhanced": {
                 "type": "object",
                 "properties": {
@@ -55,34 +89,10 @@ class Query:
                 },
                 "required": ["expanded_terms"],
                 "additionalProperties": False
-            },
-            "pass": {
-                "type": "object",
-                "properties": {
-                    "explanation": {"type": "string", "minLength": 1}
-                },
-                "required": ["explanation"],
-                "additionalProperties": False
-            },
-            "external": {
-                "type": "object",
-                "properties": {
-                    "explanation": {"type": "string", "minLength": 1}
-                },
-                "required": ["explanation"],
-                "additionalProperties": False
             }
         },
-        "required": ["language", "class"],
-        "additionalProperties": False,
-        "allOf": [
-            {"if": {"properties": {"class": {"const": "enhanced"}}},
-             "then": {"required": ["enhanced"]}},
-            {"if": {"properties": {"class": {"const": "pass"}}},
-             "then": {"required": ["pass"]}},
-            {"if": {"properties": {"class": {"const": "external"}}},
-             "then": {"required": ["external"]}}
-        ]
+        "required": ["enhanced"],
+        "additionalProperties": False
     }
     
     def _call_ollama(self, prompt: str, temperature: float = 0.7) -> str:
@@ -143,20 +153,19 @@ class Query:
         
         return ""
 
-    def enhance_query(self, query: str, conversation_context: str = "") -> str:
+    def classify_query(self, query: str) -> Optional[str]:
         """
-        Simple query enhancement using the existing prompt.
-        Let Gemma classify if enhancement is needed and enhance the query if so.
+        Classify the query to determine if it needs enhancement.
+        Returns: 'enhanced', 'pass', 'external', or None if error
         """
-        # Check if Ollama is available
         if not self.available:
-            logger.info("Query enhancement not available, returning original query")
-            return query
+            logger.info("Query classification not available, assuming enhanced")
+            return "enhanced"
             
         try:
             prompt_file = os.path.join(
                 os.path.dirname(__file__),
-                "..", "..", "prompt", "query_processor.md"
+                "..", "..", "prompt", "query_classifier.md"
             )
             with open(prompt_file, "r", encoding="utf-8") as f:
                 prompt_template = f.read()
@@ -166,62 +175,133 @@ class Query:
             # Now format with the query, but we need to unescape the {query} placeholder
             escaped_template = escaped_template.replace("{{query}}", "{query}")
             
-            prompt = escaped_template.format(
-                query=query
-            )
+            prompt = escaped_template.format(query=query)
             
-            # Debug: Log the formatted prompt to see if there are any issues
-            logger.debug(f"Formatted prompt length: {len(prompt)} characters")
-            logger.debug(f"Prompt ends with: {prompt[-100:]}")
+            logger.debug(f"Classification prompt length: {len(prompt)} characters")
             
             response_text = self._call_ollama(prompt, temperature=0.0)
             
             if not response_text.strip():
-                logger.warning("Empty response from Ollama. Falling back to pass through.")
-                return query
+                logger.warning("Empty response from Ollama for classification. Assuming enhanced.")
+                return "enhanced"
 
             # Parse and validate JSON response
-            response_json = self._parse_json_response(response_text)
+            response_json = self._parse_classify_response(response_text)
             
             if not response_json:
-                logger.warning("Failed to parse JSON response, keeping original query")
-                return query
+                logger.warning("Failed to parse classification response, assuming enhanced")
+                return "enhanced"
             
-            # Handle different classification types
             classification = response_json.get("class")
-            language = response_json.get("language", "en")
+            logger.debug(f"Query classified as '{classification}'")
             
-            logger.debug(f"Query classified as '{classification}' in language '{language}'")
-            
-            if classification == "enhanced" and "enhanced" in response_json:
-                expanded_terms = response_json["enhanced"].get("expanded_terms", [])
-                if expanded_terms and self._validate_expanded_terms(expanded_terms):
-                    enhanced_query = " ".join(expanded_terms)
-                    logger.info(f"Query enhanced: '{query}' -> '{enhanced_query}'")
-                    return enhanced_query
-                else:
-                    logger.warning("Invalid or empty expanded_terms, keeping original query")
-                    
-            elif classification == "pass":
-                logger.info("Query classified as conversational, keeping original")
-                
-            elif classification == "external":
-                logger.info("Query classified as external, keeping original")
-                
-            else:
-                logger.warning(f"Unknown classification '{classification}', keeping original query")
-            
-            return query
+            return classification
                 
         except Exception as e:
-            logger.error(f"Error processing query: {e}")
-            logger.error(f"Error type: {type(e).__name__}")
+            logger.error(f"Error classifying query: {e}")
             logger.error(f"Query was: '{query}'")
-            logger.error("Falling back to pass through.")
+            logger.error("Falling back to enhanced classification.")
+            return "enhanced"
+
+    def enhance_query_terms(self, query: str) -> Optional[List[str]]:
+        """
+        Enhance the query terms using the enhancement prompt.
+        Returns: List of expanded terms or None if error
+        """
+        if not self.available:
+            logger.info("Query enhancement not available, returning original query as single term")
+            return [query]
+            
+        try:
+            prompt_file = os.path.join(
+                os.path.dirname(__file__),
+                "..", "..", "prompt", "query_enhancer.md"
+            )
+            with open(prompt_file, "r", encoding="utf-8") as f:
+                prompt_template = f.read()
+
+            # Escape curly braces in the template to prevent format conflicts
+            escaped_template = prompt_template.replace("{", "{{").replace("}", "}}")
+            # Now format with the query, but we need to unescape the {query} placeholder
+            escaped_template = escaped_template.replace("{{query}}", "{query}")
+            
+            prompt = escaped_template.format(query=query)
+            
+            logger.debug(f"Enhancement prompt length: {len(prompt)} characters")
+            
+            response_text = self._call_ollama(prompt, temperature=0.0)
+            
+            if not response_text.strip():
+                logger.warning("Empty response from Ollama for enhancement. Using original query.")
+                return [query]
+
+            # Parse and validate JSON response
+            response_json = self._parse_enhance_response(response_text)
+            
+            if not response_json:
+                logger.warning("Failed to parse enhancement response, using original query")
+                return [query]
+            
+            enhanced_data = response_json.get("enhanced", {})
+            expanded_terms = enhanced_data.get("expanded_terms", [])
+            
+            if expanded_terms and self._validate_expanded_terms(expanded_terms):
+                logger.info(f"Query enhanced: '{query}' -> {expanded_terms}")
+                return expanded_terms
+            else:
+                logger.warning("Invalid or empty expanded_terms, using original query")
+                return [query]
+                
+        except Exception as e:
+            logger.error(f"Error enhancing query: {e}")
+            logger.error(f"Query was: '{query}'")
+            logger.error("Using original query as single term.")
+            return [query]
+
+    def enhance_query(self, query: str, conversation_context: str = "") -> str:
+        """
+        Two-step query processing: classify first, then enhance if needed.
+        Uses ASCII-based language detection instead of prompt-based detection.
+        """
+        # Detect language using ASCII analysis
+        language = detect_language_ascii(query)
+        logger.debug(f"Language detected as '{language}' for query: '{query}'")
+        
+        # Step 1: Classify the query
+        classification = self.classify_query(query)
+        
+        if not classification:
+            logger.warning("Classification failed, returning original query")
+            return query
+        
+        logger.debug(f"Query classified as '{classification}'")
+        
+        # Step 2: Handle based on classification
+        if classification == "enhanced":
+            # Enhance the query terms
+            expanded_terms = self.enhance_query_terms(query)
+            if expanded_terms and len(expanded_terms) > 0:
+                enhanced_query = " ".join(expanded_terms)
+                logger.info(f"Query enhanced: '{query}' -> '{enhanced_query}'")
+                return enhanced_query
+            else:
+                logger.warning("Enhancement failed, keeping original query")
+                return query
+                
+        elif classification == "pass":
+            logger.info("Query classified as conversational, keeping original")
+            return query
+            
+        elif classification == "external":
+            logger.info("Query classified as external, keeping original")
+            return query
+            
+        else:
+            logger.warning(f"Unknown classification '{classification}', keeping original query")
             return query
     
-    def _parse_json_response(self, response_text: str) -> Optional[Dict]:
-        """Parse and clean JSON response from Ollama"""
+    def _parse_classify_response(self, response_text: str) -> Optional[Dict]:
+        """Parse and clean classification JSON response from Ollama"""
         try:
             cleaned_response = response_text.strip()
             if cleaned_response.startswith("```json"):
@@ -233,48 +313,77 @@ class Query:
             response_json = json.loads(cleaned_response)
             
             # Validate the response structure
-            if self._validate_response_schema(response_json):
-                logger.debug(f"Successfully parsed JSON response: {response_json}")
+            if self._validate_classify_schema(response_json):
+                logger.debug(f"Successfully parsed classification response: {response_json}")
                 return response_json
             else:
-                logger.warning("Response doesn't match expected schema")
+                logger.warning("Classification response doesn't match expected schema")
                 return None
                 
         except json.JSONDecodeError as e:
-            logger.warning(f"Failed to parse JSON response: {e}")
+            logger.warning(f"Failed to parse classification JSON response: {e}")
+            logger.debug(f"Raw response was: {response_text}")
+            return None
+
+    def _parse_enhance_response(self, response_text: str) -> Optional[Dict]:
+        """Parse and clean enhancement JSON response from Ollama"""
+        try:
+            cleaned_response = response_text.strip()
+            if cleaned_response.startswith("```json"):
+                cleaned_response = cleaned_response[7:]
+            if cleaned_response.endswith("```"):
+                cleaned_response = cleaned_response[:-3]
+            cleaned_response = cleaned_response.strip()
+            
+            response_json = json.loads(cleaned_response)
+            
+            # Validate the response structure
+            if self._validate_enhance_schema(response_json):
+                logger.debug(f"Successfully parsed enhancement response: {response_json}")
+                return response_json
+            else:
+                logger.warning("Enhancement response doesn't match expected schema")
+                return None
+                
+        except json.JSONDecodeError as e:
+            logger.warning(f"Failed to parse enhancement JSON response: {e}")
             logger.debug(f"Raw response was: {response_text}")
             return None
     
-    def _validate_response_schema(self, response_json: Dict) -> bool:
-        """Validate that the response matches our expected schema"""
+    def _validate_classify_schema(self, response_json: Dict) -> bool:
+        """Validate that the classification response matches our expected schema"""
         try:    
-            if "class" not in response_json or "language" not in response_json:
+            if "class" not in response_json:
                 return False
                 
             classification = response_json.get("class")
             if classification not in ["enhanced", "pass", "external"]:
                 return False
-                
-            # Check classification-specific fields
-            if classification == "enhanced":
-                if "enhanced" not in response_json:
-                    return False
-                enhanced_data = response_json["enhanced"]
-                if not isinstance(enhanced_data, dict) or "expanded_terms" not in enhanced_data:
-                    return False
-                    
-            elif classification == "pass":
-                if "pass" not in response_json:
-                    return False
-                    
-            elif classification == "external":
-                if "external" not in response_json:
-                    return False
                     
             return True
             
         except Exception as e:
-            logger.warning(f"Error validating response schema: {e}")
+            logger.warning(f"Error validating classification schema: {e}")
+            return False
+
+    def _validate_enhance_schema(self, response_json: Dict) -> bool:
+        """Validate that the enhancement response matches our expected schema"""
+        try:    
+            if "enhanced" not in response_json:
+                return False
+                
+            enhanced_data = response_json["enhanced"]
+            if not isinstance(enhanced_data, dict) or "expanded_terms" not in enhanced_data:
+                return False
+                
+            expanded_terms = enhanced_data.get("expanded_terms", [])
+            if not isinstance(expanded_terms, list) or len(expanded_terms) == 0:
+                return False
+                    
+            return True
+            
+        except Exception as e:
+            logger.warning(f"Error validating enhancement schema: {e}")
             return False
     
     def _validate_expanded_terms(self, expanded_terms: List[str]) -> bool:
