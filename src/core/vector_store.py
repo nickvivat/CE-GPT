@@ -75,8 +75,7 @@ class ChromaVectorStore(VectorStore):
 				chroma_meta = {}
 				for key, value in meta.items():
 					if isinstance(value, list):
-						# Convert lists to comma-separated strings
-						chroma_meta[key] = ", ".join(str(v) for v in value)
+						chroma_meta[key] = ", ".join(str(item) for item in value)
 					else:
 						chroma_meta[key] = value
 				chroma_metadata.append(chroma_meta)
