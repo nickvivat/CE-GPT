@@ -370,7 +370,7 @@ class RAGSystem:
     
     @monitor_operation("vector_search")
     @handle_errors(ErrorType.VECTOR_SEARCH, fallback_value=[])
-    def search(self, query: str, top_k: int = 5, language: str = None, 
+    async def search(self, query: str, top_k: int = 5, language: str = None, 
                use_reranking: bool = True) -> List[Dict[str, Any]]:
         """Search for relevant courses and professors with detailed performance logging"""
         start_time = time.time()
@@ -378,7 +378,7 @@ class RAGSystem:
         logger.info(f"Processing query: '{query}'")
         
         # Detect professor-related queries and increase top_k to ensure professor results are included
-        professor_keywords = ['who', 'teach', 'teaches', 'instructor', 'professor', 'อาจารย์', 'สอน']
+        professor_keywords = ['who', 'teach', 'teaches', 'instructor', 'professor', 'อาจารย์', 'สอน', 'who is', 'who are']
         is_professor_query = any(keyword in query_lower for keyword in professor_keywords)
         
         # Log all professor data for debugging
@@ -386,23 +386,24 @@ class RAGSystem:
             professor_chunks = [chunk for chunk in self.chunks if getattr(chunk, 'data_type', chunk.metadata.get('data_type', 'unknown')) == 'professor']
         
         # Use circuit breaker for critical operations
-        def _perform_search():
+        async def _perform_search():
             current_query = query  # Store the original query
             enhanced_query = None
+            metadata = None
             classification = None
             detected_language = None
             
-            # Step 1: Query Enhancement with timing
+            # Step 1: Query Enhancement with timing (now async with metadata)
             query_enhancement_start = time.time()
             try:
                 if self.use_query_enhancement and self.query and hasattr(self.query, 'available') and self.query.available:
-                    enhanced_query = self.query.enhance_query(current_query, self.conversation_context)
+                    enhanced_query, metadata = await self.query.enhance_query_async(current_query, self.conversation_context)
                     
                     # Check if query was classified as conversational or external
-                    if enhanced_query == current_query:
+                    if enhanced_query == current_query and metadata and metadata.get("query_intent") in ["conversational", "external"]:
                         # Query was classified as 'pass' or 'external', return empty results
-                        logger.info("Query classified as conversational or external, returning empty results")
-                        classification = "pass"
+                        logger.info(f"Query classified as {metadata.get('query_intent')}, returning empty results")
+                        classification = metadata.get("query_intent", "pass")
                         return []
                     
                     # Query was enhanced, use the enhanced version
@@ -455,14 +456,51 @@ class RAGSystem:
                 
                 query_embedding = self.embedder.get_single_embedding(current_query)
                 
-                filter_metadata = None
+                # Build filter metadata from language and query metadata
+                filter_metadata = {}
                 if detected_language:
-                    filter_metadata = {"language": detected_language}
+                    filter_metadata["language"] = detected_language
                     logger.info(f"Applying language filter: {detected_language} (based on original query)")
-                else:
-                    logger.info("No language filter applied - searching all data")
                 
-                similarities, indices = self.vector_store.search(query_embedding, top_k=top_k, filter_metadata=filter_metadata)
+                # Add metadata-based filtering if available
+                if metadata and metadata.get("tags"):
+                    tags = metadata.get("tags", [])
+                    query_intent = metadata.get("query_intent", "course_search")
+                    
+                    # Override query_intent with early professor detection if needed
+                    if is_professor_query and query_intent != "professor_search":
+                        query_intent = "professor_search"
+                        logger.info(f"Overriding query_intent to 'professor_search' based on early detection")
+                    
+                    # For now, just use data_type filtering to test basic functionality
+                    # TODO: Implement proper metadata filtering with comma-separated strings
+                    if query_intent == "professor_search":
+                        filter_metadata["data_type"] = "professor"
+                        logger.info("Applying professor filter")
+                    else:
+                        filter_metadata["data_type"] = "course"
+                        logger.info("Applying course filter")
+                    
+                    logger.info(f"Metadata tags available: {tags} (intent: {query_intent})")
+                elif is_professor_query:
+                    # If no metadata but early detection found professor query, apply professor filter
+                    filter_metadata["data_type"] = "professor"
+                    logger.info("Applying professor filter based on early detection (no metadata)")
+                
+                # If we have multiple conditions, we need to use $and to combine them
+                # ChromaDB requires a single operator, so we'll use $and for multiple conditions
+                if len(filter_metadata) > 1:
+                    # Convert to $and structure for ChromaDB
+                    and_conditions = []
+                    for key, value in filter_metadata.items():
+                        and_conditions.append({key: value})
+                    filter_metadata = {"$and": and_conditions}
+                    logger.info(f"Combined filters using $and: {filter_metadata}")
+                
+                if not filter_metadata:
+                    logger.info("No filters applied - searching all data")
+                
+                similarities, indices = self.vector_store.search(query_embedding, top_k=top_k, filter_metadata=filter_metadata if filter_metadata else None)
                 
                 embedding_search_duration = time.time() - embedding_search_start
                 csv_logger.log_embedding_search(
@@ -548,9 +586,9 @@ class RAGSystem:
             logger.info(f"Search completed, returned {len(results)} results")
             return results
         
-        # Execute with circuit breaker and retry logic
+        # Execute the async search function
         try:
-            results = self.circuit_breaker.call(_perform_search)
+            results = await _perform_search()
             total_duration = time.time() - start_time
             
             # Log overall search performance
@@ -577,7 +615,7 @@ class RAGSystem:
             logger.error(f"Search failed: {e}")
             return []
     
-    def generate_response(self, query: str, top_k: int = 5, language: str = None, 
+    async def generate_response(self, query: str, top_k: int = 5, language: str = None, 
                          use_reranking: bool = True, stream: bool = False, search_results: List[Dict[str, Any]] = None) -> str:
         """Generate a contextual response based on retrieved data with performance logging"""
         response_generation_start = time.time()
@@ -586,7 +624,7 @@ class RAGSystem:
             if not self.response_generator:
                 logger.warning("Response generator not available, falling back to search results")
                 if not search_results:
-                    search_results = self.search(query, top_k=top_k, language=language, use_reranking=use_reranking)
+                    search_results = await self.search(query, top_k=top_k, language=language, use_reranking=use_reranking)
                 
                 response_duration = time.time() - response_generation_start
                 
@@ -667,20 +705,20 @@ class RAGSystem:
             # Fallback to search results only
             try:
                 if not search_results:
-                    search_results = self.search(query, top_k=top_k, language=language, use_reranking=use_reranking)
+                    search_results = await self.search(query, top_k=top_k, language=language, use_reranking=use_reranking)
                 return self.response_generator._format_fallback_response(query, search_results, language)
             except Exception as fallback_error:
                 logger.error(f"Fallback also failed: {fallback_error}")
                 return "ขออภัย เกิดข้อผิดพลาดในการประมวลผลคำขอของคุณ" if language == "th" else "Sorry, an error occurred while processing your request."
     
-    def generate_response_stream(self, query: str, top_k: int = 5, language: str = None, 
+    async def generate_response_stream(self, query: str, top_k: int = 5, language: str = None, 
                                use_reranking: bool = True, search_results: List[Dict[str, Any]] = None):
         """Generate a streaming response generator for real-time output"""
         try:
             if not self.response_generator:
                 logger.warning("Response generator not available, falling back to search results")
                 if not search_results:
-                    search_results = self.search(query, top_k=top_k, language=language, use_reranking=use_reranking)
+                    search_results = await self.search(query, top_k=top_k, language=language, use_reranking=use_reranking)
                 # Return fallback response as a single chunk
                 fallback_response = self.response_generator._format_fallback_response(query, search_results)
                 yield fallback_response
@@ -709,7 +747,7 @@ class RAGSystem:
             # Fallback to search results only
             try:
                 if not search_results:
-                    search_results = self.search(query, top_k=top_k, language=language, use_reranking=use_reranking)
+                    search_results = await self.search(query, top_k=top_k, language=language, use_reranking=use_reranking)
                 fallback_response = self.response_generator._format_fallback_response(query, search_results, language)
                 yield fallback_response
             except Exception as fallback_error:

@@ -1949,7 +1949,7 @@
     "original_index": 92
   },
   {
-    "content": "01076420 ADVANCED DIGITAL DESIGN USING HDL PREREQUISITE: 01076112 DIGITAL SYSTEM FUNDAMENTALS This course covers the systematic design of advanced digital systems using field- programmable gate arrays (FPGAs). The emphasis is on top-down design starting with a software application and translating it to high-level models using a hardware description language (such as VHDL or Verilog).",
+    "content": "01076420 ADVANCED DIGITAL DESIGN USING HDL PREREQUISITE: 01076112 DIGITAL SYSTEM FUNDAMENTALS This course covers the systematic design of advanced digital systems using field-programmable gate arrays (FPGAs). The emphasis is on top-down design starting with a software application and translating it to high-level models using a hardware description language (such as VHDL or Verilog).",
     "metadata": {
       "course_name": "ADVANCED DIGITAL DESIGN USING HDL",
       "course_code": "01076420",

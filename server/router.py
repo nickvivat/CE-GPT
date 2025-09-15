@@ -196,7 +196,7 @@ async def generate_response(request: GenerateRequest):
             language = request.language
         
         # First, search for relevant courses to get sources
-        search_results = rag_system.search(
+        search_results = await rag_system.search(
             query=request.query,
             top_k=request.top_k,
             language=language,
@@ -206,7 +206,7 @@ async def generate_response(request: GenerateRequest):
         logger.info(f"Found {len(search_results)} search results for query: {request.query}")
         
         # Generate response using the search results
-        response = rag_system.generate_response(
+        response = await rag_system.generate_response(
             query=request.query,
             top_k=request.top_k,
             language=request.language,
@@ -259,7 +259,7 @@ async def generate_response_stream(request: GenerateRequest):
             language = request.language
         
         # Search for relevant courses to get sources
-        search_results = rag_system.search(
+        search_results = await rag_system.search(
             query=request.query,
             top_k=request.top_k,
             language=language,
@@ -274,24 +274,20 @@ async def generate_response_stream(request: GenerateRequest):
                 # Send initial status
                 yield f"data: {json.dumps({'type': 'status', 'message': 'Starting generation...'})}\n\n"
                 
-                # Get streaming response from RAG system
-                response_stream = rag_system.generate_response_stream(
+                # Send search results info
+                yield f"data: {json.dumps({'type': 'search_results', 'count': len(search_results)})}\n\n"
+                
+                # Get streaming response from RAG system and iterate over it
+                async for chunk in rag_system.generate_response_stream(
                     query=request.query,
                     top_k=request.top_k,
                     language=request.language,
                     use_reranking=request.use_reranking,
                     search_results=search_results
-                )
-                
-                # Send search results info
-                yield f"data: {json.dumps({'type': 'search_results', 'count': len(search_results)})}\n\n"
-                
-                # Stream the response chunks
-                if response_stream:
-                    for chunk in response_stream:
-                        if chunk:
-                            yield f"data: {json.dumps({'type': 'chunk', 'content': chunk})}\n\n"
-                            await asyncio.sleep(0.01)  # Small delay for smooth streaming
+                ):
+                    if chunk:
+                        yield f"data: {json.dumps({'type': 'chunk', 'content': chunk})}\n\n"
+                        await asyncio.sleep(0.01)  # Small delay for smooth streaming
                 
                 # Send completion signal
                 yield f"data: {json.dumps({'type': 'complete', 'message': 'Generation complete'})}\n\n"
@@ -380,22 +376,6 @@ async def clear_conversation_context(rag: RAGSystem = Depends(get_rag_system)):
         raise HTTPException(status_code=500, detail=f"Failed to clear conversation context: {str(e)}")
 
 
-@router.get("/docs", summary="API Documentation")
-async def get_api_docs():
-    """Get API documentation."""
-    return {"message": "API documentation available at /docs endpoint"}
-
-
-@router.get("/test", summary="Test Endpoint")
-async def test_endpoint():
-    """Simple test endpoint for debugging."""
-    return {
-        "message": "API is working!",
-        "timestamp": time.time(),
-        "status": "success"
-    }
-
-
 @router.get("/", summary="API Root")
 async def api_root():
     """API root endpoint."""
@@ -409,6 +389,7 @@ async def api_root():
             "generate": "/api/v1/generate",
             "generate_stream": "/api/v1/generate/stream",
             "performance": "/api/v1/performance",
-            "docs": "/docs"
+            "docs": "/docs",
+            "redoc": "/redoc"
         }
     }
