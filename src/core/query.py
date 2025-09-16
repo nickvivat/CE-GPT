@@ -131,7 +131,7 @@ class Query:
                     "options": {
                         "temperature": temperature,
                         "top_p": 0.9,
-                        "max_tokens": 500
+                        "max_tokens": 150
                     }
                 }
                 
@@ -189,7 +189,7 @@ class Query:
                     "options": {
                         "temperature": temperature,
                         "top_p": 0.9,
-                        "max_tokens": 200
+                        "max_tokens": 150
                     }
                 }
                 

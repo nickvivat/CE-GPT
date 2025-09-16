@@ -33,10 +33,7 @@
       "Software Engineering",
       "Database Systems"
     ],
-    "teaching": [
-      "Computer Programming 1",
-      "Computer Programming 2"
-    ],
+    "teaching": ["Computer Programming 1", "Computer Programming 2"],
     "textbooks": []
   },
   {
@@ -47,14 +44,8 @@
       "วศ.บ. (วิศวกรรมคอมพิวเตอร์) สถาบันเทคโนโลยีพระจอมเกล้าเจ้าคุณทหารลาดกระบัง, 2540",
       "วศ.ม. (วิศวกรรมคอมพิวเตอร์) สถาบันเทคโนโลยีพระจอมเกล้าเจ้าคุณทหารลาดกระบัง, 2557"
     ],
-    "research_areas": [
-      "Computer Security",
-      "Network Security"
-    ],
-    "teaching": [
-      "Computer Programming 1",
-      "Theory of Computational"
-    ],
+    "research_areas": ["Computer Security", "Network Security"],
+    "teaching": ["Computer Programming 1", "Theory of Computational"],
     "textbooks": []
   },
   {
@@ -70,10 +61,7 @@
       "Network Security",
       "Optical Computing"
     ],
-    "teaching": [
-      "Network Security",
-      "Computer Programming"
-    ],
+    "teaching": ["Network Security", "Computer Programming"],
     "textbooks": ["Computers and Programming C and Java"]
   },
   {
@@ -84,14 +72,8 @@
       "วศ.บ. (วิศวกรรมอิเล็กทรอนิกส์) สถาบันเทคโนโลยีพระจอมเกล้าเจ้าคุณทหารลาดกระบัง, 2542",
       "วศ.ม. (วิศวกรรมอิเล็กทรอนิกส์) สถาบันเทคโนโลยีพระจอมเกล้าเจ้าคุณทหารลาดกระบัง, 2544"
     ],
-    "research_areas": [
-      "Human Computer Interaction",
-      "Virtual Reality"
-    ],
-    "teaching": [
-      "Computer Programming",
-      "Human Computer Interaction"
-    ],
+    "research_areas": ["Human Computer Interaction", "Virtual Reality"],
+    "teaching": ["Computer Programming", "Human Computer Interaction"],
     "textbooks": []
   },
   {
@@ -102,10 +84,7 @@
       "M.S. (Electrical and Computer Engineering) Oregon State University, USA, 2527",
       "วศ.บ. (วิศวกรรมไฟฟ้า) มหาวิทยาลัยเกษตรศาสตร์, 2524"
     ],
-    "research_areas": [
-      "Machine Learning",
-      "Pattern Recognition"
-    ],
+    "research_areas": ["Machine Learning", "Pattern Recognition"],
     "teaching": [],
     "textbooks": []
   },
@@ -165,7 +144,7 @@
   {
     "entity_type": "professor",
     "name": "รศ.ดร.เจริญ วงษ์ชุ่มเย็น",
-    "degrees": [  
+    "degrees": [
       "วศ.ด. (วิศวกรรมไฟฟ้า) สถาบันเทคโนโลยีพระจอมเกล้าเจ้าคุณทหารลาดกระบัง",
       "วศ.บ. (วิศวกรรมคอมพิวเตอร์) (เกียรตินิยม) สถาบันเทคโนโลยีพระจอมเกล้าเจ้าคุณทหารลาดกระบัง, 2541",
       "วศ.ม. (วิศวกรรมไฟฟ้า) สถาบันเทคโนโลยีพระจอมเกล้าเจ้าคุณทหารลาดกระบัง, 2544"
@@ -177,7 +156,9 @@
       "Optical Communication"
     ],
     "teaching": [],
-    "textbooks": ["การออกแบบไอซีดิจิตอลด้วย FPGA และ CPLD ภาคปฏิบัติโดยใช้ภาษา VHDL"]
+    "textbooks": [
+      "การออกแบบไอซีดิจิตอลด้วย FPGA และ CPLD ภาคปฏิบัติโดยใช้ภาษา VHDL"
+    ]
   },
   {
     "entity_type": "professor",
@@ -252,11 +233,7 @@
       "M.S. (Computer Engineering) Syracuse University, USA, 2539",
       "วศ.บ. (วิศวกรรมไฟฟ้า) มหาวิทยาลัยเกษตรศาสตร์, 2533"
     ],
-    "research_areas": [
-      "Data Analytics",
-      "Data Mining",
-      "Machine Learning"
-    ],
+    "research_areas": ["Data Analytics", "Data Mining", "Machine Learning"],
     "teaching": [],
     "textbooks": []
   },
@@ -291,7 +268,9 @@
       "Remote Sensing"
     ],
     "teaching": [],
-    "textbooks": ["Advanced Image Processing Techniques for Remote Sensed Hyperspectral Data. Springer-Verlag, 2004"]
+    "textbooks": [
+      "Advanced Image Processing Techniques for Remote Sensed Hyperspectral Data. Springer-Verlag, 2004"
+    ]
   },
   {
     "entity_type": "professor",
@@ -301,10 +280,7 @@
       "วศ.ม. (วิศวกรรมไฟฟ้า) สถาบันเทคโนโลยีพระจอมเกล้าเจ้าคุณทหารลาดกระบัง, 2545",
       "วศ.บ. (วิศวกรรมโทรคมนาคม) สถาบันเทคโนโลยีพระจอมเกล้าเจ้าคุณทหารลาดกระบัง, 2541"
     ],
-    "research_areas": [
-      "Computer Networks",
-      "Image Processing"
-    ],
+    "research_areas": ["Computer Networks", "Image Processing"],
     "teaching": [],
     "textbooks": []
   },
@@ -316,10 +292,7 @@
       "M.Eng. (Information Management), Asian Institute of Technology, 2555",
       "วศ.บ. (วิศวกรรมคอมพิวเตอร์) สถาบันเทคโนโลยีพระจอมเกล้าเจ้าคุณทหารลาดกระบัง, 2531"
     ],
-    "research_areas": [
-      "Data Science",
-      "User Experience"
-    ],
+    "research_areas": ["Data Science", "User Experience"],
     "teaching": [],
     "textbooks": []
   },
@@ -330,10 +303,7 @@
       "วศ.ม. (วิศวกรรมคอมพิวเตอร์) สถาบันเทคโนโลยีพระจอมเกล้าเจ้าคุณทหารลาดกระบัง, 2538",
       "วศ.บ. (วิศวกรรมคอมพิวเตอร์) สถาบันเทคโนโลยีพระจอมเกล้าเจ้าคุณทหารลาดกระบัง, 2531"
     ],
-    "research_areas": [
-      "Embedded Systems",
-      "Internet of Things"
-    ],
+    "research_areas": ["Embedded Systems", "Internet of Things"],
     "teaching": [],
     "textbooks": []
   },
@@ -344,9 +314,7 @@
       "วศ.ม. (วิศวกรรมไฟฟ้า) สถาบันเทคโนโลยีพระจอมเกล้าเจ้าคุณทหารลาดกระบัง, 2544",
       "วท.บ. (คณิตศาสตร์) สถาบันเทคโนโลยีพระจอมเกล้าเจ้าคุณทหารลาดกระบัง, 2534"
     ],
-    "research_areas": [
-      "Information Retrieval"
-    ],
+    "research_areas": ["Information Retrieval"],
     "teaching": [],
     "textbooks": []
   },
@@ -357,9 +325,7 @@
       "วศ.ม. (วิศวกรรมไฟฟ้า) สถาบันเทคโนโลยีพระจอมเกล้าเจ้าคุณทหารลาดกระบัง, 2546",
       "วศ.บ. (วิศวกรรมไฟฟ้า) มหาวิทยาลัยธรรมศาสตร์, 2541"
     ],
-    "research_areas": [
-      "Pattern Recognition"
-    ],
+    "research_areas": ["Pattern Recognition"],
     "teaching": [],
     "textbooks": []
   },
@@ -388,11 +354,7 @@
       "M.Eng. (Electrical and Computer Engineering) Carnegie Mellon University, USA, 2553",
       "Ph.D. (Electrical and Computer Engineering) Carnegie Mellon University, USA, 2556"
     ],
-    "research_areas": [
-      "Cloud Computing",
-      "Distributed System",
-      "Smart System"
-    ],
+    "research_areas": ["Cloud Computing", "Distributed System", "Smart System"],
     "teaching": [],
     "textbooks": []
   },
@@ -404,9 +366,7 @@
       "วศ.ม. (วิศวกรรมโทรคมนาคม) สถาบันเทคโนโลยีพระจอมเกล้าเจ้าคุณทหารลาดกระบัง, 2546",
       "วศ.บ. (วิศวกรรมโทรคมนาคม) มหาวิทยาลัยเทคโนโลยีสุรนารี, 2544"
     ],
-    "research_areas": [
-      "Image Processing"
-    ],
+    "research_areas": ["Image Processing"],
     "teaching": [],
     "textbooks": []
   },
@@ -417,11 +377,7 @@
       "B.Eng.-M.Eng. Electrical and Computer Engineering Carnegie Mellon University, USA, 2548",
       "Ph.D. Electrical and Computer Engineering Carnegie Mellon University, USA, 2556"
     ],
-    "research_areas": [
-      "Cloud Computing",
-      "Cyber Security",
-      "Smart System"
-    ],
+    "research_areas": ["Cloud Computing", "Cyber Security", "Smart System"],
     "teaching": [
       "Operating Systems",
       "Unix Operating Systems",
@@ -435,9 +391,7 @@
       "M.S. (Computer Science) University of New South Wales, Australia, 2544",
       "วศ.บ. (อิเล็กทรอนิกส์) สถาบันเทคโนโลยีพระจอมเกล้าเจ้าคุณทหารลาดกระบัง, 2530"
     ],
-    "research_areas": [
-      "Analysis of Algorithms"
-    ],
+    "research_areas": ["Analysis of Algorithms"],
     "teaching": [],
     "textbooks": []
   },
@@ -448,9 +402,414 @@
       "วศ.บ. (วิศวกรรมคอมพิวเตอร์) สถาบันเทคโนโลยีพระจอมเกล้าเจ้าคุณทหารลาดกระบัง, 2542",
       "วศ.ม. (วิศวกรรมคอมพิวเตอร์) สถาบันเทคโนโลยีพระจอมเกล้าเจ้าคุณทหารลาดกระบัง, 2548"
     ],
-    "research_areas": [
-      "Information Retrieval"
+    "research_areas": ["Information Retrieval"],
+    "teaching": [],
+    "textbooks": []
+  },
+  {
+    "entity_type": "professor",
+    "name": "Prof. Sorayuth Klomklom",
+    "degrees": [
+      "B.Eng. (Computer Engineering), King Mongkut's Institute of Technology Ladkrabang, 2001",
+      "M.Eng. (Computer Engineering), King Mongkut's Institute of Technology Ladkrabang, 2011"
     ],
+    "research_areas": [
+      "Cyber-Physical Systems",
+      "Embedded System",
+      "Hardware",
+      "Internet of Things",
+      "Software Codesign"
+    ],
+    "teaching": [
+      "Computer Architecture",
+      "Computer Programming",
+      "Computer Interfacing"
+    ],
+    "textbooks": []
+  },
+  {
+    "entity_type": "professor",
+    "name": "Prof. Wiboon Prompanich",
+    "degrees": [
+      "M.Eng. (Computer Technology), Asian Institute of Technology, Thailand, 1991",
+      "B.Eng. (Electrical Engineering), King Mongkut's Institute of Technology Ladkrabang, 1984"
+    ],
+    "research_areas": [
+      "GIS",
+      "Object Technology",
+      "Software Engineering",
+      "Database Systems"
+    ],
+    "teaching": ["Computer Programming 1", "Computer Programming 2"],
+    "textbooks": []
+  },
+  {
+    "entity_type": "professor",
+    "name": "Prof. Akaradaj Wacharapupong",
+    "degrees": [
+      "B.Eng. (Computer Engineering), King Mongkut's Institute of Technology Ladkrabang, 1997",
+      "M.Eng. (Computer Engineering), King Mongkut's Institute of Technology Ladkrabang, 2014"
+    ],
+    "research_areas": ["Computer Security", "Network Security"],
+    "teaching": ["Computer Programming 1", "Theory of Computational"],
+    "textbooks": []
+  },
+  {
+    "entity_type": "professor",
+    "name": "Prof. Thananchai Treepak",
+    "degrees": [
+      "B.Eng. (Computer Engineering) (First Class Honors), King Mongkut's Institute of Technology Ladkrabang, 1999",
+      "M.Eng. (Computer Engineering), King Mongkut's Institute of Technology Ladkrabang, 2003",
+      "D.Eng. (Electrical Engineering), King Mongkut's Institute of Technology Ladkrabang, 2011"
+    ],
+    "research_areas": [
+      "Computer Networks",
+      "Network Security",
+      "Optical Computing"
+    ],
+    "teaching": ["Network Security", "Computer Programming"],
+    "textbooks": ["Computers and Programming C and Java"]
+  },
+  {
+    "entity_type": "professor",
+    "name": "Prof. Chompoonut Jinchakam",
+    "degrees": [
+      "D.Eng. (Science and Technology), Tokai University, Japan, 2013",
+      "B.Eng. (Electronics Engineering), King Mongkut's Institute of Technology Ladkrabang, 1999",
+      "M.Eng. (Electronics Engineering), King Mongkut's Institute of Technology Ladkrabang, 2001"
+    ],
+    "research_areas": ["Human Computer Interaction", "Virtual Reality"],
+    "teaching": ["Computer Programming", "Human Computer Interaction"],
+    "textbooks": []
+  },
+  {
+    "entity_type": "professor",
+    "name": "Prof. Boonthe Kreuatrachue",
+    "degrees": [
+      "Ph.D. (Electrical and Computer Engineering), Oregon State University, USA, 1987",
+      "M.S. (Electrical and Computer Engineering), Oregon State University, USA, 1984",
+      "B.Eng. (Electrical Engineering), Kasetsart University, 1981"
+    ],
+    "research_areas": ["Machine Learning", "Pattern Recognition"],
+    "teaching": [],
+    "textbooks": []
+  },
+  {
+    "entity_type": "professor",
+    "name": "Prof. Somsak Mittatha",
+    "degrees": [
+      "D.Eng. (Electrical Engineering), King Mongkut's Institute of Technology Ladkrabang, 2009",
+      "M.Eng. (Electrical Engineering), King Mongkut's Institute of Technology Ladkrabang, 1995",
+      "B.Tech. (Television Technology), King Mongkut's Institute of Technology Ladkrabang, 1987"
+    ],
+    "research_areas": [
+      "Computer System Design",
+      "Embedded System Application",
+      "Microcontroller Application",
+      "Optical Logic Gate",
+      "Pattern Recognition"
+    ],
+    "teaching": [],
+    "textbooks": ["Digital and Logic Circuit Design"]
+  },
+  {
+    "entity_type": "professor",
+    "name": "Prof. Orachart Jitsobhak",
+    "degrees": [
+      "Ph.D. (Computer Engineering), University of Texas at Arlington, USA, 2001 - Visual Analytics",
+      "M.S. (Computer Engineering), Arizona State University, USA, 1997",
+      "B.Eng. (Electronics Engineering), King Mongkut's Institute of Technology Ladkrabang, 1991"
+    ],
+    "research_areas": [
+      "3D Reconstruction and Modelling",
+      "Image Registration",
+      "Image Retrieval and Indexing",
+      "Image and Video Compression",
+      "Parallel Processing GPU",
+      "Text Mining"
+    ],
+    "teaching": [],
+    "textbooks": ["Digital Image Processing (Theory of Image Processing)"]
+  },
+  {
+    "entity_type": "professor",
+    "name": "Prof. Kiattikool Chianaitanakij",
+    "degrees": [
+      "D.Eng. (Electrical Engineering), King Mongkut's Institute of Technology Ladkrabang, 2009",
+      "M.S. (Computer Science), Oregon State University, USA, 1999",
+      "B.Eng. (Computer Engineering), King Mongkut's Institute of Technology Ladkrabang, 1995"
+    ],
+    "research_areas": [
+      "Artificial neural networks",
+      "Genetic Algorithms",
+      "Particle Swarm Optimization"
+    ],
+    "teaching": [],
+    "textbooks": ["Theory of Computation"]
+  },
+  {
+    "entity_type": "professor",
+    "name": "Prof. Charoen Wongchumyen",
+    "degrees": [
+      "D.Eng. (Electrical Engineering), King Mongkut's Institute of Technology Ladkrabang",
+      "B.Eng. (Computer Engineering) (First Class Honors), King Mongkut's Institute of Technology Ladkrabang, 1998",
+      "M.Eng. (Electrical Engineering), King Mongkut's Institute of Technology Ladkrabang, 2001"
+    ],
+    "research_areas": [
+      "Computer System Design",
+      "Embedded System",
+      "Microcontroller Application",
+      "Optical Communication"
+    ],
+    "teaching": [],
+    "textbooks": [
+      "Digital IC Design with FPGA and CPLD Practical with VHDL Language"
+    ]
+  },
+  {
+    "entity_type": "professor",
+    "name": "Prof. Sakchai Thipjaksurat",
+    "degrees": [
+      "Ph.D. (Electronics and Computer Engineering), Gunma University, Japan, 2002",
+      "M.Eng. (Electrical Engineering), King Mongkut's Institute of Technology Ladkrabang, 1996",
+      "B.Sc. (Statistics), Srinakharinwirot University Prasarnmit, 1988"
+    ],
+    "research_areas": [
+      "Computer Networks",
+      "Mobile Communications",
+      "Queuing Theory",
+      "Wireless Information Networks"
+    ],
+    "teaching": [],
+    "textbooks": []
+  },
+  {
+    "entity_type": "professor",
+    "name": "Prof. Somsak Walaichat",
+    "degrees": [
+      "Ph.D. (Computational Intelligence and Systems Science), Tokyo Institute of Technology, Japan, 2001",
+      "M.Eng. (Electrical Engineering), King Mongkut's Institute of Technology Ladkrabang, 1994",
+      "B.Sc. (Mathematics), Ramkhamhaeng University, 1985"
+    ],
+    "research_areas": [
+      "Computer Graphics",
+      "Multimedia Systems",
+      "Virtual Reality"
+    ],
+    "teaching": [],
+    "textbooks": []
+  },
+  {
+    "entity_type": "professor",
+    "name": "Prof. Wisit Hirankitti",
+    "degrees": [
+      "Ph.D. (Computer Science), DIC, Imperial College of Science, Technology and Medicine, University of London, UK, 1998 - Intelligent Transportation System",
+      "B.Eng. (Computer Engineering) (First Class Honors), King Mongkut's Institute of Technology Ladkrabang, 1989"
+    ],
+    "research_areas": [
+      "Artificial Intelligence",
+      "Software Engineering",
+      "Semantic Web",
+      "Intelligent Agent"
+    ],
+    "teaching": [],
+    "textbooks": []
+  },
+  {
+    "entity_type": "professor",
+    "name": "Prof. Aranya Walaichat",
+    "degrees": [
+      "D.Eng. (Electronics), Tokai University, Japan, 2002",
+      "M.Eng. (Electrical Engineering), King Mongkut's Institute of Technology Ladkrabang, 1994",
+      "B.Sc. (Physics) (First Class Honors), Srinakharinwirot University Bangsaen, 1989"
+    ],
+    "research_areas": [
+      "Artificial Intelligence",
+      "Genetic Algorithm",
+      "Machine Translation"
+    ],
+    "teaching": [],
+    "textbooks": ["Principles of Win32 and MFC Programming"]
+  },
+  {
+    "entity_type": "professor",
+    "name": "Prof. Chutimet Sreenil",
+    "degrees": [
+      "Ph.D. (Computer Engineering), Syracuse University, USA, 1998",
+      "M.S. (Computer Engineering), Syracuse University, USA, 1996",
+      "B.Eng. (Electrical Engineering), Kasetsart University, 1990"
+    ],
+    "research_areas": ["Data Analytics", "Data Mining", "Machine Learning"],
+    "teaching": [],
+    "textbooks": []
+  },
+  {
+    "entity_type": "professor",
+    "name": "Prof. Surin Kittithorakul",
+    "degrees": [
+      "Ph.D.E.E. (Computer Engineering), University of Wisconsin, USA, 2002 - VLSI/FPGA Design - Video/Image Processing",
+      "M.S.E.E. (Computer Engineering), University of Wisconsin, USA, 1997",
+      "M.Eng. (Telecommunications Engineering), Asian Institute of Technology, 1995",
+      "B.Eng. (Electronics Engineering), King Mongkut's Institute of Technology Ladkrabang, 1992"
+    ],
+    "research_areas": [
+      "Computer Architecture",
+      "High-Level Synthesis",
+      "Reconfigurable Computing"
+    ],
+    "teaching": [],
+    "textbooks": ["Computer Operating Systems"]
+  },
+  {
+    "entity_type": "professor",
+    "name": "Prof. Pakorn Wattanajaturaporn",
+    "degrees": [
+      "Ph.D. (Computer Engineering), Syracuse University, USA, 2005",
+      "B.Eng. (Computer Engineering) (First Class Honors), King Mongkut's Institute of Technology Ladkrabang, 1994"
+    ],
+    "research_areas": [
+      "Distributed Computing",
+      "Image Processing",
+      "Pattern Recognition",
+      "Remote Sensing"
+    ],
+    "teaching": [],
+    "textbooks": [
+      "Advanced Image Processing Techniques for Remote Sensed Hyperspectral Data. Springer-Verlag, 2004"
+    ]
+  },
+  {
+    "entity_type": "professor",
+    "name": "Prof. Amnart Khaone",
+    "degrees": [
+      "D.Eng. (Science and Technology), Tokai University, Japan, 2002",
+      "M.Eng. (Electrical Engineering), King Mongkut's Institute of Technology Ladkrabang, 2002",
+      "B.Eng. (Telecommunications Engineering), King Mongkut's Institute of Technology Ladkrabang, 1998"
+    ],
+    "research_areas": ["Computer Networks", "Image Processing"],
+    "teaching": [],
+    "textbooks": []
+  },
+  {
+    "entity_type": "professor",
+    "name": "Prof. Rattchai Chaouthai",
+    "degrees": [
+      "Ph.D. (Informatics), SOKENDAI, Japan, 2016",
+      "M.Eng. (Information Management), Asian Institute of Technology, 2012",
+      "B.Eng. (Computer Engineering), King Mongkut's Institute of Technology Ladkrabang, 1988"
+    ],
+    "research_areas": ["Data Science", "User Experience"],
+    "teaching": [],
+    "textbooks": []
+  },
+  {
+    "entity_type": "professor",
+    "name": "Prof. Thana Hongsuwan",
+    "degrees": [
+      "M.Eng. (Computer Engineering), King Mongkut's Institute of Technology Ladkrabang, 1995",
+      "B.Eng. (Computer Engineering), King Mongkut's Institute of Technology Ladkrabang, 1988"
+    ],
+    "research_areas": ["Embedded Systems", "Internet of Things"],
+    "teaching": [],
+    "textbooks": []
+  },
+  {
+    "entity_type": "professor",
+    "name": "Prof. Bundit Passaya",
+    "degrees": [
+      "M.Eng. (Electrical Engineering), King Mongkut's Institute of Technology Ladkrabang, 2001",
+      "B.Sc. (Mathematics), King Mongkut's Institute of Technology Ladkrabang, 1991"
+    ],
+    "research_areas": ["Information Retrieval"],
+    "teaching": [],
+    "textbooks": []
+  },
+  {
+    "entity_type": "professor",
+    "name": "Prof. Wajanapong Kasemsiri",
+    "degrees": [
+      "M.Eng. (Electrical Engineering), King Mongkut's Institute of Technology Ladkrabang, 2003",
+      "B.Eng. (Electrical Engineering), Thammasat University, 1998"
+    ],
+    "research_areas": ["Pattern Recognition"],
+    "teaching": [],
+    "textbooks": []
+  },
+  {
+    "entity_type": "professor",
+    "name": "Prof. Watchara Chartwiriya",
+    "degrees": [
+      "Ph.D. (Computer Engineering), West Virginia University, USA, 2003",
+      "M.Eng. (Computer Engineering), King Mongkut's Institute of Technology Ladkrabang, 1993",
+      "B.Eng. (Computer Engineering), King Mongkut's Institute of Technology Ladkrabang, 1986"
+    ],
+    "research_areas": [
+      "Business Intelligence",
+      "Embedded Systems",
+      "Pattern Recognition"
+    ],
+    "teaching": [],
+    "textbooks": ["Learning Assembly to the Principles of Programming"]
+  },
+  {
+    "entity_type": "professor",
+    "name": "Prof. Akkarit Sangkpet",
+    "degrees": [
+      "B.S. (Computer Science), Carnegie Mellon University, USA, 2005",
+      "B.Eng. (Electrical and Computer Engineering), Carnegie Mellon University, USA, 2005",
+      "M.Eng. (Electrical and Computer Engineering), Carnegie Mellon University, USA, 2010",
+      "Ph.D. (Electrical and Computer Engineering), Carnegie Mellon University, USA, 2013"
+    ],
+    "research_areas": ["Cloud Computing", "Distributed System", "Smart System"],
+    "teaching": [],
+    "textbooks": []
+  },
+  {
+    "entity_type": "professor",
+    "name": "Prof. Jirasak Sittikorn",
+    "degrees": [
+      "D.Eng. (Electrical Engineering), King Mongkut's Institute of Technology Ladkrabang, 2015",
+      "M.Eng. (Telecommunications Engineering), King Mongkut's Institute of Technology Ladkrabang, 2003",
+      "B.Eng. (Telecommunications Engineering), Suranaree University of Technology, 2001"
+    ],
+    "research_areas": ["Image Processing"],
+    "teaching": [],
+    "textbooks": []
+  },
+  {
+    "entity_type": "professor",
+    "name": "Prof. Orathai Sangkpet",
+    "degrees": [
+      "B.Eng.-M.Eng. Electrical and Computer Engineering, Carnegie Mellon University, USA, 2005",
+      "Ph.D. Electrical and Computer Engineering, Carnegie Mellon University, USA, 2013"
+    ],
+    "research_areas": ["Cloud Computing", "Cyber Security", "Smart System"],
+    "teaching": [
+      "Operating Systems",
+      "Unix Operating Systems",
+      "Cloud Computing"
+    ],
+    "textbooks": []
+  },
+  {
+    "entity_type": "professor",
+    "name": "Prof. Kanat Tangtisanont",
+    "degrees": [
+      "M.S. (Computer Science), University of New South Wales, Australia, 2001",
+      "B.Eng. (Electronics), King Mongkut's Institute of Technology Ladkrabang, 1987"
+    ],
+    "research_areas": ["Analysis of Algorithms"],
+    "teaching": [],
+    "textbooks": []
+  },
+  {
+    "entity_type": "professor",
+    "name": "Prof. Kiattinarong Thongprasert",
+    "degrees": [
+      "B.Eng. (Computer Engineering), King Mongkut's Institute of Technology Ladkrabang, 1999",
+      "M.Eng. (Computer Engineering), King Mongkut's Institute of Technology Ladkrabang, 2005"
+    ],
+    "research_areas": ["Information Retrieval"],
     "teaching": [],
     "textbooks": []
   }

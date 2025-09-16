@@ -381,32 +381,27 @@ class RAGSystem:
         professor_keywords = ['who', 'teach', 'teaches', 'instructor', 'professor', 'อาจารย์', 'สอน', 'who is', 'who are']
         is_professor_query = any(keyword in query_lower for keyword in professor_keywords)
         
-        # Log all professor data for debugging
-        if is_professor_query:
-            professor_chunks = [chunk for chunk in self.chunks if getattr(chunk, 'data_type', chunk.metadata.get('data_type', 'unknown')) == 'professor']
-        
         # Use circuit breaker for critical operations
         async def _perform_search():
-            current_query = query  # Store the original query
+            current_query = query
             enhanced_query = None
             metadata = None
             classification = None
             detected_language = None
             
-            # Step 1: Query Enhancement with timing (now async with metadata)
             query_enhancement_start = time.time()
             try:
-                if self.use_query_enhancement and self.query and hasattr(self.query, 'available') and self.query.available:
+                if is_professor_query:
+                    logger.info("Professor query detected, skipping query enhancement")
+                    classification = "professor_skip_enhancement"
+                elif self.use_query_enhancement and self.query and hasattr(self.query, 'available') and self.query.available:
                     enhanced_query, metadata = await self.query.enhance_query_async(current_query, self.conversation_context)
                     
-                    # Check if query was classified as conversational or external
                     if enhanced_query == current_query and metadata and metadata.get("query_intent") in ["conversational", "external"]:
-                        # Query was classified as 'pass' or 'external', return empty results
                         logger.info(f"Query classified as {metadata.get('query_intent')}, returning empty results")
                         classification = metadata.get("query_intent", "pass")
                         return []
                     
-                    # Query was enhanced, use the enhanced version
                     current_query = enhanced_query
                     classification = "enhanced"
                 
@@ -437,17 +432,11 @@ class RAGSystem:
                 )
                 logger.error(f"Query enhancement failed: {e}")
             
-            # Step 2: Language Detection
-            if is_professor_query:
-                detected_language = None  # Disable language filtering for professor queries
-                logger.info("Professor query detected, disabling language filtering for better cross-language matching")
-            else:
-                detected_language = language
-                if not detected_language:
-                    detected_language = self._detect_language(query)
-                    logger.info(f"Auto-detected language: {detected_language} for original query: '{query}'")
+            detected_language = language
+            if not detected_language:
+                detected_language = self._detect_language(query)
+                logger.info(f"Auto-detected language: {detected_language} for original query: '{query}'")
             
-            # Step 3: Embedding and Vector Search with timing
             embedding_search_start = time.time()
             try:
                 self.last_query = current_query
@@ -499,6 +488,8 @@ class RAGSystem:
                 
                 if not filter_metadata:
                     logger.info("No filters applied - searching all data")
+                else:
+                    logger.info(f"Final filter metadata: {filter_metadata}")
                 
                 similarities, indices = self.vector_store.search(query_embedding, top_k=top_k, filter_metadata=filter_metadata if filter_metadata else None)
                 
@@ -548,7 +539,6 @@ class RAGSystem:
                     }
                     results.append(result)
             
-            # Step 4: Reranking with timing
             if use_reranking and self.use_reranker and self.reranker:
                 reranking_start = time.time()
                 try:
@@ -826,9 +816,8 @@ class RAGSystem:
             return False
 
     def _detect_language(self, text: str) -> str:
-        """Detect if text is Thai or English"""
-        thai_chars = set('กขคงจฉชซฌญฎฏฐฑฒณดตถทธนบปผฝพฟภมยรลวศษสหฬอฮะาิีึืุูเแโใไๆ')
-        text_chars = set(text)
-        if text_chars.intersection(thai_chars):
+        """Detect if text is Thai or English using ASCII check"""
+        # If any character is not ASCII, assume it's Thai (or non-English)
+        if any(ord(c) > 127 for c in text):
             return "th"
         return "en"

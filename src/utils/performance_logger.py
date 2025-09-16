@@ -50,8 +50,6 @@ class CSVPerformanceLogger:
         # Initialize CSV files with headers
         self._initialize_csv_files()
         
-        logger.info(f"CSV Performance Logger initialized. Log files: {list(self.csv_files.values())}")
-    
     def _initialize_csv_files(self):
         """Initialize CSV files with proper headers (without session_id)"""
         headers = {

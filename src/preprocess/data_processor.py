@@ -241,6 +241,21 @@ class ProfessorDataHandler(BaseDataTypeHandler):
     
     def create_metadata(self, item: Dict[str, Any]) -> Dict[str, Any]:
         """Create metadata for professor"""
+        # Detect language based on content - only label as Thai if it contains Thai characters
+        content_text = " ".join([
+            item.get('name', ''),
+            " ".join(item.get('degrees', [])),
+            " ".join(item.get('research_areas', [])),
+            " ".join(item.get('teaching', [])),
+            " ".join(item.get('textbooks', []))
+        ])
+        
+        # Check if content contains any Thai characters
+        has_thai = any('\u0e00' <= char <= '\u0e7f' for char in content_text)
+        
+        # Only label as Thai if it actually contains Thai characters
+        language = 'th' if has_thai else 'en'
+        
         metadata = {
             'data_type': 'professor',
             'name': item.get('name', ''),
@@ -248,9 +263,8 @@ class ProfessorDataHandler(BaseDataTypeHandler):
             'teaching_subjects': item.get('teaching', []),
             'textbooks': item.get('textbooks', []),
             'degrees': item.get('degrees', []),
-            'language': 'en'  # Set to English for better searchability
+            'language': language
         }
-        
         
         return metadata
 
