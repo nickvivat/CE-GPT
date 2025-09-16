@@ -309,9 +309,7 @@
       "course_name": "การเตรียมโครงงานวิศวกรรมคอมพิวเตอร์",
       "course_code": "01076016",
       "language": "th",
-      "focus_areas": [
-        "Specialized/Applied Practice"
-      ],
+      "focus_areas": ["Specialized/Applied Practice"],
       "career_tracks": [
         "AI & Data Science",
         "Cybersecurity & Privacy",
@@ -331,9 +329,7 @@
       "course_name": "COMPUTER ENGINEERING PROJECT PREPARATION",
       "course_code": "01076016",
       "language": "en",
-      "focus_areas": [
-        "Specialized/Applied Practice"
-      ],
+      "focus_areas": ["Specialized/Applied Practice"],
       "career_tracks": [
         "AI & Data Science",
         "Cybersecurity & Privacy",
@@ -869,9 +865,7 @@
       "course_name": "ทฤษฎีการคํานวณ",
       "course_code": "01076121",
       "language": "th",
-      "focus_areas": [
-        "Foundations of Mathematics & Logic"
-      ],
+      "focus_areas": ["Foundations of Mathematics & Logic"],
       "career_tracks": ["AI & Data Science", "Research & Academia"]
     },
     "chunk_id": "01076121_46",
@@ -883,9 +877,7 @@
       "course_name": "THEORY OF COMPUTATION",
       "course_code": "01076121",
       "language": "en",
-      "focus_areas": [
-        "Foundations of Mathematics & Logic"
-      ],
+      "focus_areas": ["Foundations of Mathematics & Logic"],
       "career_tracks": ["AI & Data Science", "Research & Academia"]
     },
     "chunk_id": "01076121_47",

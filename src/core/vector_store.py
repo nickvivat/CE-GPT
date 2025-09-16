@@ -150,6 +150,21 @@ class ChromaVectorStore(VectorStore):
 	def get_count(self) -> int:
 		"""Get total number of vectors"""
 		return self.collection.count()
+	
+	def clear(self):
+		"""Clear all data from the collection"""
+		try:
+			# Delete the collection and recreate it
+			self.client.delete_collection("course_embeddings")
+			self.collection = self.client.get_or_create_collection(
+				name="course_embeddings",
+				metadata={"hnsw:space": "cosine"}
+			)
+			logger.info("Cleared ChromaDB collection")
+			return True
+		except Exception as e:
+			logger.error(f"Error clearing ChromaDB collection: {e}")
+			return False
 
 def create_vector_store(store_type: str = "chroma", **kwargs) -> VectorStore:
 	"""Factory function to create vector store instances"""

@@ -55,9 +55,6 @@ class ResponseGenerator:
 		if not results:
 			return "No relevant information found."
 		
-		# Limit results to prevent context overflow
-		max_results = 6  # 3 courses + 3 professors max
-		results = results[:max_results]
 		
 		context_parts = []
 		
@@ -415,7 +412,10 @@ class ResponseGenerator:
 					"model": self.model_name,
 					"prompt": prompt,
 					"stream": stream,
-					"temperature": temperature
+					"temperature": temperature,
+					"options": {
+						"max_tokens": 500
+					}
 				}
 				
 				if stream:
@@ -508,7 +508,10 @@ class ResponseGenerator:
 				"model": self.model_name,
 				"prompt": prompt,
 				"stream": True,
-				"temperature": temperature
+				"temperature": temperature,
+				"options": {
+					"max_tokens": 500
+				}
 			}
 			
 			# Make streaming request

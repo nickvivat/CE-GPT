@@ -5,9 +5,7 @@
       "course_name": "แคลคูลัส 1",
       "course_code": "01076140",
       "language": "th",
-      "focus_areas": [
-        "Foundations of Mathematics & Logic"
-      ],
+      "focus_areas": ["Foundations of Mathematics & Logic"],
       "career_tracks": [
         "AI & Data Science",
         "Research & Academia",
@@ -24,9 +22,7 @@
       "course_name": "CALCULUS 1",
       "course_code": "01076140",
       "language": "en",
-      "focus_areas": [
-        "Foundations of Mathematics & Logic"
-      ],
+      "focus_areas": ["Foundations of Mathematics & Logic"],
       "career_tracks": [
         "AI & Data Science",
         "Research & Academia",
@@ -43,9 +39,7 @@
       "course_name": "แคลคูลัส 2",
       "course_code": "01076141",
       "language": "th",
-      "focus_areas": [
-        "Foundations of Mathematics & Logic"
-      ],
+      "focus_areas": ["Foundations of Mathematics & Logic"],
       "career_tracks": [
         "AI & Data Science",
         "Cybersecurity & Privacy",
@@ -64,9 +58,7 @@
       "course_name": "CALCULUS 2",
       "course_code": "01076141",
       "language": "en",
-      "focus_areas": [
-        "Foundations of Mathematics & Logic"
-      ],
+      "focus_areas": ["Foundations of Mathematics & Logic"],
       "career_tracks": [
         "AI & Data Science",
         "Cybersecurity & Privacy",
@@ -125,9 +117,7 @@
       "course_name": "การฝึกงานอุตสาหกรรม",
       "course_code": "01006004",
       "language": "th",
-      "focus_areas": [
-        "Specialized/Applied Practice"
-      ],
+      "focus_areas": ["Specialized/Applied Practice"],
       "career_tracks": [
         "AI & Data Science",
         "Cybersecurity & Privacy",
@@ -147,9 +137,7 @@
       "course_name": "INDUSTRIAL TRAINING",
       "course_code": "01006004",
       "language": "en",
-      "focus_areas": [
-        "Specialized/Applied Practice"
-      ],
+      "focus_areas": ["Specialized/Applied Practice"],
       "career_tracks": [
         "AI & Data Science",
         "Cybersecurity & Privacy",
@@ -209,9 +197,7 @@
       "course_name": "ปฏิบัติการวงจรไฟฟ้าและอิเล็กทรอนิกส์",
       "course_code": "01076108",
       "language": "th",
-      "focus_areas": [
-        "Hardware & Embedded Systems"
-      ],
+      "focus_areas": ["Hardware & Embedded Systems"],
       "career_tracks": [
         "Hardware & Embedded Systems",
         "Software Development & Engineering"
@@ -227,9 +213,7 @@
       "course_name": "CIRCUITS AND ELECTRONICS IN PRACTICE",
       "course_code": "01076108",
       "language": "en",
-      "focus_areas": [
-        "Hardware & Embedded Systems"
-      ],
+      "focus_areas": ["Hardware & Embedded Systems"],
       "career_tracks": [
         "Hardware & Embedded Systems",
         "Software Development & Engineering"
@@ -245,9 +229,7 @@
       "course_name": "ความน่าจะเป็นและสถิติ",
       "course_code": "01076253",
       "language": "th",
-      "focus_areas": [
-        "Foundations of Mathematics & Logic"
-      ],
+      "focus_areas": ["Foundations of Mathematics & Logic"],
       "career_tracks": [
         "AI & Data Science",
         "Research & Academia",
@@ -264,9 +246,7 @@
       "course_name": "PROBABILITY AND STATISTICS",
       "course_code": "01076253",
       "language": "en",
-      "focus_areas": [
-        "Foundations of Mathematics & Logic"
-      ],
+      "focus_areas": ["Foundations of Mathematics & Logic"],
       "career_tracks": [
         "AI & Data Science",
         "Research & Academia",
@@ -287,9 +267,7 @@
         "Computer Science Fundamentals",
         "Software Engineering & Development"
       ],
-      "career_tracks": [
-        "Software Development & Engineering"
-      ],
+      "career_tracks": ["Software Development & Engineering"],
       "data_type": "course"
     },
     "chunk_id": "01076103_14",
@@ -305,9 +283,7 @@
         "Computer Science Fundamentals",
         "Software Engineering & Development"
       ],
-      "career_tracks": [
-        "Software Development & Engineering"
-      ],
+      "career_tracks": ["Software Development & Engineering"],
       "data_type": "course"
     },
     "chunk_id": "01076103_15",
@@ -323,9 +299,7 @@
         "Computer Science Fundamentals",
         "Software Engineering & Development"
       ],
-      "career_tracks": [
-        "Software Development & Engineering"
-      ],
+      "career_tracks": ["Software Development & Engineering"],
       "data_type": "course"
     },
     "chunk_id": "01076104_16",
@@ -341,9 +315,7 @@
         "Computer Science Fundamentals",
         "Software Engineering & Development"
       ],
-      "career_tracks": [
-        "Software Development & Engineering"
-      ],
+      "career_tracks": ["Software Development & Engineering"],
       "data_type": "course"
     },
     "chunk_id": "01076104_17",
@@ -355,9 +327,7 @@
       "course_name": "การเตรียมโครงงานวิศวกรรมคอมพิวเตอร์",
       "course_code": "01076016",
       "language": "th",
-      "focus_areas": [
-        "Specialized/Applied Practice"
-      ],
+      "focus_areas": ["Specialized/Applied Practice"],
       "career_tracks": [
         "AI & Data Science",
         "Cybersecurity & Privacy",
@@ -378,9 +348,7 @@
       "course_name": "COMPUTER ENGINEERING PROJECT PREPARATION",
       "course_code": "01076016",
       "language": "en",
-      "focus_areas": [
-        "Specialized/Applied Practice"
-      ],
+      "focus_areas": ["Specialized/Applied Practice"],
       "career_tracks": [
         "AI & Data Science",
         "Cybersecurity & Privacy",
@@ -867,10 +835,7 @@
       "course_name": "ระบบปฏิบัติการ",
       "course_code": "01076011",
       "language": "th",
-      "focus_areas": [
-        "Networks & Security",
-        "Systems & Infrastructure"
-      ],
+      "focus_areas": ["Networks & Security", "Systems & Infrastructure"],
       "career_tracks": [
         "Cybersecurity & Privacy",
         "Systems & Cloud Infrastructure"
@@ -886,10 +851,7 @@
       "course_name": "OPERATING SYSTEMS",
       "course_code": "01076011",
       "language": "en",
-      "focus_areas": [
-        "Networks & Security",
-        "Systems & Infrastructure"
-      ],
+      "focus_areas": ["Networks & Security", "Systems & Infrastructure"],
       "career_tracks": [
         "Cybersecurity & Privacy",
         "Systems & Cloud Infrastructure"
@@ -949,13 +911,8 @@
       "course_name": "ทฤษฎีการคํานวณ",
       "course_code": "01076121",
       "language": "th",
-      "focus_areas": [
-        "Foundations of Mathematics & Logic"
-      ],
-      "career_tracks": [
-        "AI & Data Science",
-        "Research & Academia"
-      ],
+      "focus_areas": ["Foundations of Mathematics & Logic"],
+      "career_tracks": ["AI & Data Science", "Research & Academia"],
       "data_type": "course"
     },
     "chunk_id": "01076121_46",
@@ -967,13 +924,8 @@
       "course_name": "THEORY OF COMPUTATION",
       "course_code": "01076121",
       "language": "en",
-      "focus_areas": [
-        "Foundations of Mathematics & Logic"
-      ],
-      "career_tracks": [
-        "AI & Data Science",
-        "Research & Academia"
-      ],
+      "focus_areas": ["Foundations of Mathematics & Logic"],
+      "career_tracks": ["AI & Data Science", "Research & Academia"],
       "data_type": "course"
     },
     "chunk_id": "01076121_47",
@@ -1029,10 +981,7 @@
       "course_name": "การดูแลแพลทฟอร์มระบบ",
       "course_code": "01076118",
       "language": "th",
-      "focus_areas": [
-        "Networks & Security",
-        "Systems & Infrastructure"
-      ],
+      "focus_areas": ["Networks & Security", "Systems & Infrastructure"],
       "career_tracks": [
         "AI & Data Science",
         "Cybersecurity & Privacy",
@@ -1049,10 +998,7 @@
       "course_name": "SYSTEM PLATFORM ADMINISTRATION",
       "course_code": "01076118",
       "language": "en",
-      "focus_areas": [
-        "Networks & Security",
-        "Systems & Infrastructure"
-      ],
+      "focus_areas": ["Networks & Security", "Systems & Infrastructure"],
       "career_tracks": [
         "AI & Data Science",
         "Cybersecurity & Privacy",
@@ -1279,10 +1225,7 @@
       "course_name": "อินเตอร์เน็ตในทุกสิ่งและระบบอัจฉริยะ",
       "course_code": "01076053",
       "language": "th",
-      "focus_areas": [
-        "Hardware & Embedded Systems",
-        "Networks & Security"
-      ],
+      "focus_areas": ["Hardware & Embedded Systems", "Networks & Security"],
       "career_tracks": [
         "Cybersecurity & Privacy",
         "Hardware & Embedded Systems",
@@ -1300,10 +1243,7 @@
       "course_name": "INTERNET OF THINGS AND SMART SYSTEMS",
       "course_code": "01076053",
       "language": "en",
-      "focus_areas": [
-        "Hardware & Embedded Systems",
-        "Networks & Security"
-      ],
+      "focus_areas": ["Hardware & Embedded Systems", "Networks & Security"],
       "career_tracks": [
         "Cybersecurity & Privacy",
         "Hardware & Embedded Systems",
@@ -1668,9 +1608,7 @@
       "course_name": "โครงงาน 1",
       "course_code": "01076311",
       "language": "th",
-      "focus_areas": [
-        "Specialized/Applied Practice"
-      ],
+      "focus_areas": ["Specialized/Applied Practice"],
       "career_tracks": [
         "AI & Data Science",
         "Cybersecurity & Privacy",
@@ -1690,9 +1628,7 @@
       "course_name": "PROJECT 1",
       "course_code": "01076311",
       "language": "en",
-      "focus_areas": [
-        "Specialized/Applied Practice"
-      ],
+      "focus_areas": ["Specialized/Applied Practice"],
       "career_tracks": [
         "AI & Data Science",
         "Cybersecurity & Privacy",
@@ -1712,9 +1648,7 @@
       "course_name": "โครงงาน 2",
       "course_code": "01076312",
       "language": "th",
-      "focus_areas": [
-        "Specialized/Applied Practice"
-      ],
+      "focus_areas": ["Specialized/Applied Practice"],
       "career_tracks": [
         "AI & Data Science",
         "Cybersecurity & Privacy",
@@ -1734,9 +1668,7 @@
       "course_name": "PROJECT 2",
       "course_code": "01076312",
       "language": "en",
-      "focus_areas": [
-        "Specialized/Applied Practice"
-      ],
+      "focus_areas": ["Specialized/Applied Practice"],
       "career_tracks": [
         "AI & Data Science",
         "Cybersecurity & Privacy",
@@ -1756,9 +1688,7 @@
       "course_name": "สหกิจศึกษา",
       "course_code": "01006029",
       "language": "th",
-      "focus_areas": [
-        "Specialized/Applied Practice"
-      ],
+      "focus_areas": ["Specialized/Applied Practice"],
       "career_tracks": [
         "AI & Data Science",
         "Cybersecurity & Privacy",
@@ -1778,9 +1708,7 @@
       "course_name": "COOPERATIVE EDUCATION",
       "course_code": "01006029",
       "language": "en",
-      "focus_areas": [
-        "Specialized/Applied Practice"
-      ],
+      "focus_areas": ["Specialized/Applied Practice"],
       "career_tracks": [
         "AI & Data Science",
         "Cybersecurity & Privacy",
@@ -1800,9 +1728,7 @@
       "course_name": "การปฏิบัติการฝึกงานต่างประเทศ",
       "course_code": "01006005",
       "language": "th",
-      "focus_areas": [
-        "Specialized/Applied Practice"
-      ],
+      "focus_areas": ["Specialized/Applied Practice"],
       "career_tracks": [
         "AI & Data Science",
         "Cybersecurity & Privacy",
@@ -1822,9 +1748,7 @@
       "course_name": "OVERSEA TRAINING",
       "course_code": "01006005",
       "language": "en",
-      "focus_areas": [
-        "Specialized/Applied Practice"
-      ],
+      "focus_areas": ["Specialized/Applied Practice"],
       "career_tracks": [
         "AI & Data Science",
         "Cybersecurity & Privacy",
@@ -2068,9 +1992,7 @@
       "course_name": "การสร้างคอมไพเลอร์",
       "course_code": "01076513",
       "language": "th",
-      "focus_areas": [
-        "Networks & Security"
-      ],
+      "focus_areas": ["Networks & Security"],
       "career_tracks": [
         "Cybersecurity & Privacy",
         "Systems & Cloud Infrastructure"
@@ -2086,9 +2008,7 @@
       "course_name": "COMPILER CONSTRUCTION",
       "course_code": "01076513",
       "language": "en",
-      "focus_areas": [
-        "Networks & Security"
-      ],
+      "focus_areas": ["Networks & Security"],
       "career_tracks": [
         "Cybersecurity & Privacy",
         "Systems & Cloud Infrastructure"
@@ -2188,10 +2108,7 @@
         "Systems & Infrastructure",
         "Software Engineering & Development"
       ],
-      "career_tracks": [
-        "AI & Data Science",
-        "Systems & Cloud Infrastructure"
-      ],
+      "career_tracks": ["AI & Data Science", "Systems & Cloud Infrastructure"],
       "data_type": "course"
     },
     "chunk_id": "01076589_104",
@@ -2207,10 +2124,7 @@
         "Systems & Infrastructure",
         "Software Engineering & Development"
       ],
-      "career_tracks": [
-        "AI & Data Science",
-        "Systems & Cloud Infrastructure"
-      ],
+      "career_tracks": ["AI & Data Science", "Systems & Cloud Infrastructure"],
       "data_type": "course"
     },
     "chunk_id": "01076589_105",
@@ -2266,9 +2180,7 @@
         "Computer Science Fundamentals",
         "Software Engineering & Development"
       ],
-      "career_tracks": [
-        "Software Development & Engineering"
-      ],
+      "career_tracks": ["Software Development & Engineering"],
       "data_type": "course"
     },
     "chunk_id": "01076596_108",
@@ -2598,9 +2510,7 @@
       "course_name": "การประมวลผลภาพ",
       "course_code": "01076567",
       "language": "th",
-      "focus_areas": [
-        "AI, Data & Intelligent Systems"
-      ],
+      "focus_areas": ["AI, Data & Intelligent Systems"],
       "career_tracks": [
         "AI & Data Science",
         "Software Development & Engineering"
@@ -2616,9 +2526,7 @@
       "course_name": "IMAGE PROCESSING",
       "course_code": "01076567",
       "language": "en",
-      "focus_areas": [
-        "AI, Data & Intelligent Systems"
-      ],
+      "focus_areas": ["AI, Data & Intelligent Systems"],
       "career_tracks": [
         "AI & Data Science",
         "Software Development & Engineering"
@@ -2634,12 +2542,8 @@
       "course_name": "ระบบสื่อผสม",
       "course_code": "01076566",
       "language": "th",
-      "focus_areas": [
-        "Software Engineering & Development"
-      ],
-      "career_tracks": [
-        "Software Development & Engineering"
-      ],
+      "focus_areas": ["Software Engineering & Development"],
+      "career_tracks": ["Software Development & Engineering"],
       "data_type": "course"
     },
     "chunk_id": "01076566_126",
@@ -2651,12 +2555,8 @@
       "course_name": "MULTIMEDIA SYSTEMS",
       "course_code": "01076566",
       "language": "en",
-      "focus_areas": [
-        "Software Engineering & Development"
-      ],
-      "career_tracks": [
-        "Software Development & Engineering"
-      ],
+      "focus_areas": ["Software Engineering & Development"],
+      "career_tracks": ["Software Development & Engineering"],
       "data_type": "course"
     },
     "chunk_id": "01076566_127",
@@ -2956,9 +2856,7 @@
       "course_name": "การประเมินความมั่นคงเทคโนโลยีสารสนเทศ",
       "course_code": "01076628",
       "language": "th",
-      "focus_areas": [
-        "Networks & Security"
-      ],
+      "focus_areas": ["Networks & Security"],
       "career_tracks": [
         "Cybersecurity & Privacy",
         "Systems & Cloud Infrastructure"
@@ -2974,9 +2872,7 @@
       "course_name": "INFORMATION TECHNOLOGY SECURITY ASSESSMENT",
       "course_code": "01076628",
       "language": "en",
-      "focus_areas": [
-        "Networks & Security"
-      ],
+      "focus_areas": ["Networks & Security"],
       "career_tracks": [
         "Cybersecurity & Privacy",
         "Systems & Cloud Infrastructure"
@@ -3118,9 +3014,7 @@
       "course_name": "เทคโนโลยีเครือข่ายไร้สาย",
       "course_code": "01076632",
       "language": "th",
-      "focus_areas": [
-        "Networks & Security"
-      ],
+      "focus_areas": ["Networks & Security"],
       "career_tracks": [
         "Cybersecurity & Privacy",
         "Systems & Cloud Infrastructure"
@@ -3136,9 +3030,7 @@
       "course_name": "WIRELESS NETWORK TECHNOLOGY",
       "course_code": "01076632",
       "language": "en",
-      "focus_areas": [
-        "Networks & Security"
-      ],
+      "focus_areas": ["Networks & Security"],
       "career_tracks": [
         "Cybersecurity & Privacy",
         "Systems & Cloud Infrastructure"
