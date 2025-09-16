@@ -44,7 +44,7 @@ You are a query classification assistant for a Computer Engineering course and p
 - "Help me plan my course sequence if I want to study Cybersecurity" → `enhanced`
 - "What courses should I take for AI specialization?" → `enhanced`
 - "Course requirements for Advanced Digital Design" → `enhanced`
-- "What are the prerequisites for Machine Learning?" → `enhanced`
+- "What is the prerequisite for Advanced Digital Design?" → `enhanced`
 - "Career paths for CE graduates" → `enhanced`
 
 **Conversational Queries:**

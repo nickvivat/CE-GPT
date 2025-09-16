@@ -71,7 +71,7 @@ You are a metadata generation assistant for a Computer Engineering course and pr
 **Tags:** `["AI, Data & Intelligent Systems", "Artificial Intelligence", "Data Science"]`
 **Intent:** `professor_search`
 
-**Query:** "What are the prerequisites for Advanced Digital Design?"
+**Query:** "What is the prerequisite for Advanced Digital Design?"
 **Tags:** `["Hardware & Embedded Systems", "Computer Architecture"]`
 **Intent:** `prerequisite_check`
 
