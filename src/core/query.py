@@ -6,8 +6,6 @@ Enhance the query using the existing prompt.
 """
 
 import os
-import time
-import requests
 import json
 import re
 import asyncio
@@ -16,6 +14,7 @@ from typing import List, Dict, Optional, Tuple
 
 from ..utils.config import config
 from ..utils.logger import get_logger
+from .llm_client import LLMClient, LLMProvider
 
 logger = get_logger(__name__)
 
@@ -45,26 +44,12 @@ def detect_language_ascii(text: str) -> str:
 
 class Query:
     def __init__(self, ollama_url: str = None, model_name: str = None):
-        self.ollama_url = ollama_url or os.getenv("OLLAMA_URL", "http://localhost:11434")
-        self.model_name = model_name or os.getenv("OLLAMA_MODEL", "gemma3:4b-it-qat")
-        self.available = False
-        self.cache = {}  # Simple in-memory cache for query enhancement
-        self.cache_max_size = 100
-        self.retry_count = 3
-        self.retry_delay = 1.0
-        
-        try:
-            response = requests.get(f"{self.ollama_url}/api/tags", timeout=5)
-            if response.status_code == 200:
-                logger.info(f"Query enhancer initialized with Ollama model: {self.model_name}")
-                self.available = True
-            else:
-                logger.warning(f"Ollama server returned status {response.status_code}")
-                self.available = False
-        except Exception as e:
-            logger.warning(f"Failed to connect to Ollama at {self.ollama_url}: {e}")
-            logger.warning("Query enhancement will be disabled. Please ensure Ollama is running.")
-            self.available = False
+        self.llm_client = LLMClient(
+            provider=LLMProvider.OLLAMA,
+            ollama_url=ollama_url,
+            model_name=model_name
+        )
+        self.available = self.llm_client.is_available()
 
     # Schema for classification response
     CLASSIFY_SCHEMA = {
@@ -72,8 +57,7 @@ class Query:
         "properties": {
             "class": {"type": "string", "enum": ["enhanced", "pass", "external"]}
         },
-        "required": ["class"],
-        "additionalProperties": False
+        "required": ["class"]
     }
     
     # Schema for enhancement response
@@ -89,12 +73,10 @@ class Query:
                         "minItems": 1
                     }
                 },
-                "required": ["expanded_terms"],
-                "additionalProperties": False
+                "required": ["expanded_terms"]
             }
         },
-        "required": ["enhanced"],
-        "additionalProperties": False
+        "required": ["enhanced"]
     }
     
     # Schema for metadata generation response
@@ -109,124 +91,9 @@ class Query:
             },
             "query_intent": {"type": "string", "minLength": 1}
         },
-        "required": ["tags", "query_intent"],
-        "additionalProperties": False
+        "required": ["tags", "query_intent"]
     }
     
-    def _call_ollama(self, prompt: str, temperature: float = 0.7) -> str:
-        """Make a call to Ollama API with retry logic and caching"""
-        # Check cache first
-        cache_key = f"{prompt}_{temperature}"
-        if cache_key in self.cache:
-            logger.debug("Using cached query enhancement result")
-            return self.cache[cache_key]
-        
-        for attempt in range(self.retry_count):
-            try:
-                payload = {
-                    "model": self.model_name,
-                    "prompt": prompt,
-                    "format": "json",
-                    "stream": False,
-                    "options": {
-                        "temperature": temperature,
-                        "top_p": 0.9,
-                        "max_tokens": 150
-                    }
-                }
-                
-                response = requests.post(
-                    f"{self.ollama_url}/api/generate",
-                    json=payload,
-                    timeout=60  # Increased timeout for complex queries
-                )
-                
-                if response.status_code == 200:
-                    result = response.json()
-                    response_text = result.get("response", "").strip()
-                    
-                    # Cache the result
-                    if len(self.cache) >= self.cache_max_size:
-                        # Remove oldest entry
-                        oldest_key = next(iter(self.cache))
-                        del self.cache[oldest_key]
-                    
-                    self.cache[cache_key] = response_text
-                    return response_text
-                else:
-                    logger.warning(f"Ollama API error (attempt {attempt + 1}): {response.status_code} - {response.text}")
-                    if attempt < self.retry_count - 1:
-                        time.sleep(self.retry_delay * (attempt + 1))  # Exponential backoff
-                        continue
-                    else:
-                        return ""
-                    
-            except Exception as e:
-                logger.warning(f"Error calling Ollama (attempt {attempt + 1}): {e}")
-                if attempt < self.retry_count - 1:
-                    time.sleep(self.retry_delay * (attempt + 1))  # Exponential backoff
-                    continue
-                else:
-                    return ""
-        
-        return ""
-
-    async def _call_ollama_async(self, session: aiohttp.ClientSession, prompt: str, temperature: float = 0.7) -> str:
-        """Make an async call to Ollama API with retry logic and caching"""
-        # Check cache first
-        cache_key = f"{prompt}_{temperature}"
-        if cache_key in self.cache:
-            logger.debug("Using cached async query result")
-            return self.cache[cache_key]
-        
-        for attempt in range(self.retry_count):
-            try:
-                payload = {
-                    "model": self.model_name,
-                    "prompt": prompt,
-                    "format": "json",
-                    "stream": False,
-                    "options": {
-                        "temperature": temperature,
-                        "top_p": 0.9,
-                        "max_tokens": 150
-                    }
-                }
-                
-                async with session.post(
-                    f"{self.ollama_url}/api/generate",
-                    json=payload,
-                    timeout=aiohttp.ClientTimeout(total=60)
-                ) as response:
-                    if response.status == 200:
-                        result = await response.json()
-                        response_text = result.get("response", "").strip()
-                        
-                        # Cache the result
-                        if len(self.cache) >= self.cache_max_size:
-                            # Remove oldest entry
-                            oldest_key = next(iter(self.cache))
-                            del self.cache[oldest_key]
-                        
-                        self.cache[cache_key] = response_text
-                        return response_text
-                    else:
-                        logger.warning(f"Ollama API error (attempt {attempt + 1}): {response.status}")
-                        if attempt < self.retry_count - 1:
-                            await asyncio.sleep(self.retry_delay * (attempt + 1))  # Exponential backoff
-                            continue
-                        else:
-                            return ""
-                    
-            except Exception as e:
-                logger.warning(f"Error calling Ollama async (attempt {attempt + 1}): {e}")
-                if attempt < self.retry_count - 1:
-                    await asyncio.sleep(self.retry_delay * (attempt + 1))  # Exponential backoff
-                    continue
-                else:
-                    return ""
-        
-        return ""
 
     def classify_query(self, query: str) -> Optional[str]:
         """
@@ -254,7 +121,7 @@ class Query:
             
             logger.debug(f"Classification prompt length: {len(prompt)} characters")
             
-            response_text = self._call_ollama(prompt, temperature=0.0)
+            response_text = self.llm_client.generate(prompt, temperature=0.0, format=self.CLASSIFY_SCHEMA, num_predict=128)
             
             if not response_text.strip():
                 logger.warning("Empty response from Ollama for classification. Assuming enhanced.")
@@ -304,7 +171,7 @@ class Query:
             
             logger.debug(f"Enhancement prompt length: {len(prompt)} characters")
             
-            response_text = self._call_ollama(prompt, temperature=0.0)
+            response_text = self.llm_client.generate(prompt, temperature=0.0, format=self.ENHANCE_SCHEMA, num_predict=128)
             
             if not response_text.strip():
                 logger.warning("Empty response from Ollama for enhancement. Using original query.")
@@ -361,7 +228,7 @@ class Query:
             
             # Use async session
             async with aiohttp.ClientSession() as session:
-                response_text = await self._call_ollama_async(session, prompt, temperature=0.0)
+                response_text = await self.llm_client.generate_async(session, prompt, temperature=0.0, format=self.METADATA_SCHEMA, num_predict=128)
             
             if not response_text.strip():
                 logger.warning("Empty response from Ollama for metadata generation. Using default metadata.")
@@ -485,7 +352,7 @@ class Query:
             
             logger.debug(f"Async enhancement prompt length: {len(prompt)} characters")
             
-            response_text = await self._call_ollama_async(session, prompt, temperature=0.0)
+            response_text = await self.llm_client.generate_async(session, prompt, temperature=0.0, format=self.ENHANCE_SCHEMA, num_predict=128)
             
             if not response_text.strip():
                 logger.warning("Empty response from Ollama for async enhancement. Using original query.")
