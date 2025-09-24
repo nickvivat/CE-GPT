@@ -17,7 +17,7 @@ class Embedder:
     def __init__(self, model_name: str = None, cache_dir: str = None):
         self.model_name = model_name or config.models.embedding_model
         self.cache_dir = cache_dir or config.cache.embeddings_dir
-        self.device = "cuda" if torch.cuda.is_available() else "cpu"
+        self.device = "cpu"
         
         # Create cache directory
         os.makedirs(self.cache_dir, exist_ok=True)
