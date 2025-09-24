@@ -10,7 +10,7 @@ logger = logging.getLogger(__name__)
 class Reranker:
     def __init__(self, model_name: str = None):
         self.model_name = model_name or config.models.reranker_model
-        self.device = "cuda" if torch.cuda.is_available() else "cpu"
+        self.device = "cpu"
         self.cache = {}  # Simple cache for reranking results
         self.cache_max_size = 50
         self.batch_size = 16  # Optimized batch size for reranking
