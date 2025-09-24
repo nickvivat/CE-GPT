@@ -640,7 +640,10 @@ class RAGSystem:
             
             if not search_results:
                 logger.warning(f"No search results found for query: '{query}'")
-                response = self.response_generator.generate_conversational_response(query)
+                response = ""
+                for chunk in self.response_generator.generate_response(query, [], language):
+                    if chunk:
+                        response += chunk
                 response_duration = time.time() - response_generation_start
                 
                 csv_logger.log_response_generation(
@@ -656,11 +659,11 @@ class RAGSystem:
                 
                 return response
             
-            # Use streaming if requested
-            if stream:
-                response = self.response_generator.generate_response_stream(query, search_results, language)
-            else:
-                response = self.response_generator.generate_response(query, search_results, language)
+            # Collect chunks from generator for contextual response
+            response = ""
+            for chunk in self.response_generator.generate_response(query, search_results, language):
+                if chunk:
+                    response += chunk
             
             response_duration = time.time() - response_generation_start
             csv_logger.log_response_generation(
@@ -723,12 +726,16 @@ class RAGSystem:
             
             if not search_results:
                 logger.warning(f"No search results found for query: '{query}'")
-                conversational_response = self.response_generator.generate_conversational_response(query)
+                # Collect chunks from generator for conversational response
+                conversational_response = ""
+                for chunk in self.response_generator.generate_response(query, [], language):
+                    if chunk:
+                        conversational_response += chunk
                 yield conversational_response
                 return
             
             # Get streaming response from generator
-            for chunk in self.response_generator.generate_response_stream_generator(query, search_results, language):
+            for chunk in self.response_generator.generate_response(query, search_results, language):
                 if chunk:
                     yield chunk
                     
