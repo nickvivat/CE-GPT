@@ -83,11 +83,6 @@ class ResponseGenerator:
 				
 				context_part = f"{i}. {course_name} ({course_code})"
 				
-				# Add focus areas if available
-				if metadata.get('focus_areas'):
-					focus_areas = ', '.join(metadata['focus_areas'][:2])  # Limit to 2 areas
-					context_part += f" - {focus_areas}"
-				
 				# Add truncated description
 				if content:
 					clean_content = self._clean_content(content)

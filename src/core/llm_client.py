@@ -140,7 +140,7 @@ class OllamaClient(BaseLLMClient):
         temperature: float = 0.7, 
         format: str = None,
         stream: bool = False,
-        num_predict: int = 512,
+        num_predict: int = 1024,
         use_cache: bool = True
     ) -> Optional[str]:
         """
