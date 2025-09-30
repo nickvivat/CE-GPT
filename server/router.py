@@ -13,7 +13,6 @@ from fastapi.responses import Response
 import asyncio
 
 from .models import (
-    SearchRequest, SearchResponse, SearchResult, CourseMetadata, ProfessorMetadata,
     GenerateRequest, GenerateResponse, SystemStatus, 
     PerformanceMetrics, HealthCheck, ErrorResponse
 )
@@ -66,14 +65,14 @@ async def health_check():
         uptime = time.time() - system_start_time
         return HealthCheck(
             status="healthy" if rag_system is not None else "unhealthy",
-            version="2.0.0",
+            version="1.0.0",
             uptime_seconds=uptime
         )
     except Exception as e:
         logger.error(f"Health check failed: {e}")
         return HealthCheck(
             status="error",
-            version="2.0.0",
+            version="1.0.0",
             uptime_seconds=time.time() - system_start_time
         )
 
@@ -87,7 +86,7 @@ async def get_system_status(rag: RAGSystem = Depends(get_rag_system)):
         
         return SystemStatus(
             status="operational",
-            version="2.0.0",
+            version="1.0.0",
             total_chunks=status_data.get('total_chunks', 0),
             vector_store_count=status_data.get('vector_store_count', 0),
             reranker_enabled=status_data.get('reranker_enabled', False),
@@ -101,84 +100,6 @@ async def get_system_status(rag: RAGSystem = Depends(get_rag_system)):
         raise HTTPException(status_code=500, detail=f"Failed to get system status: {str(e)}")
 
 
-@router.post("/search", response_model=SearchResponse, summary="Search Courses")
-async def search_courses(request: SearchRequest, rag: RAGSystem = Depends(get_rag_system)):
-    """Search for courses using semantic search."""
-    try:
-        start_time = time.time()
-        
-        # Determine language
-        language = None
-        if request.language != "auto":
-            language = request.language.value
-        
-        # Perform search
-        results = rag.search(
-            query=request.query,
-            top_k=request.top_k,
-            language=language,
-            use_reranking=request.use_reranking
-        )
-        
-        search_time_ms = (time.time() - start_time) * 1000
-        
-        # Convert results to API models
-        api_results = []
-        for result in results:
-            metadata = result.get('metadata', {})
-            data_type = result.get('data_type', metadata.get('data_type', 'course'))
-            
-            if data_type == 'professor':
-                # Handle professor metadata
-                professor_metadata = ProfessorMetadata(
-                    data_type='professor',
-                    name=metadata.get('name', 'N/A'),
-                    research_areas=metadata.get('research_areas', []),
-                    teaching_subjects=metadata.get('teaching_subjects', []),
-                    textbooks=metadata.get('textbooks', []),
-                    degrees=metadata.get('degrees', []),
-                    language=metadata.get('language', 'en')
-                )
-                result_metadata = professor_metadata
-            else:
-                # Handle course metadata
-                course_metadata = CourseMetadata(
-                    course_code=metadata.get('course_code', 'N/A'),
-                    course_name=metadata.get('course_name', 'N/A'),
-                    language=metadata.get('language', 'en'),
-                    focus_areas=metadata.get('focus_areas', []),
-                    career_tracks=metadata.get('career_tracks', []),
-                    credits=metadata.get('credits'),
-                    semester=metadata.get('semester'),
-                    data_type='course'
-                )
-                result_metadata = course_metadata
-            
-            api_result = SearchResult(
-                content=result.get('content', ''),
-                metadata=result_metadata,
-                similarity_score=result.get('similarity_score', 0.0),
-                rerank_score=result.get('rerank_score'),
-                chunk_id=result.get('chunk_id', ''),
-                original_index=result.get('original_index', 0),
-                data_type=data_type
-            )
-            api_results.append(api_result)
-        
-        # Detect language
-        language_detected = rag._detect_language(request.query)
-        
-        return SearchResponse(
-            query=request.query,
-            results=api_results,
-            total_results=len(api_results),
-            search_time_ms=search_time_ms,
-            language_detected=language_detected
-        )
-        
-    except Exception as e:
-        logger.error(f"Search failed: {e}")
-        raise HTTPException(status_code=500, detail=f"Search failed: {str(e)}")
 
 
 @router.post("/generate", summary="Generate AI Response")
@@ -381,11 +302,10 @@ async def api_root():
     """API root endpoint."""
     return {
         "message": "CE RAG System API",
-        "version": "2.0.0",
+        "version": "1.0.0",
         "endpoints": {
             "health": "/api/v1/health",
             "status": "/api/v1/status",
-            "search": "/api/v1/search",
             "generate": "/api/v1/generate",
             "generate_stream": "/api/v1/generate/stream",
             "performance": "/api/v1/performance",

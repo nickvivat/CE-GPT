@@ -132,7 +132,7 @@ class APIConfig:
     """Configuration for API settings."""
     
     host: str = "0.0.0.0"
-    port: int = 5500
+    port: int = 8000
     reload: bool = False
     workers: int = 1
     max_requests: int = 1000
@@ -154,7 +154,7 @@ class APIConfig:
         """Create configuration from environment variables."""
         return cls(
             host=os.getenv("API_HOST", "0.0.0.0"),
-            port=int(os.getenv("API_PORT", "5500")),
+            port=int(os.getenv("API_PORT", "8000")),
             reload=os.getenv("API_RELOAD", "false").lower() == "true",
             workers=int(os.getenv("API_WORKERS", "1")),
             max_requests=int(os.getenv("API_MAX_REQUESTS", "1000")),

@@ -16,64 +16,6 @@ class LanguageEnum(str, Enum):
     AUTO = "auto"
 
 
-class SearchRequest(BaseModel):
-    """Request model for course search."""
-    query: str = Field(..., min_length=1, max_length=500, description="Search query")
-    top_k: int = Field(default=5, ge=1, le=10, description="Number of results to return")
-    language: LanguageEnum = Field(default=LanguageEnum.AUTO, description="Language preference")
-    use_reranking: bool = Field(default=True, description="Whether to use reranking")
-    include_metadata: bool = Field(default=True, description="Include course metadata in results")
-    
-    @validator('query')
-    def validate_query(cls, v):
-        """Validate query is not just whitespace."""
-        if not v.strip():
-            raise ValueError("Query cannot be empty or just whitespace")
-        return v.strip()
-
-
-class CourseMetadata(BaseModel):
-    """Course metadata information."""
-    course_code: str = Field(..., description="Course code")
-    course_name: str = Field(..., description="Course name")
-    language: str = Field(..., description="Course language")
-    focus_areas: List[str] = Field(default_factory=list, description="Focus areas")
-    career_tracks: List[str] = Field(default_factory=list, description="Career tracks")
-    credits: Optional[int] = Field(None, description="Course credits")
-    semester: Optional[str] = Field(None, description="Offered semester")
-    data_type: str = Field(default="course", description="Data type")
-
-
-class ProfessorMetadata(BaseModel):
-    """Professor metadata information."""
-    data_type: str = Field(default="professor", description="Data type")
-    name: str = Field(..., description="Professor name")
-    research_areas: List[str] = Field(default_factory=list, description="Research areas")
-    teaching_subjects: List[str] = Field(default_factory=list, description="Teaching subjects")
-    textbooks: List[str] = Field(default_factory=list, description="Textbooks")
-    degrees: List[str] = Field(default_factory=list, description="Academic degrees")
-    language: str = Field(default="en", description="Language")
-
-
-class SearchResult(BaseModel):
-    """Individual search result."""
-    content: str = Field(..., description="Content/chunk")
-    metadata: Union[CourseMetadata, ProfessorMetadata] = Field(..., description="Metadata")
-    similarity_score: float = Field(..., ge=0.0, le=1.0, description="Similarity score")
-    rerank_score: Optional[float] = Field(None, ge=0.0, le=1.0, description="Reranking score")
-    chunk_id: str = Field(..., description="Unique chunk identifier")
-    original_index: int = Field(..., description="Original chunk index")
-    data_type: str = Field(..., description="Data type (course or professor)")
-
-
-class SearchResponse(BaseModel):
-    """Response model for course search."""
-    query: str = Field(..., description="Original search query")
-    results: List[SearchResult] = Field(..., description="Search results")
-    total_results: int = Field(..., description="Total number of results")
-    search_time_ms: float = Field(..., description="Search execution time in milliseconds")
-    language_detected: str = Field(..., description="Detected language")
-    timestamp: datetime = Field(default_factory=datetime.now, description="Response timestamp")
 
 
 class GenerateRequest(BaseModel):
