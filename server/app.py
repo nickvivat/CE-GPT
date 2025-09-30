@@ -11,9 +11,8 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI, Request, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.gzip import GZipMiddleware
-from fastapi.responses import JSONResponse, HTMLResponse
+from fastapi.responses import JSONResponse
 from fastapi.openapi.utils import get_openapi
-from fastapi.staticfiles import StaticFiles
 
 from .router import router, initialize_rag_system
 from src.utils.logger import get_logger
@@ -48,37 +47,9 @@ async def lifespan(app: FastAPI):
 app = FastAPI(
     title="CE RAG System API",
     description="""
-    **Computer Engineering RAG System API**
-    
-    A multilingual Retrieval-Augmented Generation (RAG) system designed specifically for Computer Engineering courses at KMITL.
-    
-    ## Features
-    
-    - 🌐 **Multilingual Support**: Thai and English language processing
-    - 🔍 **Intelligent Search**: Vector-based semantic search with reranking
-    - 🤖 **LLM Integration**: Ollama-based query enhancement and response generation
-    - 📊 **Performance Monitoring**: Real-time system metrics and performance tracking
-    - 🛡️ **Error Handling**: Robust error handling with circuit breaker patterns
-    - 💬 **Conversation Context**: Maintains chat history for better query understanding
-    
-    ## Quick Start
-    
-    1. **Health Check**: `GET /api/v1/health`
-    2. **Search Courses**: `POST /api/v1/search`
-    3. **Generate Response**: `POST /api/v1/generate`
-    4. **System Status**: `GET /api/v1/status`
-    
-    ## Authentication
-    
-    Currently, this API does not require authentication for development purposes.
-    For production deployment, consider implementing API key authentication.
-    
-    ## Rate Limiting
-    
-    Basic rate limiting is implemented to prevent abuse.
-    Contact administrators for higher rate limits if needed.
+    Computer Engineering RAG System API Documentation
     """,
-    version="2.0.0",
+    version="1.0.0",
     contact={
         "name": "CE RAG System Team",
         "email": "support@kmitl.ac.th",
@@ -130,8 +101,6 @@ app.add_middleware(
 app.add_middleware(GZipMiddleware, minimum_size=1000)
 
 
-# Mount static files
-app.mount("/static", StaticFiles(directory="server/static"), name="static")
 
 
 # Global exception handler
@@ -192,26 +161,17 @@ async def log_requests(request: Request, call_next):
 app.include_router(router)
 
 
-# Root endpoint - serve the web interface
-@app.get("/", response_class=HTMLResponse, tags=["Root"])
+# Root endpoint - API information
+@app.get("/", tags=["Root"])
 async def root():
-    """Serve the web interface."""
-    try:
-        with open("server/static/index.html", "r", encoding="utf-8") as f:
-            html_content = f.read()
-        return HTMLResponse(content=html_content)
-    except FileNotFoundError:
-        return HTMLResponse(content="""
-        <html>
-            <head><title>CE RAG System</title></head>
-            <body>
-                <h1>🎓 CE RAG System</h1>
-                <p>Web interface not found. Please check the server configuration.</p>
-                <p><a href="/docs">API Documentation</a></p>
-                <p><a href="/health">Health Check</a></p>
-            </body>
-        </html>
-        """, status_code=404)
+    """API root endpoint with basic information."""
+    return {
+        "message": "CE RAG System API",
+        "version": "1.0.0",
+        "docs": "/docs",
+        "health": "/health",
+        "api": "/api/v1"
+    }
 
 
 # Health check endpoint (root level)
@@ -221,7 +181,7 @@ async def health_check():
     return {
         "status": "healthy",
         "timestamp": time.time(),
-        "version": "2.0.0"
+        "version": "1.0.0"
     }
 
 
@@ -230,7 +190,7 @@ if __name__ == "__main__":
     
     # Get configuration
     host = os.getenv("API_HOST", "0.0.0.0")
-    port = int(os.getenv("API_PORT", "5500"))
+    port = int(os.getenv("API_PORT", "8000"))
     reload = os.getenv("API_RELOAD", "false").lower() == "true"
     
     logger.info(f"Starting API server on {host}:{port}")
