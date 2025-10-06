@@ -98,19 +98,23 @@ class ResponseGenerator:
 				metadata = result.get('metadata', {})
 				content = result.get('content', '')
 				
-				# Create concise professor entry
+				# Create structured professor entry
 				name = metadata.get('name', 'N/A')
-				context_part = f"{i}. {name}"
+				context_part = f"{i}. **{name}**"
 				
-				# Add research areas if available
-				if metadata.get('research_areas'):
-					research_areas = ', '.join(metadata['research_areas'])
-					context_part += f" - {research_areas}"
+				# Add education/degrees if available
+				if metadata.get('degrees'):
+					degrees = metadata['degrees']
+					if len(degrees) > 0:
+						context_part += f"\n   **Education:**"
+						for degree in degrees:
+							context_part += f"\n   - {degree}"
 				
 				# Add teaching subjects if available
 				if metadata.get('teaching_subjects'):
-					subjects = ', '.join(metadata['teaching_subjects'])
-					context_part += f"\n   Teaches: {subjects}"
+					context_part += f"\n   **Teaching:**"
+					for subject in metadata['teaching_subjects']:
+						context_part += f"\n   - {subject}"
 				
 				# Add truncated description
 				if content:
