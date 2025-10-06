@@ -13,7 +13,7 @@ from dataclasses import dataclass, field
 class ModelConfig:
     """Configuration for AI models used in the system."""
     
-    embedding_model: str = "BAAI/bge-m3"
+    embedding_model: str = "google/embeddinggemma-300m"
     reranker_model: str = "BAAI/bge-reranker-v2-m3"
     ollama_url: str = "http://localhost:11434"
     ollama_model: str = "gemma3:4b-it-qat"
@@ -33,7 +33,7 @@ class ModelConfig:
     def from_env(cls) -> 'ModelConfig':
         """Create configuration from environment variables."""
         return cls(
-            embedding_model=os.getenv("EMBEDDING_MODEL", "BAAI/bge-m3"),
+            embedding_model=os.getenv("EMBEDDING_MODEL", "google/embeddinggemma-300m"),
             reranker_model=os.getenv("RERANKER_MODEL", "BAAI/bge-reranker-v2-m3"),
             ollama_url=os.getenv("OLLAMA_URL", "http://localhost:11434"),
             ollama_model=os.getenv("OLLAMA_MODEL", "gemma3:4b-it-qat")

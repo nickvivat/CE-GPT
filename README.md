@@ -197,7 +197,7 @@ DEBUG=false
 # Model Configuration
 OLLAMA_URL=http://localhost:11434
 OLLAMA_MODEL=gemma3:4b-it-qat
-EMBEDDING_MODEL=BAAI/bge-m3
+EMBEDDING_MODEL=google/embeddinggemma-300m
 RERANKER_MODEL=BAAI/bge-reranker-v2-m3
 
 # Processing Configuration
