@@ -45,29 +45,11 @@ def get_chunk_content(chunk) -> str:
         if name:
             content_parts.append(f"Professor: {name}")
         
-        # Add degrees
-        degrees = chunk.metadata.get('degrees', [])
-        if degrees:
-            degrees_text = " ".join(degrees)
-            content_parts.append(f"Education: {degrees_text}")
-        
-        # Add research areas
-        research_areas = chunk.metadata.get('research_areas', [])
-        if research_areas:
-            research_text = ", ".join(research_areas)
-            content_parts.append(f"Research Areas: {research_text}")
-        
         # Add teaching subjects
         teaching = chunk.metadata.get('teaching_subjects', [])
         if teaching:
             teaching_text = ", ".join(teaching)
             content_parts.append(f"Teaching: {teaching_text}")
-        
-        # Add textbooks
-        textbooks = chunk.metadata.get('textbooks', [])
-        if textbooks:
-            textbook_text = ", ".join(textbooks)
-            content_parts.append(f"Textbooks: {textbook_text}")
         
         return " | ".join(content_parts)
     else:
@@ -292,7 +274,8 @@ class RAGSystem:
             
             # Calculate hash of current chunks to check if cache is still valid
             chunks_content = "".join([chunk.content for chunk in self.chunks])
-            current_hash = hashlib.md5(chunks_content.encode()).hexdigest()
+            chunks_metadata = "".join([str(chunk.metadata) for chunk in self.chunks])
+            current_hash = hashlib.md5((chunks_content + chunks_metadata).encode()).hexdigest()
             
             # Check if data has changed by comparing with cached hash
             data_changed = True
@@ -351,7 +334,10 @@ class RAGSystem:
                 except Exception as e:
                     logger.warning(f"Failed to save embeddings cache: {e}")
             
-            # Add to vector store only if it's empty
+            if data_changed and self.vector_store.get_count() > 0:
+                logger.info("Data changed, clearing vector store before adding new embeddings")
+                self.vector_store.clear()
+            
             if self.vector_store.get_count() == 0:
                 chunk_metadata = [chunk.metadata for chunk in self.chunks]
                 if not self.vector_store.add_embeddings(self.embeddings, chunk_metadata):
@@ -378,7 +364,7 @@ class RAGSystem:
         logger.info(f"Processing query: '{query}'")
         
         # Detect professor-related queries and increase top_k to ensure professor results are included
-        professor_keywords = ['who', 'teach', 'teaches', 'instructor', 'professor', 'อาจารย์', 'สอน', 'who is', 'who are']
+        professor_keywords = ['who', 'teach', 'teaches', 'instructor', 'professor', 'อาจารย์', 'สอน', 'who is', 'who are', 'teaching']
         is_professor_query = any(keyword in query_lower for keyword in professor_keywords)
         
         # Use circuit breaker for critical operations
@@ -501,7 +487,7 @@ class RAGSystem:
                     top_k=top_k,
                     results_count=len(similarities) if similarities.size > 0 else 0,
                     language_filter=detected_language,
-                    embedding_model=getattr(self.embedder, 'model_name', 'sentence-transformers/all-MiniLM-L6-v2'),
+                    embedding_model=getattr(self.embedder, 'model_name', 'google/embeddinggemma-300m'),
                     vector_store_type=self.vector_store.__class__.__name__
                 )
                 
@@ -515,7 +501,7 @@ class RAGSystem:
                     top_k=top_k,
                     results_count=0,
                     language_filter=detected_language,
-                    embedding_model=getattr(self.embedder, 'model_name', 'sentence-transformers/all-MiniLM-L6-v2'),
+                    embedding_model=getattr(self.embedder, 'model_name', 'google/embeddinggemma-300m'),
                     vector_store_type=self.vector_store.__class__.__name__
                 )
                 logger.error(f"Embedding search failed: {e}")
@@ -557,7 +543,7 @@ class RAGSystem:
                         success=True,
                         input_count=input_count,
                         output_count=len(results),
-                        reranker_model=getattr(self.reranker, 'model_name', 'cross-encoder/ms-marco-MiniLM-L-6-v2')
+                        reranker_model=getattr(self.reranker, 'model_name', 'BAAI/bge-reranker-v2-m3')
                     )
                     
                 except Exception as e:
@@ -569,7 +555,7 @@ class RAGSystem:
                         error_message=str(e),
                         input_count=len(results),
                         output_count=0,
-                        reranker_model=getattr(self.reranker, 'model_name', 'cross-encoder/ms-marco-MiniLM-L-6-v2')
+                        reranker_model=getattr(self.reranker, 'model_name', 'BAAI/bge-reranker-v2-m3')
                     )
                     logger.error(f"Reranking failed: {e}")
             

@@ -4,7 +4,6 @@ from typing import List, Dict, Any, Optional, Protocol, Type
 from dataclasses import dataclass
 from abc import ABC, abstractmethod
 import logging
-from ..utils.config import config
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -19,7 +18,7 @@ class DataChunk:
 
 def create_chunk_from_data(data: Dict[str, Any]) -> DataChunk:
     """Create a DataChunk from loaded data, handling both course and professor data"""
-    data_type = data.get('data_type', 'unknown')
+    data_type = data.get('metadata', {}).get('data_type', 'unknown')
     
     if data_type == 'professor':
         # For professor data, generate content from metadata
@@ -181,7 +180,7 @@ class ProfessorDataHandler(BaseDataTypeHandler):
             content_parts.append(f"Research Areas: {research_text}")
         
         # Add teaching subjects with enhanced keywords
-        teaching = item.get('teaching', [])
+        teaching = item.get('teaching_subjects', [])
         if teaching:
             teaching_text = ", ".join(teaching)
             content_parts.append(f"Teaching: {teaching_text}")
@@ -246,21 +245,21 @@ class ProfessorDataHandler(BaseDataTypeHandler):
             item.get('name', ''),
             " ".join(item.get('degrees', [])),
             " ".join(item.get('research_areas', [])),
-            " ".join(item.get('teaching', [])),
+            " ".join(item.get('teaching_subjects', [])),
             " ".join(item.get('textbooks', []))
         ])
         
-        # Check if content contains any Thai characters
-        has_thai = any('\u0e00' <= char <= '\u0e7f' for char in content_text)
+        # Check if more than 80% of the characters are Thai
+        thai_chars = sum(1 for char in content_text if '\u0E00' <= char <= '\u0E7F')
+        total_chars = len(content_text)
+        is_thai = (total_chars > 0 and (thai_chars / total_chars) > 0.2)
         
-        # Only label as Thai if it actually contains Thai characters
-        language = 'th' if has_thai else 'en'
-        
+        language = 'th' if is_thai else 'en'
         metadata = {
             'data_type': 'professor',
             'name': item.get('name', ''),
             'research_areas': item.get('research_areas', []),
-            'teaching_subjects': item.get('teaching', []),
+            'teaching_subjects': item.get('teaching_subjects', []),
             'textbooks': item.get('textbooks', []),
             'degrees': item.get('degrees', []),
             'language': language

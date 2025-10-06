@@ -1,11 +1,7 @@
 [
   {
-    "entity_type": "professor",
+    "data_type": "professor",
     "name": "อ. สรยุทธ กลมกล่อม",
-    "degrees": [
-      "วศ.บ. (วิศวกรรมคอมพิวเตอร์) สถาบันเทคโนโลยีพระจอมเกล้าเจ้าคุณทหารลาดกระบัง, 2544",
-      "วศ.ม. (วิศวกรรมคอมพิวเตอร์) สถาบันเทคโนโลยีพระจอมเกล้าเจ้าคุณทหารลาดกระบัง, 2554"
-    ],
     "research_areas": [
       "Cyber-Physical Systems",
       "Embedded System",
@@ -13,107 +9,83 @@
       "Internet of Things",
       "Software Codesign"
     ],
-    "teaching": [
-      "Computer Architecture",
-      "Computer Programming",
-      "Computer Interfacing"
+    "teaching_subjects": [
+      "01076051 - โครงงานไมโครคอนโทรลเลอร์",
+      "01076312 - โครงงาน 2",
+      "01076311 - โครงงาน 1",
+      "01076050 - การประยุกต์และพัฒนาไมโครคอนโทรลเลอร์",
+      "01076052 - ระบบสมองกลฝังตัวแบบเรียลไทม์"
     ],
-    "textbooks": []
-  },
-  {
-    "entity_type": "professor",
-    "name": "อ. วิบูลย์ พร้อมพานิชย์",
+    "textbooks": [],
     "degrees": [
-      "M.Eng. (Computer Technology) Asian Institute of Technology, Thailand, 2534",
-      "วศ.บ. (วิศวกรรมไฟฟ้า) สถาบันเทคโนโลยีพระจอมเกล้าเจ้าคุณทหารลาดกระบัง, 2527"
+      "วศ.บ. (วิศวกรรมคอมพิวเตอร์) สถาบันเทคโนโลยีพระจอมเกล้าเจ้าคุณทหารลาดกระบัง, 2544",
+      "วศ.ม. (วิศวกรรมคอมพิวเตอร์) สถาบันเทคโนโลยีพระจอมเกล้าเจ้าคุณทหารลาดกระบัง, 2554"
     ],
-    "research_areas": [
-      "GIS",
-      "Object Technology",
-      "Software Engineering",
-      "Database Systems"
-    ],
-    "teaching": ["Computer Programming 1", "Computer Programming 2"],
-    "textbooks": []
+    "language": "th"
   },
   {
-    "entity_type": "professor",
+    "data_type": "professor",
     "name": "ผศ.อัครเดช วัชระภูพงษ์",
+    "research_areas": ["Computer Security", "Network Security"],
+    "teaching_subjects": [
+      "01076312 - โครงงาน 2",
+      "01076311 - โครงงาน 1",
+      "01076629 - การทดสอบเจาะระบบและการแฮกแบบมีจริยธรรมเบื้องต้น",
+      "01076118 - การดูแลแพลทฟอร์มระบบ"
+    ],
+    "textbooks": [],
     "degrees": [
       "ผลงานทางวิชาการ:",
       "วศ.บ. (วิศวกรรมคอมพิวเตอร์) สถาบันเทคโนโลยีพระจอมเกล้าเจ้าคุณทหารลาดกระบัง, 2540",
       "วศ.ม. (วิศวกรรมคอมพิวเตอร์) สถาบันเทคโนโลยีพระจอมเกล้าเจ้าคุณทหารลาดกระบัง, 2557"
     ],
-    "research_areas": ["Computer Security", "Network Security"],
-    "teaching": ["Computer Programming 1", "Theory of Computational"],
-    "textbooks": []
+    "language": "th"
   },
   {
-    "entity_type": "professor",
+    "data_type": "professor",
     "name": "ผศ.ดร.ธนัญชัย ตรีภาค",
-    "degrees": [
-      "วศ.บ. (วิศวกรรมคอมพิวเตอร์) (เกียรตินิยม) สถาบันเทคโนโลยีพระจอมเกล้าเจ้าคุณทหารลาดกระบัง, 2542",
-      "วศ.ม. (วิศวกรรมคอมพิวเตอร์) สถาบันเทคโนโลยีพระจอมเกล้าเจ้าคุณทหารลาดกระบัง, 2546",
-      "วศ.ด. (วิศวกรรมไฟฟ้า) สถาบันเทคโนโลยีพระจอมเกล้าเจ้าคุณทหารลาดกระบัง, 2554"
-    ],
     "research_areas": [
       "Computer Networks",
       "Network Security",
       "Optical Computing"
     ],
-    "teaching": ["Network Security", "Computer Programming"],
-    "textbooks": ["Computers and Programming C and Java"]
+    "teaching_subjects": [
+      "01076042 - ความมั่นคงข้อมูลและคอมพิวเตอร์",
+      "01076312 - โครงงาน 2",
+      "01076103 - พื้นฐานการเขียนโปรแกรมคอมพิวเตอร์",
+      "01076311 - โครงงาน 1",
+      "01076104 - โครงงานโปรแกรมคอมพิวเตอร์",
+      "01076012 - โครงสร้างแบบดิสครีต"
+    ],
+    "textbooks": ["Computers and Programming C and Java"],
+    "degrees": [
+      "วศ.บ. (วิศวกรรมคอมพิวเตอร์) (เกียรตินิยม) สถาบันเทคโนโลยีพระจอมเกล้าเจ้าคุณทหารลาดกระบัง, 2542",
+      "วศ.ม. (วิศวกรรมคอมพิวเตอร์) สถาบันเทคโนโลยีพระจอมเกล้าเจ้าคุณทหารลาดกระบัง, 2546",
+      "วศ.ด. (วิศวกรรมไฟฟ้า) สถาบันเทคโนโลยีพระจอมเกล้าเจ้าคุณทหารลาดกระบัง, 2554"
+    ],
+    "language": "th"
   },
   {
-    "entity_type": "professor",
-    "name": "ผศ.ดร.ชมพูนุท จินจาคาม",
+    "data_type": "professor",
+    "name": "ผศ.ดร. ชมพูนุท เต็งเจริญ",
+    "research_areas": ["Human Computer Interaction", "Virtual Reality"],
+    "teaching_subjects": [
+      "01076312 - โครงงาน 2",
+      "01076311 - โครงงาน 1",
+      "01076037 - โครงงานออกแบบประสบการณ์และส่วนติดต่อผู้ใช้",
+      "01076036 - การออกแบบประสบการณ์และส่วนติดต่อผู้ใช้"
+    ],
+    "textbooks": [],
     "degrees": [
       "D.Eng. (Science and Technology) Tokai University, Japan, 2556",
       "วศ.บ. (วิศวกรรมอิเล็กทรอนิกส์) สถาบันเทคโนโลยีพระจอมเกล้าเจ้าคุณทหารลาดกระบัง, 2542",
       "วศ.ม. (วิศวกรรมอิเล็กทรอนิกส์) สถาบันเทคโนโลยีพระจอมเกล้าเจ้าคุณทหารลาดกระบัง, 2544"
     ],
-    "research_areas": ["Human Computer Interaction", "Virtual Reality"],
-    "teaching": ["Computer Programming", "Human Computer Interaction"],
-    "textbooks": []
+    "language": "th"
   },
   {
-    "entity_type": "professor",
-    "name": "รศ.ดร.บุญธีร์ เครือตราชู",
-    "degrees": [
-      "Ph.D. (Electrical and Computer Engineering) Oregon State University, USA, 2530",
-      "M.S. (Electrical and Computer Engineering) Oregon State University, USA, 2527",
-      "วศ.บ. (วิศวกรรมไฟฟ้า) มหาวิทยาลัยเกษตรศาสตร์, 2524"
-    ],
-    "research_areas": ["Machine Learning", "Pattern Recognition"],
-    "teaching": [],
-    "textbooks": []
-  },
-  {
-    "entity_type": "professor",
-    "name": "รศ.ดร.สมศักดิ์ มิตะถา",
-    "degrees": [
-      "วศ.ด. (วิศวกรรมไฟฟ้า) สถาบันเทคโนโลยีพระจอมเกล้าเจ้าคุณทหารลาดกระบัง, 2552",
-      "วศ.ม. (วิศวกรรมไฟฟ้า) สถาบันเทคโนโลยีพระจอมเกล้าเจ้าคุณทหารลาดกระบัง, 2538",
-      "อส.บ. (เทคโนโลยีโทรทัศน์) สถาบันเทคโนโลยีพระจอมเกล้าเจ้าคุณทหารลาดกระบัง, 2530"
-    ],
-    "research_areas": [
-      "Computer System Design",
-      "Embedded System Application",
-      "Microcontroller Application",
-      "Optical Logic Gate",
-      "Pattern Recognition"
-    ],
-    "teaching": [],
-    "textbooks": ["การออกแบบวงจรดิจิตอลและวงจรตรรก"]
-  },
-  {
-    "entity_type": "professor",
+    "data_type": "professor",
     "name": "รศ.ดร.อรฉัตร จิตต์โสภักตร์",
-    "degrees": [
-      "Ph.D. (Computer Engineering) University of Texas at Arlington, USA, 2544 - Visual Analytics",
-      "M.S. (Computer Engineering) Arizona State University, USA, 2540",
-      "วศ.บ. (วิศวกรรมอิเล็กทรอนิกส์) สถาบันเทคโนโลยีพระจอมเกล้าเจ้าคุณทหารลาดกระบัง, 2534"
-    ],
     "research_areas": [
       "3D Reconstruction and Modelling",
       "Image Registration",
@@ -122,297 +94,379 @@
       "Parallel Processing GPU",
       "Text Mining"
     ],
-    "teaching": [],
-    "textbooks": ["Digital Image Processing (ทฤษฎีการประมวลผลภาพ)"]
+    "teaching_subjects": [
+      "01076105 - การเขียนโปรแกรมเชิงวัตถุ",
+      "01076532 - การเรียนรู้ของเครื่อง",
+      "01076312 - โครงงาน 2",
+      "01076032 - สมการอนุพันธ์และพีชคณิตเชิงเส้นพื้นฐาน",
+      "01076311 - โครงงาน 1",
+      "01076567 - การประมวลผลภาพ",
+      "01076106 - โครงงานโปรแกรมเชิงวัตถุ"
+    ],
+    "textbooks": ["Digital Image Processing (ทฤษฎีการประมวลผลภาพ)"],
+    "degrees": [
+      "Ph.D. (Computer Engineering) University of Texas at Arlington, USA, 2544 - Visual Analytics",
+      "M.S. (Computer Engineering) Arizona State University, USA, 2540",
+      "วศ.บ. (วิศวกรรมอิเล็กทรอนิกส์) สถาบันเทคโนโลยีพระจอมเกล้าเจ้าคุณทหารลาดกระบัง, 2534"
+    ],
+    "language": "th"
   },
   {
-    "entity_type": "professor",
+    "data_type": "professor",
     "name": "รศ.ดร.เกียรติกูล เจียรนัยธนะกิจ",
-    "degrees": [
-      "วศ.ด. (วิศวกรรมไฟฟ้า) สถาบันเทคโนโลยีพระจอมเกล้าเจ้าคุณทหารลาดกระบัง, 2552",
-      "M.S. (Computer Science) Oregon State University, USA, 2542",
-      "วศ.บ. (วิศวกรรมคอมพิวเตอร์) สถาบันเทคโนโลยีพระจอมเกล้าเจ้าคุณทหารลาดกระบัง, 2538"
-    ],
     "research_areas": [
       "Artificial neural networks",
       "Genetic Algorithms",
       "Particle Swarm Optimization"
     ],
-    "teaching": [],
-    "textbooks": ["ทฤษฎีการคำนวณ (Theory of computation)"]
+    "teaching_subjects": [
+      "01076312 - โครงงาน 2",
+      "01076121 - ทฤษฎีการคำนวณ",
+      "01076311 - โครงงาน 1",
+      "01076533 - การเรียนรู้เชิงลึก",
+      "01076582 - ปัญญาประดิษฐ์"
+    ],
+    "textbooks": ["ทฤษฎีการคำนวณ (Theory of computation)"],
+    "degrees": [
+      "วศ.ด. (วิศวกรรมไฟฟ้า) สถาบันเทคโนโลยีพระจอมเกล้าเจ้าคุณทหารลาดกระบัง, 2552",
+      "M.S. (Computer Science) Oregon State University, USA, 2542",
+      "วศ.บ. (วิศวกรรมคอมพิวเตอร์) สถาบันเทคโนโลยีพระจอมเกล้าเจ้าคุณทหารลาดกระบัง, 2538"
+    ],
+    "language": "th"
   },
   {
-    "entity_type": "professor",
+    "data_type": "professor",
     "name": "รศ.ดร.เจริญ วงษ์ชุ่มเย็น",
-    "degrees": [
-      "วศ.ด. (วิศวกรรมไฟฟ้า) สถาบันเทคโนโลยีพระจอมเกล้าเจ้าคุณทหารลาดกระบัง",
-      "วศ.บ. (วิศวกรรมคอมพิวเตอร์) (เกียรตินิยม) สถาบันเทคโนโลยีพระจอมเกล้าเจ้าคุณทหารลาดกระบัง, 2541",
-      "วศ.ม. (วิศวกรรมไฟฟ้า) สถาบันเทคโนโลยีพระจอมเกล้าเจ้าคุณทหารลาดกระบัง, 2544"
-    ],
     "research_areas": [
       "Computer System Design",
       "Embedded System",
       "Microcontroller Application",
       "Optical Communication"
     ],
-    "teaching": [],
+    "teaching_subjects": [
+      "01076423 - การวางแผนเชิงกลยุทธ์โดยใช้บอร์ดและการ์ดเกม",
+      "01076112 - พื้นฐานระบบดิจิตอล",
+      "01076312 - โครงงาน 2",
+      "01076245 - ปฏิบัติการออกแบบระบบดิจิทัลขั้นสูง",
+      "01076311 - โครงงาน 1",
+      "01076420 - การออกแบบดิจิตอลขั้นสูงโดยใช้เฮชดีแอล",
+      "01076113 - ปฏิบัติการพื้นฐานระบบดิจิตอล",
+      "01076422 - การประกอบการและการจัดการด้านเทคโนโลยีสารสนเทศ"
+    ],
     "textbooks": [
       "การออกแบบไอซีดิจิตอลด้วย FPGA และ CPLD ภาคปฏิบัติโดยใช้ภาษา VHDL"
-    ]
+    ],
+    "degrees": [
+      "วศ.ด. (วิศวกรรมไฟฟ้า) สถาบันเทคโนโลยีพระจอมเกล้าเจ้าคุณทหารลาดกระบัง",
+      "วศ.บ. (วิศวกรรมคอมพิวเตอร์) (เกียรตินิยม) สถาบันเทคโนโลยีพระจอมเกล้าเจ้าคุณทหารลาดกระบัง, 2541",
+      "วศ.ม. (วิศวกรรมไฟฟ้า) สถาบันเทคโนโลยีพระจอมเกล้าเจ้าคุณทหารลาดกระบัง, 2544"
+    ],
+    "language": "th"
   },
   {
-    "entity_type": "professor",
+    "data_type": "professor",
     "name": "รศ.ดร.ศักดิ์ชัย ทิพย์จักษุรัตน์",
-    "degrees": [
-      "Ph.D. (Electronics and Computer Engineering) Gunma University, Japan, 2545",
-      "วศ.ม. (วิศวกรรมไฟฟ้า) สถาบันเทคโนโลยีพระจอมเกล้าเจ้าคุณทหารลาดกระบัง, 2539",
-      "วท.บ. (สถิติ) มหาวิทยาลัยศรีนครินทรวิโรฒประสานมิตร, 2531"
-    ],
     "research_areas": [
       "Computer Networks",
       "Mobile Communications",
       "Queuing Theory",
       "Wireless Information Networks"
     ],
-    "teaching": [],
-    "textbooks": []
-  },
-  {
-    "entity_type": "professor",
-    "name": "ผศ.ดร.สมศักดิ์ วลัยรัชต์",
+    "teaching_subjects": [
+      "01076253 - ความน่าจะเป็นและสถิติ",
+      "01076141 - แคลคูลัส 2",
+      "01076311 - โครงงาน 1",
+      "01076140 - แคลคูลัส 1"
+    ],
+    "textbooks": [],
     "degrees": [
-      "Ph.D. (Computational Intelligence and Systems Science) Tokyo Institute of Technology, Japan, 2544",
-      "วศ.ม. (วิศวกรรมไฟฟ้า) สถาบันเทคโนโลยีพระจอมเกล้าเจ้าคุณทหารลาดกระบัง, 2537",
-      "วท.บ. (คณิตศาสตร์) มหาวิทยาลัยรามคำแหง, 2528"
+      "Ph.D. (Electronics and Computer Engineering) Gunma University, Japan, 2545",
+      "วศ.ม. (วิศวกรรมไฟฟ้า) สถาบันเทคโนโลยีพระจอมเกล้าเจ้าคุณทหารลาดกระบัง, 2539",
+      "วท.บ. (สถิติ) มหาวิทยาลัยศรีนครินทรวิโรฒประสานมิตร, 2531"
     ],
-    "research_areas": [
-      "Computer Graphics",
-      "Multimedia Systems",
-      "Virtual Reality"
-    ],
-    "teaching": [],
-    "textbooks": []
+    "language": "th"
   },
   {
-    "entity_type": "professor",
-    "name": "ผศ.ดร.วิศิษฏ์ หิรัญกิตติ",
-    "degrees": [
-      "Ph.D. (Computer Science), DIC, Imperial College of Science, Technology and Medicine, University of London, UK, 2541 - Intelligent Transportation System",
-      "วศ.บ. (วิศวกรรมคอมพิวเตอร์) (เกียรตินิยม) สถาบันเทคโนโลยีพระจอมเกล้าเจ้าคุณทหารลาดกระบัง, 2532"
-    ],
-    "research_areas": [
-      "Artificial Intelligence",
-      "Software Engineering",
-      "Semantic Web",
-      "Intelligent Agent"
-    ],
-    "teaching": [],
-    "textbooks": []
-  },
-  {
-    "entity_type": "professor",
-    "name": "ผศ.ดร.อรัญญา วลัยรัชต์",
-    "degrees": [
-      "D.Eng. (Electronics) Tokai University, Japan, 2545",
-      "วศ.ม. (วิศวกรรมไฟฟ้า) สถาบันเทคโนโลยีพระจอมเกล้าเจ้าคุณทหารลาดกระบัง, 2537",
-      "วท.บ. (ฟิสิกส์) (เกียรตินิยม) มหาวิทยาลัยศรีนครินทรวิโรฒบางแสน, 2532"
-    ],
-    "research_areas": [
-      "Artificial Intelligence",
-      "Genetic Algorithm",
-      "Machine Translation"
-    ],
-    "teaching": [],
-    "textbooks": ["หลักการเขียนโปรแกรม Win32 และ MFC"]
-  },
-  {
-    "entity_type": "professor",
+    "data_type": "professor",
     "name": "ผศ.ดร.ชุติเมษฏ์ ศรีนิลทา",
+    "research_areas": ["Data Analytics", "Data Mining", "Machine Learning"],
+    "teaching_subjects": [
+      "01076312 - โครงงาน 2",
+      "01076008 - กระบวนการพัฒนาซอฟต์แวร์",
+      "01076311 - โครงงาน 1",
+      "01076034 - หลักการของกระบวนการพัฒนาซอฟต์แวร์"
+    ],
+    "textbooks": [],
     "degrees": [
       "Ph.D. (Computer Engineering) Syracuse University, USA, 2541",
       "M.S. (Computer Engineering) Syracuse University, USA, 2539",
       "วศ.บ. (วิศวกรรมไฟฟ้า) มหาวิทยาลัยเกษตรศาสตร์, 2533"
     ],
-    "research_areas": ["Data Analytics", "Data Mining", "Machine Learning"],
-    "teaching": [],
-    "textbooks": []
+    "language": "th"
   },
   {
-    "entity_type": "professor",
+    "data_type": "professor",
     "name": "ผศ.ดร.สุรินทร์ กิตติธรกุล",
+    "research_areas": [
+      "Computer Architecture",
+      "High-Level Synthesis",
+      "Reconfigurable Computing"
+    ],
+    "teaching_subjects": [
+      "01076312 - โครงงาน 2",
+      "01076311 - โครงงาน 1",
+      "01076114 - องค์ประกอบและสถาปัตยกรรมคอมพิวเตอร์",
+      "01076021 - สถาปัตยกรรมคอมพิวเตอร์",
+      "01076418 - การประมวลผลสมรรถนะสูง",
+      "01076115 - ปฏิบัติการองค์ประกอบคอมพิวเตอร์"
+    ],
+    "textbooks": ["ระบบปฏิบัติการคอมพิวเตอร์"],
     "degrees": [
       "Ph.D.E.E. (Computer Engineering) University of Wisconsin, USA, 2545 - VLSI/FPGA Design - Video/Image Processing",
       "M.S.E.E. (Computer Engineering) University of Wisconsin, USA, 2540",
       "วศ.ม. (วิศวกรรมโทรคมนาคม) สถาบันเทคโนโลยีแห่งเอเชีย, 2538",
       "วศ.บ. (วิศวกรรมอิเล็กทรอนิกส์) สถาบันเทคโนโลยีพระจอมเกล้าเจ้าคุณทหารลาดกระบัง, 2535"
     ],
-    "research_areas": [
-      "Computer Architecture",
-      "High-Level Synthesis",
-      "Reconfigurable Computing"
-    ],
-    "teaching": [],
-    "textbooks": ["ระบบปฏิบัติการคอมพิวเตอร์"]
+    "language": "th"
   },
   {
-    "entity_type": "professor",
+    "data_type": "professor",
     "name": "ผศ.ดร.ปกรณ์ วัฒนจตุรพร",
-    "degrees": [
-      "Ph.D. (Computer Engineering) Syracuse University, USA, 2548",
-      "วศ.บ. (วิศวกรรมคอมพิวเตอร์) (เกียรตินิยม) สถาบันเทคโนโลยีพระจอมเกล้าเจ้าคุณทหารลาดกระบัง, 2537"
-    ],
     "research_areas": [
       "Distributed Computing",
       "Image Processing",
       "Pattern Recognition",
       "Remote Sensing"
     ],
-    "teaching": [],
+    "teaching_subjects": ["01076311 - โครงงาน 1", "01076263 - ระบบฐานข้อมูล"],
     "textbooks": [
       "Advanced Image Processing Techniques for Remote Sensed Hyperspectral Data. Springer-Verlag, 2004"
-    ]
+    ],
+    "degrees": [
+      "Ph.D. (Computer Engineering) Syracuse University, USA, 2548",
+      "วศ.บ. (วิศวกรรมคอมพิวเตอร์) (เกียรตินิยม) สถาบันเทคโนโลยีพระจอมเกล้าเจ้าคุณทหารลาดกระบัง, 2537"
+    ],
+    "language": "th"
   },
   {
-    "entity_type": "professor",
+    "data_type": "professor",
     "name": "ผศ.ดร.อำนาจ ขาวเน",
+    "research_areas": ["Computer Networks", "Image Processing"],
+    "teaching_subjects": [
+      "01076107 - วงจรไฟฟ้าและอิเล็กทรอนิกส์",
+      "01076108 - ปฏิบัติการวงจรไฟฟ้าและอิเล็กทรอนิกส์",
+      "01076421 - การออกแบบระบบสมองกลฝังตัว",
+      "01076312 - โครงงาน 2",
+      "01076311 - โครงงาน 1",
+      "01076566 - ระบบสื่อผสม",
+      "01076232 - อิเล็กทรอนิกส์สำหรับวิศวกรรมคอมพิวเตอร์"
+    ],
+    "textbooks": [],
     "degrees": [
       "D.Eng. (Science and Technology) Tokai University, Japan, 2545",
       "วศ.ม. (วิศวกรรมไฟฟ้า) สถาบันเทคโนโลยีพระจอมเกล้าเจ้าคุณทหารลาดกระบัง, 2545",
       "วศ.บ. (วิศวกรรมโทรคมนาคม) สถาบันเทคโนโลยีพระจอมเกล้าเจ้าคุณทหารลาดกระบัง, 2541"
     ],
-    "research_areas": ["Computer Networks", "Image Processing"],
-    "teaching": [],
-    "textbooks": []
+    "language": "th"
   },
   {
-    "entity_type": "professor",
+    "data_type": "professor",
     "name": "ผศ.ดร.รัฐชัย ชาวอุทัย",
+    "research_areas": ["Data Science", "User Experience"],
+    "teaching_subjects": [
+      "01076312 - โครงงาน 2",
+      "01076311 - โครงงาน 1",
+      "01076035 - กระบวนการพัฒนาซอฟต์แวร์เชิงปฏิบัติ",
+      "01076598 - การวิเคราะห์ข้อมูลเบื้องต้น"
+    ],
+    "textbooks": [],
     "degrees": [
       "Ph.D. (Informatics), SOKENDAI, Japan, 2559",
       "M.Eng. (Information Management), Asian Institute of Technology, 2555",
       "วศ.บ. (วิศวกรรมคอมพิวเตอร์) สถาบันเทคโนโลยีพระจอมเกล้าเจ้าคุณทหารลาดกระบัง, 2531"
     ],
-    "research_areas": ["Data Science", "User Experience"],
-    "teaching": [],
-    "textbooks": []
+    "language": "th"
   },
   {
-    "entity_type": "professor",
+    "data_type": "professor",
     "name": "ผศ.ธนา หงษ์สุวรรณ",
+    "research_areas": ["Embedded Systems", "Internet of Things"],
+    "teaching_subjects": [
+      "01076016 - การเตรียมโครงงานวิศวกรรมคอมพิวเตอร์",
+      "01076105 - การเขียนโปรแกรมเชิงวัตถุ",
+      "01076312 - โครงงาน 2",
+      "01076117 - ปฏิบัติการเครือข่ายคอมพิวเตอร์",
+      "01076311 - โครงงาน 1",
+      "01076106 - โครงงานโปรแกรมเชิงวัตถุ"
+    ],
+    "textbooks": [],
     "degrees": [
       "วศ.ม. (วิศวกรรมคอมพิวเตอร์) สถาบันเทคโนโลยีพระจอมเกล้าเจ้าคุณทหารลาดกระบัง, 2538",
       "วศ.บ. (วิศวกรรมคอมพิวเตอร์) สถาบันเทคโนโลยีพระจอมเกล้าเจ้าคุณทหารลาดกระบัง, 2531"
     ],
-    "research_areas": ["Embedded Systems", "Internet of Things"],
-    "teaching": [],
-    "textbooks": []
+    "language": "th"
   },
   {
-    "entity_type": "professor",
+    "data_type": "professor",
     "name": "ผศ.บัณฑิต พัสยา",
+    "research_areas": ["Information Retrieval"],
+    "teaching_subjects": [
+      "01076312 - โครงงาน 2",
+      "01076311 - โครงงาน 1",
+      "01006012 - การเขียนโปรแกรมคอมพิวเตอร์",
+      "01076595 - การสืบค้นสารสนเทศและการค้นหาเว็บ",
+      "01076573 - การจัดเก็บและค้นคืนสารสนเทศ"
+    ],
+    "textbooks": [],
     "degrees": [
       "วศ.ม. (วิศวกรรมไฟฟ้า) สถาบันเทคโนโลยีพระจอมเกล้าเจ้าคุณทหารลาดกระบัง, 2544",
       "วท.บ. (คณิตศาสตร์) สถาบันเทคโนโลยีพระจอมเกล้าเจ้าคุณทหารลาดกระบัง, 2534"
     ],
-    "research_areas": ["Information Retrieval"],
-    "teaching": [],
-    "textbooks": []
+    "language": "th"
   },
   {
-    "entity_type": "professor",
+    "data_type": "professor",
     "name": "ผศ.วัจนพงศ์ เกษมศิริ",
+    "research_areas": ["Pattern Recognition"],
+    "teaching_subjects": [
+      "01076311 - โครงงาน 1",
+      "01076119 - การพัฒนาโปรแกรมบนเว็บ",
+      "01076120 - โครงงานพัฒนาโปรแกรมบนเว็บ",
+      "01076106 - โครงงานโปรแกรมเชิงวัตถุ",
+      "01076011 - ระบบปฏิบัติการ"
+    ],
+    "textbooks": [],
     "degrees": [
       "วศ.ม. (วิศวกรรมไฟฟ้า) สถาบันเทคโนโลยีพระจอมเกล้าเจ้าคุณทหารลาดกระบัง, 2546",
       "วศ.บ. (วิศวกรรมไฟฟ้า) มหาวิทยาลัยธรรมศาสตร์, 2541"
     ],
-    "research_areas": ["Pattern Recognition"],
-    "teaching": [],
-    "textbooks": []
+    "language": "th"
   },
   {
-    "entity_type": "professor",
-    "name": "ดร.วัชระ ฉัตรวิริยะ",
-    "degrees": [
-      "Ph.D. (Computer Engineering) West Virginia University, USA, 2546",
-      "วศ.ม. (วิศวกรรมคอมพิวเตอร์) สถาบันเทคโนโลยีพระจอมเกล้าเจ้าคุณทหารลาดกระบัง, 2536",
-      "วศ.บ. (วิศวกรรมคอมพิวเตอร์) สถาบันเทคโนโลยีพระจอมเกล้าเจ้าคุณทหารลาดกระบัง, 2529"
-    ],
-    "research_areas": [
-      "Business Intelligence",
-      "Embedded Systems",
-      "Pattern Recognition"
-    ],
-    "teaching": [],
-    "textbooks": ["เรียนรู้แอสเซมบลีสู่หลักการเขียนโปรแกรม"]
-  },
-  {
-    "entity_type": "professor",
-    "name": "ดร.อักฤทธิ์ สังข์เพ็ชร",
-    "degrees": [
-      "B.S. (Computer Science) Carnegie Mellon University, USA, 2548",
-      "B.Eng. (Electrical and Computer Engineering) Carnegie Mellon University, USA, 2548",
-      "M.Eng. (Electrical and Computer Engineering) Carnegie Mellon University, USA, 2553",
-      "Ph.D. (Electrical and Computer Engineering) Carnegie Mellon University, USA, 2556"
-    ],
-    "research_areas": ["Cloud Computing", "Distributed System", "Smart System"],
-    "teaching": [],
-    "textbooks": []
-  },
-  {
-    "entity_type": "professor",
+    "data_type": "professor",
     "name": "ดร.จิระศักดิ์ สิทธิกร",
+    "research_areas": ["Image Processing"],
+    "teaching_subjects": [
+      "01076016 - การเตรียมโครงงานวิศวกรรมคอมพิวเตอร์",
+      "01076411 - การพัฒนาหุ่นยนต์ขนาดเล็ก",
+      "01076312 - โครงงาน 2",
+      "01076311 - โครงงาน 1",
+      "01076001 - วิศวกรรมคอมพิวเตอร์เบื้องต้น",
+      "01076041 - ปฏิบัติการมาตรฐานและเทคโนโลยีเครือข่าย",
+      "01076040 - มาตรฐานและเทคโนโลยีเครือข่าย"
+    ],
+    "textbooks": [],
     "degrees": [
       "วศ.ด. (วิศวกรรมไฟฟ้า) สถาบันเทคโนโลยีพระจอมเกล้าเจ้าคุณทหารลาดกระบัง, 2558",
       "วศ.ม. (วิศวกรรมโทรคมนาคม) สถาบันเทคโนโลยีพระจอมเกล้าเจ้าคุณทหารลาดกระบัง, 2546",
       "วศ.บ. (วิศวกรรมโทรคมนาคม) มหาวิทยาลัยเทคโนโลยีสุรนารี, 2544"
     ],
-    "research_areas": ["Image Processing"],
-    "teaching": [],
-    "textbooks": []
+    "language": "th"
   },
   {
-    "entity_type": "professor",
-    "name": "ดร.อรทัย สังข์เพ็ชร",
-    "degrees": [
-      "B.Eng.-M.Eng. Electrical and Computer Engineering Carnegie Mellon University, USA, 2548",
-      "Ph.D. Electrical and Computer Engineering Carnegie Mellon University, USA, 2556"
-    ],
-    "research_areas": ["Cloud Computing", "Cyber Security", "Smart System"],
-    "teaching": [
-      "Operating Systems",
-      "Unix Operating Systems",
-      "Cloud Computing"
-    ]
-  },
-  {
-    "entity_type": "professor",
+    "data_type": "professor",
     "name": "อ.คณัฐ ตังติสานนท์",
+    "research_areas": ["Analysis of Algorithms"],
+    "teaching_subjects": [
+      "01076312 - โครงงาน 2",
+      "01076110 - โครงงานโครงสร้างข้อมูลเชิงวัตถุ",
+      "01076311 - โครงงาน 1"
+    ],
+    "textbooks": [],
     "degrees": [
       "M.S. (Computer Science) University of New South Wales, Australia, 2544",
       "วศ.บ. (อิเล็กทรอนิกส์) สถาบันเทคโนโลยีพระจอมเกล้าเจ้าคุณทหารลาดกระบัง, 2530"
     ],
-    "research_areas": ["Analysis of Algorithms"],
-    "teaching": [],
-    "textbooks": []
+    "language": "th"
   },
   {
-    "entity_type": "professor",
+    "data_type": "professor",
     "name": "อ.เกียรติณรงค์ ทองประเสริฐ",
+    "research_areas": ["Information Retrieval"],
+    "teaching_subjects": [
+      "01076312 - โครงงาน 2",
+      "01076110 - โครงงานโครงสร้างข้อมูลเชิงวัตถุ",
+      "01076311 - โครงงาน 1",
+      "01006012 - การเขียนโปรแกรมคอมพิวเตอร์",
+      "01076109 - โครงสร้างข้อมูลเชิงวัตถุ"
+    ],
+    "textbooks": [],
     "degrees": [
       "วศ.บ. (วิศวกรรมคอมพิวเตอร์) สถาบันเทคโนโลยีพระจอมเกล้าเจ้าคุณทหารลาดกระบัง, 2542",
       "วศ.ม. (วิศวกรรมคอมพิวเตอร์) สถาบันเทคโนโลยีพระจอมเกล้าเจ้าคุณทหารลาดกระบัง, 2548"
     ],
-    "research_areas": ["Information Retrieval"],
-    "teaching": [],
-    "textbooks": []
+    "language": "th"
   },
   {
-    "entity_type": "professor",
-    "name": "Prof. Sorayuth Klomklom",
-    "degrees": [
-      "B.Eng. (Computer Engineering), King Mongkut's Institute of Technology Ladkrabang, 2001",
-      "M.Eng. (Computer Engineering), King Mongkut's Institute of Technology Ladkrabang, 2011"
+    "data_type": "professor",
+    "name": "ดร. ปริญญา เอกปริญญา",
+    "research_areas": [],
+    "teaching_subjects": [
+      "01076116 - เครือข่ายคอมพิวเตอร์",
+      "01076312 - โครงงาน 2",
+      "01076117 - ปฏิบัติการเครือข่ายคอมพิวเตอร์",
+      "01076043 - สถาปัตยกรรมคลาวด์เบื้องต้น",
+      "01076311 - โครงงาน 1",
+      "01076044 - ปฏิบัติการสถาปัตยกรรมคลาวด์เบื้องต้น"
     ],
+    "textbooks": [],
+    "degrees": [
+      "2021 Doctor of Philosophy (Engineering), The University of Sydney, Australia",
+      "2015 Master of Information Technology, The University of Sydney, Australia",
+      "2009 Bachelor of Engineering (Computer), KMITL, Thailand"
+    ],
+    "language": "th"
+  },
+  {
+    "data_type": "professor",
+    "name": "ผศ.ดร. พงษ์ศักดิ์ กีรติวินทกร",
+    "research_areas": [
+      "Wireless Networks",
+      "Mobile and Data Networks",
+      "Network Security/Cybersecurity",
+      "Management of Information System and Database",
+      "Cloud Computing"
+    ],
+    "teaching_subjects": [
+      "01076312 - โครงงาน 2",
+      "01076627 - สถาปัตยกรรมและการบริหารความมั่นคงไอซีที",
+      "01076311 - โครงงาน 1",
+      "01076628 - การประเมินความมั่นคงเทคโนโลยีสารสนเทศ"
+    ],
+    "textbooks": [],
+    "degrees": [
+      "ปริญญาตรี : วศ.บ วิศวกรรมไฟฟ้า KMITL",
+      "ปริญญาโท : Electrical Engineering, University of Kansas USA",
+      "ปริญญาเอก : Information Science and Telecommunications, University of Pittsburgh ,USA"
+    ],
+    "language": "th"
+  },
+  {
+    "data_type": "professor",
+    "name": "ดร. จิรายุ เพชรแหน",
+    "research_areas": [
+      "Machine Learning and related fields",
+      "Artificial Intelligence of Things (AIoT)",
+      "Language Models"
+    ],
+    "teaching_subjects": [
+      "01076532 - การเรียนรู้ของเครื่อง",
+      "01076641 - การเรียนรู้ของเครื่องและการเรียนรู้เชิงลึกเบื้องต้น",
+      "01076421 - การออกแบบระบบสมองกลฝังตัว",
+      "01076312 - โครงงาน 2",
+      "01076001 - วิศวกรรมคอมพิวเตอร์เบื้องต้น"
+    ],
+    "textbooks": [],
+    "degrees": [
+      "ปริญญาตรี : B.Eng. - Hons. I (Control Engineering), King Mongkut Institute of Technology Ladkrabang (2017)",
+      "ปริญญาโท : M.Eng. (Instrumentation Engineering), King Mongkut Institute of Technology Ladkrabang (2019)",
+      "ปริญญาเอก : Ph.D. (Electrical Engineering), National Taiwan University of Science and Technology (Taiwan Tech), Taipei, Taiwan, R.O.C. (2024)"
+    ],
+    "language": "th"
+  },
+  {
+    "data_type": "professor",
+    "name": "Prof. SORAYUT GLOMGLOME",
     "research_areas": [
       "Cyber-Physical Systems",
       "Embedded System",
@@ -420,106 +474,82 @@
       "Internet of Things",
       "Software Codesign"
     ],
-    "teaching": [
-      "Computer Architecture",
-      "Computer Programming",
-      "Computer Interfacing"
+    "teaching_subjects": [
+      "01076051 - MICROCONTROLLER PROJECT",
+      "01076050 - MICROCONTROLLER APPLICATION AND DEVELOPMENT",
+      "01076312 - PROJECT 2",
+      "01076311 - PROJECT 1",
+      "01076052 - REAL-TIME EMBEDDED SYSTEMS"
     ],
-    "textbooks": []
-  },
-  {
-    "entity_type": "professor",
-    "name": "Prof. Wiboon Prompanich",
+    "textbooks": [],
     "degrees": [
-      "M.Eng. (Computer Technology), Asian Institute of Technology, Thailand, 1991",
-      "B.Eng. (Electrical Engineering), King Mongkut's Institute of Technology Ladkrabang, 1984"
+      "B.Eng. (Computer Engineering), King Mongkut's Institute of Technology Ladkrabang, 2001",
+      "M.Eng. (Computer Engineering), King Mongkut's Institute of Technology Ladkrabang, 2011"
     ],
-    "research_areas": [
-      "GIS",
-      "Object Technology",
-      "Software Engineering",
-      "Database Systems"
-    ],
-    "teaching": ["Computer Programming 1", "Computer Programming 2"],
-    "textbooks": []
+    "language": "en"
   },
   {
-    "entity_type": "professor",
-    "name": "Prof. Akaradaj Wacharapupong",
+    "data_type": "professor",
+    "name": "Prof. AKKRADACH WATCHARAPUPONG",
+    "research_areas": ["Computer Security", "Network Security"],
+    "teaching_subjects": [
+      "01076118 - SYSTEM PLATFORM ADMINISTRATION",
+      "01076311 - PROJECT 1",
+      "01076629 - BASIC PENETRATION TESTING AND ETHICAL HACKING",
+      "01076312 - PROJECT 2"
+    ],
+    "textbooks": [],
     "degrees": [
       "B.Eng. (Computer Engineering), King Mongkut's Institute of Technology Ladkrabang, 1997",
       "M.Eng. (Computer Engineering), King Mongkut's Institute of Technology Ladkrabang, 2014"
     ],
-    "research_areas": ["Computer Security", "Network Security"],
-    "teaching": ["Computer Programming 1", "Theory of Computational"],
-    "textbooks": []
+    "language": "en"
   },
   {
-    "entity_type": "professor",
-    "name": "Prof. Thananchai Treepak",
-    "degrees": [
-      "B.Eng. (Computer Engineering) (First Class Honors), King Mongkut's Institute of Technology Ladkrabang, 1999",
-      "M.Eng. (Computer Engineering), King Mongkut's Institute of Technology Ladkrabang, 2003",
-      "D.Eng. (Electrical Engineering), King Mongkut's Institute of Technology Ladkrabang, 2011"
-    ],
+    "data_type": "professor",
+    "name": "Prof. THANUNCHAI THREEPAK",
     "research_areas": [
       "Computer Networks",
       "Network Security",
       "Optical Computing"
     ],
-    "teaching": ["Network Security", "Computer Programming"],
-    "textbooks": ["Computers and Programming C and Java"]
+    "teaching_subjects": [
+      "01076104 - PROGRAMMING PROJECT",
+      "01076312 - PROJECT 2",
+      "01076103 - PROGRAMMING FUNDAMENTAL",
+      "01076042 - INFORMATION AND COMPUTER SECURITY",
+      "01076311 - PROJECT 1",
+      "01076012 - DISCRETE STRUCTURE"
+    ],
+    "textbooks": ["Computers and Programming C and Java"],
+    "degrees": [
+      "B.Eng. (Computer Engineering) (First Class Honors), King Mongkut's Institute of Technology Ladkrabang, 1999",
+      "M.Eng. (Computer Engineering), King Mongkut's Institute of Technology Ladkrabang, 2003",
+      "D.Eng. (Electrical Engineering), King Mongkut's Institute of Technology Ladkrabang, 2011"
+    ],
+    "language": "en"
   },
   {
-    "entity_type": "professor",
-    "name": "Prof. Chompoonut Jinchakam",
+    "data_type": "professor",
+    "name": "Prof. CHOMPOONUCH TENGCHAROEN",
+    "research_areas": ["Human Computer Interaction", "Virtual Reality"],
+    "teaching_subjects": [
+      "01076036 - USER EXPERIENCE AND USER INTERFACE DESIGN",
+      "01076311 - PROJECT 1",
+      "01076037 - USER EXPERIENCE AND USER INTERFACE PROJECT",
+      "01076312 - PROJECT 2"
+    ],
+    "textbooks": [],
     "degrees": [
       "D.Eng. (Science and Technology), Tokai University, Japan, 2013",
       "B.Eng. (Electronics Engineering), King Mongkut's Institute of Technology Ladkrabang, 1999",
       "M.Eng. (Electronics Engineering), King Mongkut's Institute of Technology Ladkrabang, 2001"
     ],
-    "research_areas": ["Human Computer Interaction", "Virtual Reality"],
-    "teaching": ["Computer Programming", "Human Computer Interaction"],
-    "textbooks": []
+    "language": "en"
   },
   {
-    "entity_type": "professor",
-    "name": "Prof. Boonthe Kreuatrachue",
-    "degrees": [
-      "Ph.D. (Electrical and Computer Engineering), Oregon State University, USA, 1987",
-      "M.S. (Electrical and Computer Engineering), Oregon State University, USA, 1984",
-      "B.Eng. (Electrical Engineering), Kasetsart University, 1981"
-    ],
-    "research_areas": ["Machine Learning", "Pattern Recognition"],
-    "teaching": [],
-    "textbooks": []
-  },
-  {
-    "entity_type": "professor",
-    "name": "Prof. Somsak Mittatha",
-    "degrees": [
-      "D.Eng. (Electrical Engineering), King Mongkut's Institute of Technology Ladkrabang, 2009",
-      "M.Eng. (Electrical Engineering), King Mongkut's Institute of Technology Ladkrabang, 1995",
-      "B.Tech. (Television Technology), King Mongkut's Institute of Technology Ladkrabang, 1987"
-    ],
-    "research_areas": [
-      "Computer System Design",
-      "Embedded System Application",
-      "Microcontroller Application",
-      "Optical Logic Gate",
-      "Pattern Recognition"
-    ],
-    "teaching": [],
-    "textbooks": ["Digital and Logic Circuit Design"]
-  },
-  {
-    "entity_type": "professor",
-    "name": "Prof. Orachart Jitsobhak",
-    "degrees": [
-      "Ph.D. (Computer Engineering), University of Texas at Arlington, USA, 2001 - Visual Analytics",
-      "M.S. (Computer Engineering), Arizona State University, USA, 1997",
-      "B.Eng. (Electronics Engineering), King Mongkut's Institute of Technology Ladkrabang, 1991"
-    ],
+    "data_type": "professor",
+    "name": "Prof. ORACHAT CHITSOBHUK",
     "research_areas": [
       "3D Reconstruction and Modelling",
       "Image Registration",
@@ -528,289 +558,377 @@
       "Parallel Processing GPU",
       "Text Mining"
     ],
-    "teaching": [],
-    "textbooks": ["Digital Image Processing (Theory of Image Processing)"]
+    "teaching_subjects": [
+      "01076105 - OBJECT ORIENTED PROGRAMMING",
+      "01076032 - ELEMENTARY DIFFERENTIAL EQUATIONS AND LINEAR ALGEBRA",
+      "01076312 - PROJECT 2",
+      "01076567 - IMAGE PROCESSING",
+      "01076532 - MACHINE LEARNING",
+      "01076311 - PROJECT 1",
+      "01076106 - OBJECT ORIENTED PROGRAMMING PROJECT"
+    ],
+    "textbooks": ["Digital Image Processing (Theory of Image Processing)"],
+    "degrees": [
+      "Ph.D. (Computer Engineering), University of Texas at Arlington, USA, 2001 - Visual Analytics",
+      "M.S. (Computer Engineering), Arizona State University, USA, 1997",
+      "B.Eng. (Electronics Engineering), King Mongkut's Institute of Technology Ladkrabang, 1991"
+    ],
+    "language": "en"
   },
   {
-    "entity_type": "professor",
-    "name": "Prof. Kiattikool Chianaitanakij",
-    "degrees": [
-      "D.Eng. (Electrical Engineering), King Mongkut's Institute of Technology Ladkrabang, 2009",
-      "M.S. (Computer Science), Oregon State University, USA, 1999",
-      "B.Eng. (Computer Engineering), King Mongkut's Institute of Technology Ladkrabang, 1995"
-    ],
+    "data_type": "professor",
+    "name": "Prof. KIETIKUL JEARANAITANAKIJ",
     "research_areas": [
       "Artificial neural networks",
       "Genetic Algorithms",
       "Particle Swarm Optimization"
     ],
-    "teaching": [],
-    "textbooks": ["Theory of Computation"]
+    "teaching_subjects": [
+      "01076312 - PROJECT 2",
+      "01076121 - THEORY OF COMPUTATION",
+      "01076533 - DEEP LEARNING",
+      "01076311 - PROJECT 1",
+      "01076582 - ARTIFICIAL INTELLIGENCE"
+    ],
+    "textbooks": ["Theory of Computation"],
+    "degrees": [
+      "D.Eng. (Electrical Engineering), King Mongkut's Institute of Technology Ladkrabang, 2009",
+      "M.S. (Computer Science), Oregon State University, USA, 1999",
+      "B.Eng. (Computer Engineering), King Mongkut's Institute of Technology Ladkrabang, 1995"
+    ],
+    "language": "en"
   },
   {
-    "entity_type": "professor",
-    "name": "Prof. Charoen Wongchumyen",
-    "degrees": [
-      "D.Eng. (Electrical Engineering), King Mongkut's Institute of Technology Ladkrabang",
-      "B.Eng. (Computer Engineering) (First Class Honors), King Mongkut's Institute of Technology Ladkrabang, 1998",
-      "M.Eng. (Electrical Engineering), King Mongkut's Institute of Technology Ladkrabang, 2001"
-    ],
+    "data_type": "professor",
+    "name": "Prof. CHAROEN VONGCHUMYEN",
     "research_areas": [
       "Computer System Design",
       "Embedded System",
       "Microcontroller Application",
       "Optical Communication"
     ],
-    "teaching": [],
+    "teaching_subjects": [
+      "01076420 - ADVANCED DIGITAL DESIGN USING HDL",
+      "01076113 - DIGITAL SYSTEM FUNDAMENTALS IN PRACTICE",
+      "01076112 - DIGITAL SYSTEM FUNDAMENTALS",
+      "01076423 - STRATEGIC PLANNING USING BOARD AND CARD GAME",
+      "01076422 - IT ENTREPRENEURSHIP AND MANAGEMENT",
+      "01076312 - PROJECT 2",
+      "01076311 - PROJECT 1",
+      "01076245 - ADVANCED DIGITAL SYSTEM DESIGN LABORATORY"
+    ],
     "textbooks": [
       "Digital IC Design with FPGA and CPLD Practical with VHDL Language"
-    ]
+    ],
+    "degrees": [
+      "D.Eng. (Electrical Engineering), King Mongkut's Institute of Technology Ladkrabang",
+      "B.Eng. (Computer Engineering) (First Class Honors), King Mongkut's Institute of Technology Ladkrabang, 1998",
+      "M.Eng. (Electrical Engineering), King Mongkut's Institute of Technology Ladkrabang, 2001"
+    ],
+    "language": "en"
   },
   {
-    "entity_type": "professor",
-    "name": "Prof. Sakchai Thipjaksurat",
-    "degrees": [
-      "Ph.D. (Electronics and Computer Engineering), Gunma University, Japan, 2002",
-      "M.Eng. (Electrical Engineering), King Mongkut's Institute of Technology Ladkrabang, 1996",
-      "B.Sc. (Statistics), Srinakharinwirot University Prasarnmit, 1988"
-    ],
+    "data_type": "professor",
+    "name": "Prof. SAKCHAI THIPCHAKSURAT",
     "research_areas": [
       "Computer Networks",
       "Mobile Communications",
       "Queuing Theory",
       "Wireless Information Networks"
     ],
-    "teaching": [],
-    "textbooks": []
-  },
-  {
-    "entity_type": "professor",
-    "name": "Prof. Somsak Walaichat",
+    "teaching_subjects": [
+      "01076253 - PROBABILITY AND STATISTICS",
+      "01076141 - CALCULUS 2",
+      "01076140 - CALCULUS 1",
+      "01076311 - PROJECT 1"
+    ],
+    "textbooks": [],
     "degrees": [
-      "Ph.D. (Computational Intelligence and Systems Science), Tokyo Institute of Technology, Japan, 2001",
-      "M.Eng. (Electrical Engineering), King Mongkut's Institute of Technology Ladkrabang, 1994",
-      "B.Sc. (Mathematics), Ramkhamhaeng University, 1985"
+      "Ph.D. (Electronics and Computer Engineering), Gunma University, Japan, 2002",
+      "M.Eng. (Electrical Engineering), King Mongkut's Institute of Technology Ladkrabang, 1996",
+      "B.Sc. (Statistics), Srinakharinwirot University Prasarnmit, 1988"
     ],
-    "research_areas": [
-      "Computer Graphics",
-      "Multimedia Systems",
-      "Virtual Reality"
-    ],
-    "teaching": [],
-    "textbooks": []
+    "language": "en"
   },
   {
-    "entity_type": "professor",
-    "name": "Prof. Wisit Hirankitti",
-    "degrees": [
-      "Ph.D. (Computer Science), DIC, Imperial College of Science, Technology and Medicine, University of London, UK, 1998 - Intelligent Transportation System",
-      "B.Eng. (Computer Engineering) (First Class Honors), King Mongkut's Institute of Technology Ladkrabang, 1989"
+    "data_type": "professor",
+    "name": "Prof. CHUTIMET SRINILTA",
+    "research_areas": ["Data Analytics", "Data Mining", "Machine Learning"],
+    "teaching_subjects": [
+      "01076311 - PROJECT 1",
+      "01076008 - SOFTWARE DEVELOPMENT PROCESSES",
+      "01076312 - PROJECT 2",
+      "01076034 - PRINCIPLES OF SOFTWARE DEVELOPMENT PROCESS"
     ],
-    "research_areas": [
-      "Artificial Intelligence",
-      "Software Engineering",
-      "Semantic Web",
-      "Intelligent Agent"
-    ],
-    "teaching": [],
-    "textbooks": []
-  },
-  {
-    "entity_type": "professor",
-    "name": "Prof. Aranya Walaichat",
-    "degrees": [
-      "D.Eng. (Electronics), Tokai University, Japan, 2002",
-      "M.Eng. (Electrical Engineering), King Mongkut's Institute of Technology Ladkrabang, 1994",
-      "B.Sc. (Physics) (First Class Honors), Srinakharinwirot University Bangsaen, 1989"
-    ],
-    "research_areas": [
-      "Artificial Intelligence",
-      "Genetic Algorithm",
-      "Machine Translation"
-    ],
-    "teaching": [],
-    "textbooks": ["Principles of Win32 and MFC Programming"]
-  },
-  {
-    "entity_type": "professor",
-    "name": "Prof. Chutimet Sreenil",
+    "textbooks": [],
     "degrees": [
       "Ph.D. (Computer Engineering), Syracuse University, USA, 1998",
       "M.S. (Computer Engineering), Syracuse University, USA, 1996",
       "B.Eng. (Electrical Engineering), Kasetsart University, 1990"
     ],
-    "research_areas": ["Data Analytics", "Data Mining", "Machine Learning"],
-    "teaching": [],
-    "textbooks": []
+    "language": "en"
   },
   {
-    "entity_type": "professor",
-    "name": "Prof. Surin Kittithorakul",
+    "data_type": "professor",
+    "name": "Prof. SURIN KITTITORNKUN",
+    "research_areas": [
+      "Computer Architecture",
+      "High-Level Synthesis",
+      "Reconfigurable Computing"
+    ],
+    "teaching_subjects": [
+      "01076114 - COMPUTER ORGANIZATION AND ARCHITECTURE",
+      "01076021 - COMPUTER ARCHITECTURE",
+      "01076312 - PROJECT 2",
+      "01076418 - HIGH PERFORMANCE COMPUTING",
+      "01076311 - PROJECT 1",
+      "01076115 - COMPUTER ORGANIZATION IN PRACTICE"
+    ],
+    "textbooks": ["Computer Operating Systems"],
     "degrees": [
       "Ph.D.E.E. (Computer Engineering), University of Wisconsin, USA, 2002 - VLSI/FPGA Design - Video/Image Processing",
       "M.S.E.E. (Computer Engineering), University of Wisconsin, USA, 1997",
       "M.Eng. (Telecommunications Engineering), Asian Institute of Technology, 1995",
       "B.Eng. (Electronics Engineering), King Mongkut's Institute of Technology Ladkrabang, 1992"
     ],
-    "research_areas": [
-      "Computer Architecture",
-      "High-Level Synthesis",
-      "Reconfigurable Computing"
-    ],
-    "teaching": [],
-    "textbooks": ["Computer Operating Systems"]
+    "language": "en"
   },
   {
-    "entity_type": "professor",
-    "name": "Prof. Pakorn Wattanajaturaporn",
-    "degrees": [
-      "Ph.D. (Computer Engineering), Syracuse University, USA, 2005",
-      "B.Eng. (Computer Engineering) (First Class Honors), King Mongkut's Institute of Technology Ladkrabang, 1994"
-    ],
+    "data_type": "professor",
+    "name": "Prof. PAKORN WATANACHATURAPORN",
     "research_areas": [
       "Distributed Computing",
       "Image Processing",
       "Pattern Recognition",
       "Remote Sensing"
     ],
-    "teaching": [],
+    "teaching_subjects": [
+      "01076311 - PROJECT 1",
+      "01076263 - DATABASE SYSTEMS"
+    ],
     "textbooks": [
       "Advanced Image Processing Techniques for Remote Sensed Hyperspectral Data. Springer-Verlag, 2004"
-    ]
+    ],
+    "degrees": [
+      "Ph.D. (Computer Engineering), Syracuse University, USA, 2005",
+      "B.Eng. (Computer Engineering) (First Class Honors), King Mongkut's Institute of Technology Ladkrabang, 1994"
+    ],
+    "language": "en"
   },
   {
-    "entity_type": "professor",
-    "name": "Prof. Amnart Khaone",
+    "data_type": "professor",
+    "name": "Prof. AMNACH KHAWNE",
+    "research_areas": ["Computer Networks", "Image Processing"],
+    "teaching_subjects": [
+      "01076108 - CIRCUITS AND ELECTRONICS IN PRACTICE",
+      "01076107 - CIRCUITS AND ELECTRONICS",
+      "01076421 - EMBEDED SYSTEM DESIGN",
+      "01076312 - PROJECT 2",
+      "01076232 - ELECTRONICS FOR COMPUTER ENGINEERING",
+      "01076566 - MULTIMEDIA SYSTEMS",
+      "01076311 - PROJECT 1"
+    ],
+    "textbooks": [],
     "degrees": [
       "D.Eng. (Science and Technology), Tokai University, Japan, 2002",
       "M.Eng. (Electrical Engineering), King Mongkut's Institute of Technology Ladkrabang, 2002",
       "B.Eng. (Telecommunications Engineering), King Mongkut's Institute of Technology Ladkrabang, 1998"
     ],
-    "research_areas": ["Computer Networks", "Image Processing"],
-    "teaching": [],
-    "textbooks": []
+    "language": "en"
   },
   {
-    "entity_type": "professor",
-    "name": "Prof. Rattchai Chaouthai",
+    "data_type": "professor",
+    "name": "Prof. RATHACHAI CHAWUTHAI",
+    "research_areas": ["Data Science", "User Experience"],
+    "teaching_subjects": [
+      "01076311 - PROJECT 1",
+      "01076598 - INTRODUCTION TO DATA ANALYTICS",
+      "01076312 - PROJECT 2",
+      "01076035 - SOFTWARE DEVELOPMENT PROCESS IN PRACTICE"
+    ],
+    "textbooks": [],
     "degrees": [
       "Ph.D. (Informatics), SOKENDAI, Japan, 2016",
       "M.Eng. (Information Management), Asian Institute of Technology, 2012",
       "B.Eng. (Computer Engineering), King Mongkut's Institute of Technology Ladkrabang, 1988"
     ],
-    "research_areas": ["Data Science", "User Experience"],
-    "teaching": [],
-    "textbooks": []
+    "language": "en"
   },
   {
-    "entity_type": "professor",
-    "name": "Prof. Thana Hongsuwan",
+    "data_type": "professor",
+    "name": "Prof. THANA HONGSUWAN",
+    "research_areas": ["Embedded Systems", "Internet of Things"],
+    "teaching_subjects": [
+      "01076105 - OBJECT ORIENTED PROGRAMMING",
+      "01076312 - PROJECT 2",
+      "01076016 - COMPUTER ENGINEERING PROJECT PREPARATION",
+      "01076117 - COMPUTER NETWORKS IN PRACTICE",
+      "01076311 - PROJECT 1",
+      "01076106 - OBJECT ORIENTED PROGRAMMING PROJECT"
+    ],
+    "textbooks": [],
     "degrees": [
       "M.Eng. (Computer Engineering), King Mongkut's Institute of Technology Ladkrabang, 1995",
       "B.Eng. (Computer Engineering), King Mongkut's Institute of Technology Ladkrabang, 1988"
     ],
-    "research_areas": ["Embedded Systems", "Internet of Things"],
-    "teaching": [],
-    "textbooks": []
+    "language": "en"
   },
   {
-    "entity_type": "professor",
-    "name": "Prof. Bundit Passaya",
+    "data_type": "professor",
+    "name": "Prof. BUNDIT PASAYA",
+    "research_areas": ["Information Retrieval"],
+    "teaching_subjects": [
+      "01076573 - INFORMATION STORAGE AND RETRIEVAL",
+      "01076312 - PROJECT 2",
+      "01006012 - COMPUTER PROGRAMMING",
+      "01076595 - INFORMATION STORAGE AND WEB SEARCH",
+      "01076311 - PROJECT 1"
+    ],
+    "textbooks": [],
     "degrees": [
       "M.Eng. (Electrical Engineering), King Mongkut's Institute of Technology Ladkrabang, 2001",
       "B.Sc. (Mathematics), King Mongkut's Institute of Technology Ladkrabang, 1991"
     ],
-    "research_areas": ["Information Retrieval"],
-    "teaching": [],
-    "textbooks": []
+    "language": "en"
   },
   {
-    "entity_type": "professor",
-    "name": "Prof. Wajanapong Kasemsiri",
+    "data_type": "professor",
+    "name": "Prof. WATJANAPONG KASEMSIRI",
+    "research_areas": ["Pattern Recognition"],
+    "teaching_subjects": [
+      "01076011 - OPERATING SYSTEMS",
+      "01076120 - WEB APPLICATION DEVELOPMENT PROJECT",
+      "01076311 - PROJECT 1",
+      "01076119 - WEB APPLICATION DEVELOPMENT",
+      "01076106 - OBJECT ORIENTED PROGRAMMING PROJECT"
+    ],
+    "textbooks": [],
     "degrees": [
       "M.Eng. (Electrical Engineering), King Mongkut's Institute of Technology Ladkrabang, 2003",
       "B.Eng. (Electrical Engineering), Thammasat University, 1998"
     ],
-    "research_areas": ["Pattern Recognition"],
-    "teaching": [],
-    "textbooks": []
+    "language": "en"
   },
   {
-    "entity_type": "professor",
-    "name": "Prof. Watchara Chartwiriya",
-    "degrees": [
-      "Ph.D. (Computer Engineering), West Virginia University, USA, 2003",
-      "M.Eng. (Computer Engineering), King Mongkut's Institute of Technology Ladkrabang, 1993",
-      "B.Eng. (Computer Engineering), King Mongkut's Institute of Technology Ladkrabang, 1986"
+    "data_type": "professor",
+    "name": "Prof. JIRASAK SITTIGORN",
+    "research_areas": ["Image Processing"],
+    "teaching_subjects": [
+      "01076040 - INTERNETWORKING STANDARDS AND TECHNOLOGIES",
+      "01076411 - MICRO ROBOT DEVELOPMENT",
+      "01076041 - INTERNETWORKING STANDARDS AND TECHNOLOGIES IN PRACTICE",
+      "01076312 - PROJECT 2",
+      "01076016 - COMPUTER ENGINEERING PROJECT PREPARATION",
+      "01076001 - INTRODUCTION TO COMPUTER ENGINEERING",
+      "01076311 - PROJECT 1"
     ],
-    "research_areas": [
-      "Business Intelligence",
-      "Embedded Systems",
-      "Pattern Recognition"
-    ],
-    "teaching": [],
-    "textbooks": ["Learning Assembly to the Principles of Programming"]
-  },
-  {
-    "entity_type": "professor",
-    "name": "Prof. Akkarit Sangkpet",
-    "degrees": [
-      "B.S. (Computer Science), Carnegie Mellon University, USA, 2005",
-      "B.Eng. (Electrical and Computer Engineering), Carnegie Mellon University, USA, 2005",
-      "M.Eng. (Electrical and Computer Engineering), Carnegie Mellon University, USA, 2010",
-      "Ph.D. (Electrical and Computer Engineering), Carnegie Mellon University, USA, 2013"
-    ],
-    "research_areas": ["Cloud Computing", "Distributed System", "Smart System"],
-    "teaching": [],
-    "textbooks": []
-  },
-  {
-    "entity_type": "professor",
-    "name": "Prof. Jirasak Sittikorn",
+    "textbooks": [],
     "degrees": [
       "D.Eng. (Electrical Engineering), King Mongkut's Institute of Technology Ladkrabang, 2015",
       "M.Eng. (Telecommunications Engineering), King Mongkut's Institute of Technology Ladkrabang, 2003",
       "B.Eng. (Telecommunications Engineering), Suranaree University of Technology, 2001"
     ],
-    "research_areas": ["Image Processing"],
-    "teaching": [],
-    "textbooks": []
+    "language": "en"
   },
   {
-    "entity_type": "professor",
-    "name": "Prof. Orathai Sangkpet",
-    "degrees": [
-      "B.Eng.-M.Eng. Electrical and Computer Engineering, Carnegie Mellon University, USA, 2005",
-      "Ph.D. Electrical and Computer Engineering, Carnegie Mellon University, USA, 2013"
+    "data_type": "professor",
+    "name": "Prof. KANUT TANGTISANON",
+    "research_areas": ["Analysis of Algorithms"],
+    "teaching_subjects": [
+      "01076311 - PROJECT 1",
+      "01076312 - PROJECT 2",
+      "01076110 - OBJECT ORIENTED DATA STRUCTURES PROJECT"
     ],
-    "research_areas": ["Cloud Computing", "Cyber Security", "Smart System"],
-    "teaching": [
-      "Operating Systems",
-      "Unix Operating Systems",
-      "Cloud Computing"
-    ],
-    "textbooks": []
-  },
-  {
-    "entity_type": "professor",
-    "name": "Prof. Kanat Tangtisanont",
+    "textbooks": [],
     "degrees": [
       "M.S. (Computer Science), University of New South Wales, Australia, 2001",
       "B.Eng. (Electronics), King Mongkut's Institute of Technology Ladkrabang, 1987"
     ],
-    "research_areas": ["Analysis of Algorithms"],
-    "teaching": [],
-    "textbooks": []
+    "language": "en"
   },
   {
-    "entity_type": "professor",
-    "name": "Prof. Kiattinarong Thongprasert",
+    "data_type": "professor",
+    "name": "Prof. KIATNARONG TONGPRASERT",
+    "research_areas": ["Information Retrieval"],
+    "teaching_subjects": [
+      "01076110 - OBJECT ORIENTED DATA STRUCTURES PROJECT",
+      "01076312 - PROJECT 2",
+      "01006012 - COMPUTER PROGRAMMING",
+      "01076311 - PROJECT 1",
+      "01076109 - OBJECT ORIENTED DATA STRUCTURES"
+    ],
+    "textbooks": [],
     "degrees": [
       "B.Eng. (Computer Engineering), King Mongkut's Institute of Technology Ladkrabang, 1999",
       "M.Eng. (Computer Engineering), King Mongkut's Institute of Technology Ladkrabang, 2005"
     ],
-    "research_areas": ["Information Retrieval"],
-    "teaching": [],
-    "textbooks": []
+    "language": "en"
+  },
+  {
+    "data_type": "professor",
+    "name": "Prof. PARINYA EKPARINYA",
+    "research_areas": [],
+    "teaching_subjects": [
+      "01076044 - INTRODUCTION TO CLOUD ARCHITECTURE IN PRACTICE",
+      "01076312 - PROJECT 2",
+      "01076116 - COMPUTER NETWORKS",
+      "01076117 - COMPUTER NETWORKS IN PRACTICE",
+      "01076311 - PROJECT 1",
+      "01076043 - INTRODUCTION TO CLOUD ARCHITECTURE"
+    ],
+    "textbooks": [],
+    "degrees": [
+      "2021 Doctor of Philosophy (Engineering), The University of Sydney, Australia",
+      "2015 Master of Information Technology, The University of Sydney, Australia",
+      "2009 Bachelor of Engineering (Computer), KMITL, Thailand"
+    ],
+    "language": "en"
+  },
+  {
+    "data_type": "professor",
+    "name": "Prof. PONGSAK KIRATIWINTAKORN",
+    "research_areas": [
+      "Wireless Networks",
+      "Mobile and Data Networks",
+      "Network Security/Cybersecurity",
+      "Management of Information System and Database",
+      "Cloud Computing"
+    ],
+    "teaching_subjects": [
+      "01076311 - PROJECT 1",
+      "01076627 - ICT SECURITY ARCHITECTURE AND MANAGEMENT",
+      "01076312 - PROJECT 2",
+      "01076628 - INFORMATION TECHNOLOGY SECURITY ASSESSMENT"
+    ],
+    "textbooks": [],
+    "degrees": [
+      "ปริญญาตรี : วศ.บ วิศวกรรมไฟฟ้า KMITL",
+      "ปริญญาโท : Electrical Engineering, University of Kansas USA",
+      "ปริญญาเอก : Information Science and Telecommunications, University of Pittsburgh ,USA"
+    ],
+    "language": "en"
+  },
+  {
+    "data_type": "professor",
+    "name": "Prof. JIRAYU PETCHHAN",
+    "research_areas": [
+      "Machine Learning and related fields",
+      "Artificial Intelligence of Things (AIoT)",
+      "Language Models"
+    ],
+    "teaching_subjects": [
+      "01076421 - EMBEDED SYSTEM DESIGN",
+      "01076641 - INTRODUCTION TO MACHINE LEARNING AND DEEP LEARNING",
+      "01076312 - PROJECT 2",
+      "01076001 - INTRODUCTION TO COMPUTER ENGINEERING",
+      "01076532 - MACHINE LEARNING"
+    ],
+    "textbooks": [],
+    "degrees": [
+      "ปริญญาตรี : B.Eng. - Hons. I (Control Engineering), King Mongkut Institute of Technology Ladkrabang (2017)",
+      "ปริญญาโท : M.Eng. (Instrumentation Engineering), King Mongkut Institute of Technology Ladkrabang (2019)",
+      "ปริญญาเอก : Ph.D. (Electrical Engineering), National Taiwan University of Science and Technology (Taiwan Tech), Taipei, Taiwan, R.O.C. (2024)"
+    ],
+    "language": "en"
   }
 ]
