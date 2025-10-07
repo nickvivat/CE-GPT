@@ -96,7 +96,6 @@ class ResponseGenerator:
 			
 			for i, result in enumerate(professors, 1):
 				metadata = result.get('metadata', {})
-				content = result.get('content', '')
 				
 				# Create structured professor entry
 				name = metadata.get('name', 'N/A')
@@ -115,11 +114,6 @@ class ResponseGenerator:
 					context_part += f"\n   **Teaching:**"
 					for subject in metadata['teaching_subjects']:
 						context_part += f"\n   - {subject}"
-				
-				# Add truncated description
-				if content:
-					clean_content = self._clean_content(content)
-					context_part += f"\n   {clean_content}"
 				
 				context_parts.append(context_part)
 		
