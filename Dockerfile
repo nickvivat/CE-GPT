@@ -17,13 +17,17 @@ RUN apt-get update && apt-get install -y \
     git \
     && rm -rf /var/lib/apt/lists/*
 
-# Install Python dependencies
-COPY requirements.txt .
-RUN pip install --no-cache-dir --upgrade pip && \
-    pip install --no-cache-dir -r requirements.txt
+# Install uv
+RUN pip install uv
+
+# Copy dependency files
+COPY requirements.txt ./
+
+# Install Python dependencies with uv
+RUN uv pip install --system -r requirements.txt
 
 # Install huggingface_hub for authentication
-RUN pip install --no-cache-dir huggingface_hub
+RUN uv pip install --system huggingface_hub
 
 # Copy project files
 COPY . .
