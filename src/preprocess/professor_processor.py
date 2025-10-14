@@ -45,84 +45,27 @@ class ProfessorDataProcessor:
             degrees_text = " ".join(degrees)
             content_parts.append(f"Education: {degrees_text}")
         
-        # Add research areas
-        research_areas = professor.get('research_areas', [])
-        if research_areas:
-            research_text = ", ".join(research_areas)
-            content_parts.append(f"Research Areas: {research_text}")
         
-        # Add teaching subjects with enhanced keywords
-        teaching = professor.get('teaching', [])
+        teaching = professor.get('teaching_subjects', [])
         if teaching:
             teaching_text = ", ".join(teaching)
             content_parts.append(f"Teaching: {teaching_text}")
-            
-            # Add enhanced keywords for better searchability
-            enhanced_teaching = []
-            for subject in teaching:
-                enhanced_teaching.append(subject)
-                # Add common variations and keywords
-                if "programming" in subject.lower():
-                    enhanced_teaching.append("computer programming")
-                    enhanced_teaching.append("programming course")
-                    if "1" in subject:
-                        enhanced_teaching.append("introductory programming")
-                        enhanced_teaching.append("basic programming")
-                    if "2" in subject:
-                        enhanced_teaching.append("advanced programming")
-                if "computer" in subject.lower():
-                    enhanced_teaching.append("computer science")
-                if "architecture" in subject.lower():
-                    enhanced_teaching.append("computer architecture")
-                    enhanced_teaching.append("hardware design")
-                if "network" in subject.lower():
-                    enhanced_teaching.append("computer networks")
-                    enhanced_teaching.append("networking")
-                if "security" in subject.lower():
-                    enhanced_teaching.append("cybersecurity")
-                    enhanced_teaching.append("information security")
-                if "database" in subject.lower():
-                    enhanced_teaching.append("database systems")
-                    enhanced_teaching.append("data management")
-                if "operating" in subject.lower():
-                    enhanced_teaching.append("operating systems")
-                    enhanced_teaching.append("system software")
-                if "interaction" in subject.lower():
-                    enhanced_teaching.append("human computer interaction")
-                    enhanced_teaching.append("user interface")
-                if "image" in subject.lower():
-                    enhanced_teaching.append("image processing")
-                    enhanced_teaching.append("computer vision")
-                if "artificial" in subject.lower() or "ai" in subject.lower():
-                    enhanced_teaching.append("artificial intelligence")
-                    enhanced_teaching.append("machine learning")
-                if "software" in subject.lower():
-                    enhanced_teaching.append("software engineering")
-                    enhanced_teaching.append("software development")
-            
-            # Add enhanced teaching keywords
-            if enhanced_teaching:
-                enhanced_text = ", ".join(set(enhanced_teaching))  # Remove duplicates
-                content_parts.append(f"Teaching Keywords: {enhanced_text}")
-        
-        # Add textbooks
-        textbooks = professor.get('textbooks', [])
-        if textbooks:
-            textbook_text = ", ".join(textbooks)
-            content_parts.append(f"Textbooks: {textbook_text}")
         
         return " | ".join(content_parts)
     
     def create_professor_metadata(self, professor: Dict[str, Any]) -> Dict[str, Any]:
         """Create metadata from professor data"""
+        professor_name = professor.get('name', '')
+        has_thai_chars = any('\u0E00' <= char <= '\u0E7F' for char in professor_name)
+        
+        language = 'th' if has_thai_chars else 'en'
+        
         return {
             'data_type': 'professor',
             'name': professor.get('name', ''),
-            'research_areas': professor.get('research_areas', []),
-            'teaching_subjects': professor.get('teaching', []),
-            'textbooks': professor.get('textbooks', []),
+            'teaching_subjects': professor.get('teaching_subjects', []),
             'degrees': professor.get('degrees', []),
-            'language': 'en'  # Set to English for better searchability
+            'language': language
         }
     
     def process_professors(self, professors: List[Dict[str, Any]]) -> List[ProfessorChunk]:
@@ -200,7 +143,7 @@ class ProfessorDataProcessor:
             
             # Search in metadata fields
             metadata = chunk.metadata
-            for field in ['name', 'research_areas', 'teaching_subjects', 'textbooks', 'degrees']:
+            for field in ['name', 'teaching_subjects', 'degrees']:
                 if field in metadata:
                     field_value = metadata[field]
                     if isinstance(field_value, list):
@@ -219,15 +162,10 @@ class ProfessorDataProcessor:
             return {}
         
         total_chunks = len(chunks)
-        research_areas = {}
         teaching_subjects = {}
         degrees = {}
         
         for chunk in chunks:
-            # Count research areas
-            for area in chunk.metadata.get('research_areas', []):
-                research_areas[area] = research_areas.get(area, 0) + 1
-            
             # Count teaching subjects
             for subject in chunk.metadata.get('teaching_subjects', []):
                 teaching_subjects[subject] = teaching_subjects.get(subject, 0) + 1
@@ -238,7 +176,6 @@ class ProfessorDataProcessor:
         
         return {
             'total_chunks': total_chunks,
-            'research_areas': research_areas,
             'teaching_subjects': teaching_subjects,
             'degrees': degrees
         }

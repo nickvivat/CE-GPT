@@ -26,8 +26,7 @@ COPY requirements.txt ./
 # Install Python dependencies with uv
 RUN uv pip install --system -r requirements.txt
 
-# Install huggingface_hub for authentication
-RUN uv pip install --system huggingface_hub
+RUN pip install huggingface_hub
 
 # Copy project files
 COPY . .

@@ -34,24 +34,12 @@ def create_chunk_from_data(data: Dict[str, Any]) -> DataChunk:
         if degrees:
             degrees_text = " ".join(degrees)
             content_parts.append(f"Education: {degrees_text}")
-        
-        # Add research areas
-        research_areas = data['metadata'].get('research_areas', [])
-        if research_areas:
-            research_text = ", ".join(research_areas)
-            content_parts.append(f"Research Areas: {research_text}")
-        
+
         # Add teaching subjects
         teaching = data['metadata'].get('teaching_subjects', [])
         if teaching:
             teaching_text = ", ".join(teaching)
             content_parts.append(f"Teaching: {teaching_text}")
-        
-        # Add textbooks
-        textbooks = data['metadata'].get('textbooks', [])
-        if textbooks:
-            textbook_text = ", ".join(textbooks)
-            content_parts.append(f"Textbooks: {textbook_text}")
         
         content = " | ".join(content_parts)
     else:
@@ -173,12 +161,6 @@ class ProfessorDataHandler(BaseDataTypeHandler):
             degrees_text = " ".join(degrees)
             content_parts.append(f"Education: {degrees_text}")
         
-        # Add research areas
-        research_areas = item.get('research_areas', [])
-        if research_areas:
-            research_text = ", ".join(research_areas)
-            content_parts.append(f"Research Areas: {research_text}")
-        
         # Add teaching subjects with enhanced keywords
         teaching = item.get('teaching_subjects', [])
         if teaching:
@@ -230,37 +212,18 @@ class ProfessorDataHandler(BaseDataTypeHandler):
                 enhanced_text = ", ".join(set(enhanced_teaching))  # Remove duplicates
                 content_parts.append(f"Teaching Keywords: {enhanced_text}")
         
-        # Add textbooks
-        textbooks = item.get('textbooks', [])
-        if textbooks:
-            textbook_text = ", ".join(textbooks)
-            content_parts.append(f"Textbooks: {textbook_text}")
-        
         return " | ".join(content_parts)
     
     def create_metadata(self, item: Dict[str, Any]) -> Dict[str, Any]:
         """Create metadata for professor"""
-        # Detect language based on content - only label as Thai if it contains Thai characters
-        content_text = " ".join([
-            item.get('name', ''),
-            " ".join(item.get('degrees', [])),
-            " ".join(item.get('research_areas', [])),
-            " ".join(item.get('teaching_subjects', [])),
-            " ".join(item.get('textbooks', []))
-        ])
+        professor_name = item.get('name', '')
+        has_thai_chars = any('\u0E00' <= char <= '\u0E7F' for char in professor_name)
         
-        # Check if more than 80% of the characters are Thai
-        thai_chars = sum(1 for char in content_text if '\u0E00' <= char <= '\u0E7F')
-        total_chars = len(content_text)
-        is_thai = (total_chars > 0 and (thai_chars / total_chars) > 0.2)
-        
-        language = 'th' if is_thai else 'en'
+        language = 'th' if has_thai_chars else 'en'
         metadata = {
             'data_type': 'professor',
             'name': item.get('name', ''),
-            'research_areas': item.get('research_areas', []),
             'teaching_subjects': item.get('teaching_subjects', []),
-            'textbooks': item.get('textbooks', []),
             'degrees': item.get('degrees', []),
             'language': language
         }

@@ -36,9 +36,12 @@ class CourseDataProcessor:
         chunks = []
         
         # Create main chunk with course information
+        metadata = course.get('metadata', {})
+        metadata['data_type'] = 'course'  # Ensure data_type is set
+        
         chunk = CourseChunk(
             content=self.clean_text(course.get('content', '')),
-            metadata=course.get('metadata', {}),
+            metadata=metadata,
             chunk_id=chunk_id,
             original_index=original_index
         )
