@@ -47,7 +47,7 @@ class SearchConfig:
     top_k: int = 50
     top_k_rerank: int = 20
     similarity_threshold: float = 0.1
-    rerank_threshold: float = 0.05
+    rerank_threshold: float = 0.5
     
     def __post_init__(self):
         """Validate search configurations."""
@@ -67,7 +67,7 @@ class SearchConfig:
             top_k=int(os.getenv("TOP_K", "50")),
             top_k_rerank=int(os.getenv("TOP_K_RERANK", "20")),
             similarity_threshold=float(os.getenv("SIMILARITY_THRESHOLD", "0.1")),
-            rerank_threshold=float(os.getenv("RERANK_THRESHOLD", "0.05"))
+            rerank_threshold=float(os.getenv("RERANK_THRESHOLD", "0.5"))
         )
 
 

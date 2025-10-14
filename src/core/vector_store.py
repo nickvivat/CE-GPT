@@ -124,8 +124,8 @@ class ChromaVectorStore(VectorStore):
 			results = self.collection.query(**query_params)
 			
 			if results['ids'] and results['ids'][0]:
-				# Extract similarities and indices
-				similarities = np.array(results['distances'][0])
+				distances = np.array(results['distances'][0])
+				similarities = 1.0 - distances
 				indices = []
 				
 				for id_str in results['ids'][0]:

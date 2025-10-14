@@ -381,15 +381,22 @@ class RAGSystem:
                     logger.info("Professor query detected, skipping query enhancement")
                     classification = "professor_skip_enhancement"
                 elif self.use_query_enhancement and self.query and hasattr(self.query, 'available') and self.query.available:
-                    enhanced_query, metadata = await self.query.enhance_query_async(current_query, self.conversation_context)
+                    enhanced_query, metadata = await self.query.enhance_query_async(current_query)
                     
                     if enhanced_query == current_query and metadata and metadata.get("query_intent") in ["conversational", "external"]:
                         logger.info(f"Query classified as {metadata.get('query_intent')}, returning empty results")
                         classification = metadata.get("query_intent", "pass")
                         return []
                     
-                    current_query = enhanced_query
-                    classification = "enhanced"
+                    if metadata and metadata.get("query_intent") == "course_search" and metadata.get("tags") == ["clear_query"]:
+                        logger.info("Query classified as pass (clear query) - searching database without enhancement")
+                        classification = "pass"
+                    else:
+                        current_query = enhanced_query
+                        classification = "enhanced"
+                else:
+                    logger.info("Query enhancement disabled, treating as pass (direct search)")
+                    classification = "pass"
                 
                 query_enhancement_duration = time.time() - query_enhancement_start
                 csv_logger.log_query_enhancement(

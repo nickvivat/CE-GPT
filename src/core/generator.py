@@ -49,11 +49,44 @@ class ResponseGenerator:
 		
 		return cleaned
 	
+	def _filter_by_rerank_score(self, results: List[Dict[str, Any]], 
+	                           threshold: float = None) -> List[Dict[str, Any]]:
+		"""Filter results based on rerank score threshold"""
+		if not results:
+			return results
+		
+		# Use config threshold if not provided
+		if threshold is None:
+			threshold = config.search.rerank_threshold
+		
+		# Filter results that have rerank scores above threshold
+		filtered_results = []
+		for result in results:
+			rerank_score = result.get('rerank_score', 0.0)
+			if rerank_score >= threshold:
+				filtered_results.append(result)
+		
+		# Log filtering results
+		original_count = len(results)
+		filtered_count = len(filtered_results)
+		logger.info(f"Rerank score filtering: {original_count} -> {filtered_count} results "
+		           f"(threshold: {threshold:.3f})")
+		
+		# If no results pass the threshold, return the top 5 results anyway
+		if not filtered_results and results:
+			logger.warning("No results passed rerank threshold, returning top 5 results")
+			# Sort by rerank score and take top 5
+			sorted_results = sorted(results, key=lambda x: x.get('rerank_score', 0.0), reverse=True)
+			return sorted_results[:5]
+		
+		return filtered_results
+	
 	def _format_context(self, results: List[Dict[str, Any]]) -> str:
 		"""Format retrieved results into context for the LLM"""
 		if not results:
 			return "No relevant information found."
 		
+		filtered_results = self._filter_by_rerank_score(results)
 		
 		context_parts = []
 		
@@ -61,7 +94,7 @@ class ResponseGenerator:
 		courses = []
 		professors = []
 		
-		for result in results:
+		for result in filtered_results:
 			data_type = result.get('data_type', result.get('metadata', {}).get('data_type', 'course'))
 			if data_type == 'professor':
 				professors.append(result)
@@ -75,12 +108,17 @@ class ResponseGenerator:
 			
 			for i, result in enumerate(courses, 1):
 				metadata = result.get('metadata', {})
+				content = result.get('content', '')
 				
 				# Create concise course entry
 				course_name = metadata.get('course_name', 'N/A')
 				course_code = metadata.get('course_code', 'N/A')
 				
-				context_part = f"{i}. {course_name} ({course_code})"
+				context_part = f"{i}. **{course_name} ({course_code})**"
+				
+				if content:
+					cleaned_content = self._clean_content(content)
+					context_part += f"\n   {cleaned_content}"
 				
 				context_parts.append(context_part)
 		
@@ -112,6 +150,8 @@ class ResponseGenerator:
 							context_part += f"\n   - {subject}"
 				
 				context_parts.append(context_part)
+
+		logger.info(f"Context parts: {context_parts}")
 		
 		return "\n".join(context_parts)
 	
@@ -157,6 +197,9 @@ class ResponseGenerator:
 				context = self._format_context(results)
 				system_prompt = system_prompt.replace("{context}", context)
 				full_prompt = system_prompt.format(query=query)
+			
+			# Log the full prompt for debugging
+			logger.info(f"Full prompt being sent to LLM:\n{full_prompt}")
 			
 			# Generate streaming response using Ollama with real-time streaming
 			response_chunks = self.llm_client.generate_stream(full_prompt)

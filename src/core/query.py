@@ -55,7 +55,7 @@ class Query:
     CLASSIFY_SCHEMA = {
         "type": "object",
         "properties": {
-            "class": {"type": "string", "enum": ["enhanced", "pass", "external"]}
+            "class": {"type": "string", "enum": ["enhanced", "pass", "conversational", "external"]}
         },
         "required": ["class"]
     }
@@ -314,6 +314,10 @@ class Query:
                         return query, metadata
                         
             elif classification == "pass":
+                logger.info("Query classified as pass (clear query - search without enhancement)")
+                return query, {"tags": ["clear_query"], "query_intent": "course_search"}
+                
+            elif classification == "conversational":
                 logger.info("Query classified as conversational, keeping original")
                 return query, {"tags": ["conversational"], "query_intent": "conversational"}
                 
@@ -480,7 +484,7 @@ class Query:
                 return False
                 
             classification = response_json.get("class")
-            if classification not in ["enhanced", "pass", "external"]:
+            if classification not in ["enhanced", "pass", "conversational", "external"]:
                 return False
                     
             return True
