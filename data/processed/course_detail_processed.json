@@ -5,7 +5,9 @@
       "course_name": "แคลคูลัส 1",
       "course_code": "01076140",
       "language": "th",
-      "focus_areas": ["Foundations of Mathematics & Logic"],
+      "focus_areas": [
+        "Foundations of Mathematics & Logic"
+      ],
       "career_tracks": [
         "AI & Data Science",
         "Research & Academia",
@@ -13,7 +15,7 @@
       ],
       "data_type": "course"
     },
-    "chunk_id": "01076140_0",
+    "chunk_id": "course_001",
     "original_index": 0
   },
   {
@@ -22,7 +24,9 @@
       "course_name": "CALCULUS 1",
       "course_code": "01076140",
       "language": "en",
-      "focus_areas": ["Foundations of Mathematics & Logic"],
+      "focus_areas": [
+        "Foundations of Mathematics & Logic"
+      ],
       "career_tracks": [
         "AI & Data Science",
         "Research & Academia",
@@ -30,7 +34,7 @@
       ],
       "data_type": "course"
     },
-    "chunk_id": "01076140_1",
+    "chunk_id": "course_002",
     "original_index": 1
   },
   {
@@ -39,7 +43,9 @@
       "course_name": "แคลคูลัส 2",
       "course_code": "01076141",
       "language": "th",
-      "focus_areas": ["Foundations of Mathematics & Logic"],
+      "focus_areas": [
+        "Foundations of Mathematics & Logic"
+      ],
       "career_tracks": [
         "AI & Data Science",
         "Cybersecurity & Privacy",
@@ -49,7 +55,7 @@
       ],
       "data_type": "course"
     },
-    "chunk_id": "01076141_2",
+    "chunk_id": "course_003",
     "original_index": 2
   },
   {
@@ -58,7 +64,9 @@
       "course_name": "CALCULUS 2",
       "course_code": "01076141",
       "language": "en",
-      "focus_areas": ["Foundations of Mathematics & Logic"],
+      "focus_areas": [
+        "Foundations of Mathematics & Logic"
+      ],
       "career_tracks": [
         "AI & Data Science",
         "Cybersecurity & Privacy",
@@ -68,7 +76,7 @@
       ],
       "data_type": "course"
     },
-    "chunk_id": "01076141_3",
+    "chunk_id": "course_004",
     "original_index": 3
   },
   {
@@ -88,7 +96,7 @@
       ],
       "data_type": "course"
     },
-    "chunk_id": "01076032_4",
+    "chunk_id": "course_005",
     "original_index": 4
   },
   {
@@ -108,7 +116,7 @@
       ],
       "data_type": "course"
     },
-    "chunk_id": "01076032_5",
+    "chunk_id": "course_006",
     "original_index": 5
   },
   {
@@ -117,7 +125,9 @@
       "course_name": "การฝึกงานอุตสาหกรรม",
       "course_code": "01006004",
       "language": "th",
-      "focus_areas": ["Specialized/Applied Practice"],
+      "focus_areas": [
+        "Specialized/Applied Practice"
+      ],
       "career_tracks": [
         "AI & Data Science",
         "Cybersecurity & Privacy",
@@ -128,7 +138,7 @@
       ],
       "data_type": "course"
     },
-    "chunk_id": "01006004_6",
+    "chunk_id": "course_007",
     "original_index": 6
   },
   {
@@ -137,7 +147,9 @@
       "course_name": "INDUSTRIAL TRAINING",
       "course_code": "01006004",
       "language": "en",
-      "focus_areas": ["Specialized/Applied Practice"],
+      "focus_areas": [
+        "Specialized/Applied Practice"
+      ],
       "career_tracks": [
         "AI & Data Science",
         "Cybersecurity & Privacy",
@@ -148,7 +160,7 @@
       ],
       "data_type": "course"
     },
-    "chunk_id": "01006004_7",
+    "chunk_id": "course_008",
     "original_index": 7
   },
   {
@@ -168,7 +180,7 @@
       ],
       "data_type": "course"
     },
-    "chunk_id": "01076107_8",
+    "chunk_id": "course_009",
     "original_index": 8
   },
   {
@@ -188,7 +200,7 @@
       ],
       "data_type": "course"
     },
-    "chunk_id": "01076107_9",
+    "chunk_id": "course_010",
     "original_index": 9
   },
   {
@@ -197,14 +209,16 @@
       "course_name": "ปฏิบัติการวงจรไฟฟ้าและอิเล็กทรอนิกส์",
       "course_code": "01076108",
       "language": "th",
-      "focus_areas": ["Hardware & Embedded Systems"],
+      "focus_areas": [
+        "Hardware & Embedded Systems"
+      ],
       "career_tracks": [
         "Hardware & Embedded Systems",
         "Software Development & Engineering"
       ],
       "data_type": "course"
     },
-    "chunk_id": "01076108_10",
+    "chunk_id": "course_011",
     "original_index": 10
   },
   {
@@ -213,14 +227,16 @@
       "course_name": "CIRCUITS AND ELECTRONICS IN PRACTICE",
       "course_code": "01076108",
       "language": "en",
-      "focus_areas": ["Hardware & Embedded Systems"],
+      "focus_areas": [
+        "Hardware & Embedded Systems"
+      ],
       "career_tracks": [
         "Hardware & Embedded Systems",
         "Software Development & Engineering"
       ],
       "data_type": "course"
     },
-    "chunk_id": "01076108_11",
+    "chunk_id": "course_012",
     "original_index": 11
   },
   {
@@ -229,7 +245,9 @@
       "course_name": "ความน่าจะเป็นและสถิติ",
       "course_code": "01076253",
       "language": "th",
-      "focus_areas": ["Foundations of Mathematics & Logic"],
+      "focus_areas": [
+        "Foundations of Mathematics & Logic"
+      ],
       "career_tracks": [
         "AI & Data Science",
         "Research & Academia",
@@ -237,7 +255,7 @@
       ],
       "data_type": "course"
     },
-    "chunk_id": "01076253_12",
+    "chunk_id": "course_013",
     "original_index": 12
   },
   {
@@ -246,7 +264,9 @@
       "course_name": "PROBABILITY AND STATISTICS",
       "course_code": "01076253",
       "language": "en",
-      "focus_areas": ["Foundations of Mathematics & Logic"],
+      "focus_areas": [
+        "Foundations of Mathematics & Logic"
+      ],
       "career_tracks": [
         "AI & Data Science",
         "Research & Academia",
@@ -254,7 +274,7 @@
       ],
       "data_type": "course"
     },
-    "chunk_id": "01076253_13",
+    "chunk_id": "course_014",
     "original_index": 13
   },
   {
@@ -267,10 +287,12 @@
         "Computer Science Fundamentals",
         "Software Engineering & Development"
       ],
-      "career_tracks": ["Software Development & Engineering"],
+      "career_tracks": [
+        "Software Development & Engineering"
+      ],
       "data_type": "course"
     },
-    "chunk_id": "01076103_14",
+    "chunk_id": "course_015",
     "original_index": 14
   },
   {
@@ -283,10 +305,12 @@
         "Computer Science Fundamentals",
         "Software Engineering & Development"
       ],
-      "career_tracks": ["Software Development & Engineering"],
+      "career_tracks": [
+        "Software Development & Engineering"
+      ],
       "data_type": "course"
     },
-    "chunk_id": "01076103_15",
+    "chunk_id": "course_016",
     "original_index": 15
   },
   {
@@ -299,10 +323,12 @@
         "Computer Science Fundamentals",
         "Software Engineering & Development"
       ],
-      "career_tracks": ["Software Development & Engineering"],
+      "career_tracks": [
+        "Software Development & Engineering"
+      ],
       "data_type": "course"
     },
-    "chunk_id": "01076104_16",
+    "chunk_id": "course_017",
     "original_index": 16
   },
   {
@@ -315,10 +341,12 @@
         "Computer Science Fundamentals",
         "Software Engineering & Development"
       ],
-      "career_tracks": ["Software Development & Engineering"],
+      "career_tracks": [
+        "Software Development & Engineering"
+      ],
       "data_type": "course"
     },
-    "chunk_id": "01076104_17",
+    "chunk_id": "course_018",
     "original_index": 17
   },
   {
@@ -327,7 +355,9 @@
       "course_name": "การเตรียมโครงงานวิศวกรรมคอมพิวเตอร์",
       "course_code": "01076016",
       "language": "th",
-      "focus_areas": ["Specialized/Applied Practice"],
+      "focus_areas": [
+        "Specialized/Applied Practice"
+      ],
       "career_tracks": [
         "AI & Data Science",
         "Cybersecurity & Privacy",
@@ -339,7 +369,7 @@
       ],
       "data_type": "course"
     },
-    "chunk_id": "01076016_18",
+    "chunk_id": "course_019",
     "original_index": 18
   },
   {
@@ -348,7 +378,9 @@
       "course_name": "COMPUTER ENGINEERING PROJECT PREPARATION",
       "course_code": "01076016",
       "language": "en",
-      "focus_areas": ["Specialized/Applied Practice"],
+      "focus_areas": [
+        "Specialized/Applied Practice"
+      ],
       "career_tracks": [
         "AI & Data Science",
         "Cybersecurity & Privacy",
@@ -360,7 +392,7 @@
       ],
       "data_type": "course"
     },
-    "chunk_id": "01076016_19",
+    "chunk_id": "course_020",
     "original_index": 19
   },
   {
@@ -379,7 +411,7 @@
       ],
       "data_type": "course"
     },
-    "chunk_id": "01076101_20",
+    "chunk_id": "course_021",
     "original_index": 20
   },
   {
@@ -398,7 +430,7 @@
       ],
       "data_type": "course"
     },
-    "chunk_id": "01076101_21",
+    "chunk_id": "course_022",
     "original_index": 21
   },
   {
@@ -419,7 +451,7 @@
       ],
       "data_type": "course"
     },
-    "chunk_id": "01076105_22",
+    "chunk_id": "course_023",
     "original_index": 22
   },
   {
@@ -440,7 +472,7 @@
       ],
       "data_type": "course"
     },
-    "chunk_id": "01076105_23",
+    "chunk_id": "course_024",
     "original_index": 23
   },
   {
@@ -461,7 +493,7 @@
       ],
       "data_type": "course"
     },
-    "chunk_id": "01076106_24",
+    "chunk_id": "course_025",
     "original_index": 24
   },
   {
@@ -482,7 +514,7 @@
       ],
       "data_type": "course"
     },
-    "chunk_id": "01076106_25",
+    "chunk_id": "course_026",
     "original_index": 25
   },
   {
@@ -503,7 +535,7 @@
       ],
       "data_type": "course"
     },
-    "chunk_id": "01076109_26",
+    "chunk_id": "course_027",
     "original_index": 26
   },
   {
@@ -524,7 +556,7 @@
       ],
       "data_type": "course"
     },
-    "chunk_id": "01076109_27",
+    "chunk_id": "course_028",
     "original_index": 27
   },
   {
@@ -545,7 +577,7 @@
       ],
       "data_type": "course"
     },
-    "chunk_id": "01076110_28",
+    "chunk_id": "course_029",
     "original_index": 28
   },
   {
@@ -566,7 +598,7 @@
       ],
       "data_type": "course"
     },
-    "chunk_id": "01076110_29",
+    "chunk_id": "course_030",
     "original_index": 29
   },
   {
@@ -589,7 +621,7 @@
       ],
       "data_type": "course"
     },
-    "chunk_id": "01076112_30",
+    "chunk_id": "course_031",
     "original_index": 30
   },
   {
@@ -612,7 +644,7 @@
       ],
       "data_type": "course"
     },
-    "chunk_id": "01076112_31",
+    "chunk_id": "course_032",
     "original_index": 31
   },
   {
@@ -635,7 +667,7 @@
       ],
       "data_type": "course"
     },
-    "chunk_id": "01076113_32",
+    "chunk_id": "course_033",
     "original_index": 32
   },
   {
@@ -658,7 +690,7 @@
       ],
       "data_type": "course"
     },
-    "chunk_id": "01076113_33",
+    "chunk_id": "course_034",
     "original_index": 33
   },
   {
@@ -678,7 +710,7 @@
       ],
       "data_type": "course"
     },
-    "chunk_id": "01076114_34",
+    "chunk_id": "course_035",
     "original_index": 34
   },
   {
@@ -698,7 +730,7 @@
       ],
       "data_type": "course"
     },
-    "chunk_id": "01076114_35",
+    "chunk_id": "course_036",
     "original_index": 35
   },
   {
@@ -718,7 +750,7 @@
       ],
       "data_type": "course"
     },
-    "chunk_id": "01076115_36",
+    "chunk_id": "course_037",
     "original_index": 36
   },
   {
@@ -738,7 +770,7 @@
       ],
       "data_type": "course"
     },
-    "chunk_id": "01076115_37",
+    "chunk_id": "course_038",
     "original_index": 37
   },
   {
@@ -760,7 +792,7 @@
       ],
       "data_type": "course"
     },
-    "chunk_id": "01076116_38",
+    "chunk_id": "course_039",
     "original_index": 38
   },
   {
@@ -782,7 +814,7 @@
       ],
       "data_type": "course"
     },
-    "chunk_id": "01076116_39",
+    "chunk_id": "course_040",
     "original_index": 39
   },
   {
@@ -804,7 +836,7 @@
       ],
       "data_type": "course"
     },
-    "chunk_id": "01076117_40",
+    "chunk_id": "course_041",
     "original_index": 40
   },
   {
@@ -826,7 +858,7 @@
       ],
       "data_type": "course"
     },
-    "chunk_id": "01076117_41",
+    "chunk_id": "course_042",
     "original_index": 41
   },
   {
@@ -835,14 +867,17 @@
       "course_name": "ระบบปฏิบัติการ",
       "course_code": "01076011",
       "language": "th",
-      "focus_areas": ["Networks & Security", "Systems & Infrastructure"],
+      "focus_areas": [
+        "Networks & Security",
+        "Systems & Infrastructure"
+      ],
       "career_tracks": [
         "Cybersecurity & Privacy",
         "Systems & Cloud Infrastructure"
       ],
       "data_type": "course"
     },
-    "chunk_id": "01076011_42",
+    "chunk_id": "course_043",
     "original_index": 42
   },
   {
@@ -851,14 +886,17 @@
       "course_name": "OPERATING SYSTEMS",
       "course_code": "01076011",
       "language": "en",
-      "focus_areas": ["Networks & Security", "Systems & Infrastructure"],
+      "focus_areas": [
+        "Networks & Security",
+        "Systems & Infrastructure"
+      ],
       "career_tracks": [
         "Cybersecurity & Privacy",
         "Systems & Cloud Infrastructure"
       ],
       "data_type": "course"
     },
-    "chunk_id": "01076011_43",
+    "chunk_id": "course_044",
     "original_index": 43
   },
   {
@@ -880,7 +918,7 @@
       ],
       "data_type": "course"
     },
-    "chunk_id": "01076012_44",
+    "chunk_id": "course_045",
     "original_index": 44
   },
   {
@@ -902,7 +940,7 @@
       ],
       "data_type": "course"
     },
-    "chunk_id": "01076012_45",
+    "chunk_id": "course_046",
     "original_index": 45
   },
   {
@@ -911,11 +949,16 @@
       "course_name": "ทฤษฎีการคํานวณ",
       "course_code": "01076121",
       "language": "th",
-      "focus_areas": ["Foundations of Mathematics & Logic"],
-      "career_tracks": ["AI & Data Science", "Research & Academia"],
+      "focus_areas": [
+        "Foundations of Mathematics & Logic"
+      ],
+      "career_tracks": [
+        "AI & Data Science",
+        "Research & Academia"
+      ],
       "data_type": "course"
     },
-    "chunk_id": "01076121_46",
+    "chunk_id": "course_047",
     "original_index": 46
   },
   {
@@ -924,11 +967,16 @@
       "course_name": "THEORY OF COMPUTATION",
       "course_code": "01076121",
       "language": "en",
-      "focus_areas": ["Foundations of Mathematics & Logic"],
-      "career_tracks": ["AI & Data Science", "Research & Academia"],
+      "focus_areas": [
+        "Foundations of Mathematics & Logic"
+      ],
+      "career_tracks": [
+        "AI & Data Science",
+        "Research & Academia"
+      ],
       "data_type": "course"
     },
-    "chunk_id": "01076121_47",
+    "chunk_id": "course_048",
     "original_index": 47
   },
   {
@@ -950,7 +998,7 @@
       ],
       "data_type": "course"
     },
-    "chunk_id": "01076263_48",
+    "chunk_id": "course_049",
     "original_index": 48
   },
   {
@@ -972,7 +1020,7 @@
       ],
       "data_type": "course"
     },
-    "chunk_id": "01076263_49",
+    "chunk_id": "course_050",
     "original_index": 49
   },
   {
@@ -981,7 +1029,10 @@
       "course_name": "การดูแลแพลทฟอร์มระบบ",
       "course_code": "01076118",
       "language": "th",
-      "focus_areas": ["Networks & Security", "Systems & Infrastructure"],
+      "focus_areas": [
+        "Networks & Security",
+        "Systems & Infrastructure"
+      ],
       "career_tracks": [
         "AI & Data Science",
         "Cybersecurity & Privacy",
@@ -989,7 +1040,7 @@
       ],
       "data_type": "course"
     },
-    "chunk_id": "01076118_50",
+    "chunk_id": "course_051",
     "original_index": 50
   },
   {
@@ -998,7 +1049,10 @@
       "course_name": "SYSTEM PLATFORM ADMINISTRATION",
       "course_code": "01076118",
       "language": "en",
-      "focus_areas": ["Networks & Security", "Systems & Infrastructure"],
+      "focus_areas": [
+        "Networks & Security",
+        "Systems & Infrastructure"
+      ],
       "career_tracks": [
         "AI & Data Science",
         "Cybersecurity & Privacy",
@@ -1006,7 +1060,7 @@
       ],
       "data_type": "course"
     },
-    "chunk_id": "01076118_51",
+    "chunk_id": "course_052",
     "original_index": 51
   },
   {
@@ -1027,7 +1081,7 @@
       ],
       "data_type": "course"
     },
-    "chunk_id": "01076119_52",
+    "chunk_id": "course_053",
     "original_index": 52
   },
   {
@@ -1048,7 +1102,7 @@
       ],
       "data_type": "course"
     },
-    "chunk_id": "01076119_53",
+    "chunk_id": "course_054",
     "original_index": 53
   },
   {
@@ -1069,7 +1123,7 @@
       ],
       "data_type": "course"
     },
-    "chunk_id": "01076120_54",
+    "chunk_id": "course_055",
     "original_index": 54
   },
   {
@@ -1090,7 +1144,7 @@
       ],
       "data_type": "course"
     },
-    "chunk_id": "01076120_55",
+    "chunk_id": "course_056",
     "original_index": 55
   },
   {
@@ -1110,7 +1164,7 @@
       ],
       "data_type": "course"
     },
-    "chunk_id": "01076050_56",
+    "chunk_id": "course_057",
     "original_index": 56
   },
   {
@@ -1130,7 +1184,7 @@
       ],
       "data_type": "course"
     },
-    "chunk_id": "01076050_57",
+    "chunk_id": "course_058",
     "original_index": 57
   },
   {
@@ -1150,7 +1204,7 @@
       ],
       "data_type": "course"
     },
-    "chunk_id": "01076051_58",
+    "chunk_id": "course_059",
     "original_index": 58
   },
   {
@@ -1170,7 +1224,7 @@
       ],
       "data_type": "course"
     },
-    "chunk_id": "01076051_59",
+    "chunk_id": "course_060",
     "original_index": 59
   },
   {
@@ -1193,7 +1247,7 @@
       ],
       "data_type": "course"
     },
-    "chunk_id": "01076052_60",
+    "chunk_id": "course_061",
     "original_index": 60
   },
   {
@@ -1216,7 +1270,7 @@
       ],
       "data_type": "course"
     },
-    "chunk_id": "01076052_61",
+    "chunk_id": "course_062",
     "original_index": 61
   },
   {
@@ -1225,7 +1279,10 @@
       "course_name": "อินเตอร์เน็ตในทุกสิ่งและระบบอัจฉริยะ",
       "course_code": "01076053",
       "language": "th",
-      "focus_areas": ["Hardware & Embedded Systems", "Networks & Security"],
+      "focus_areas": [
+        "Hardware & Embedded Systems",
+        "Networks & Security"
+      ],
       "career_tracks": [
         "Cybersecurity & Privacy",
         "Hardware & Embedded Systems",
@@ -1234,7 +1291,7 @@
       ],
       "data_type": "course"
     },
-    "chunk_id": "01076053_62",
+    "chunk_id": "course_063",
     "original_index": 62
   },
   {
@@ -1243,7 +1300,10 @@
       "course_name": "INTERNET OF THINGS AND SMART SYSTEMS",
       "course_code": "01076053",
       "language": "en",
-      "focus_areas": ["Hardware & Embedded Systems", "Networks & Security"],
+      "focus_areas": [
+        "Hardware & Embedded Systems",
+        "Networks & Security"
+      ],
       "career_tracks": [
         "Cybersecurity & Privacy",
         "Hardware & Embedded Systems",
@@ -1252,7 +1312,7 @@
       ],
       "data_type": "course"
     },
-    "chunk_id": "01076053_63",
+    "chunk_id": "course_064",
     "original_index": 63
   },
   {
@@ -1274,7 +1334,7 @@
       ],
       "data_type": "course"
     },
-    "chunk_id": "01076034_64",
+    "chunk_id": "course_065",
     "original_index": 64
   },
   {
@@ -1296,7 +1356,7 @@
       ],
       "data_type": "course"
     },
-    "chunk_id": "01076034_65",
+    "chunk_id": "course_066",
     "original_index": 65
   },
   {
@@ -1317,7 +1377,7 @@
       ],
       "data_type": "course"
     },
-    "chunk_id": "01076035_66",
+    "chunk_id": "course_067",
     "original_index": 66
   },
   {
@@ -1338,7 +1398,7 @@
       ],
       "data_type": "course"
     },
-    "chunk_id": "01076035_67",
+    "chunk_id": "course_068",
     "original_index": 67
   },
   {
@@ -1359,7 +1419,7 @@
       ],
       "data_type": "course"
     },
-    "chunk_id": "01076036_68",
+    "chunk_id": "course_069",
     "original_index": 68
   },
   {
@@ -1380,7 +1440,7 @@
       ],
       "data_type": "course"
     },
-    "chunk_id": "01076036_69",
+    "chunk_id": "course_070",
     "original_index": 69
   },
   {
@@ -1401,7 +1461,7 @@
       ],
       "data_type": "course"
     },
-    "chunk_id": "01076037_70",
+    "chunk_id": "course_071",
     "original_index": 70
   },
   {
@@ -1422,7 +1482,7 @@
       ],
       "data_type": "course"
     },
-    "chunk_id": "01076037_71",
+    "chunk_id": "course_072",
     "original_index": 71
   },
   {
@@ -1445,7 +1505,7 @@
       ],
       "data_type": "course"
     },
-    "chunk_id": "01076040_72",
+    "chunk_id": "course_073",
     "original_index": 72
   },
   {
@@ -1468,7 +1528,7 @@
       ],
       "data_type": "course"
     },
-    "chunk_id": "01076040_73",
+    "chunk_id": "course_074",
     "original_index": 73
   },
   {
@@ -1491,7 +1551,7 @@
       ],
       "data_type": "course"
     },
-    "chunk_id": "01076042_74",
+    "chunk_id": "course_075",
     "original_index": 74
   },
   {
@@ -1515,7 +1575,7 @@
       ],
       "data_type": "course"
     },
-    "chunk_id": "01076042_75",
+    "chunk_id": "course_076",
     "original_index": 75
   },
   {
@@ -1536,7 +1596,7 @@
       ],
       "data_type": "course"
     },
-    "chunk_id": "01076043_76",
+    "chunk_id": "course_077",
     "original_index": 76
   },
   {
@@ -1557,7 +1617,7 @@
       ],
       "data_type": "course"
     },
-    "chunk_id": "01076043_77",
+    "chunk_id": "course_078",
     "original_index": 77
   },
   {
@@ -1578,7 +1638,7 @@
       ],
       "data_type": "course"
     },
-    "chunk_id": "01076044_78",
+    "chunk_id": "course_079",
     "original_index": 78
   },
   {
@@ -1599,7 +1659,7 @@
       ],
       "data_type": "course"
     },
-    "chunk_id": "01076044_79",
+    "chunk_id": "course_080",
     "original_index": 79
   },
   {
@@ -1608,7 +1668,9 @@
       "course_name": "โครงงาน 1",
       "course_code": "01076311",
       "language": "th",
-      "focus_areas": ["Specialized/Applied Practice"],
+      "focus_areas": [
+        "Specialized/Applied Practice"
+      ],
       "career_tracks": [
         "AI & Data Science",
         "Cybersecurity & Privacy",
@@ -1619,7 +1681,7 @@
       ],
       "data_type": "course"
     },
-    "chunk_id": "01076311_80",
+    "chunk_id": "course_081",
     "original_index": 80
   },
   {
@@ -1628,7 +1690,9 @@
       "course_name": "PROJECT 1",
       "course_code": "01076311",
       "language": "en",
-      "focus_areas": ["Specialized/Applied Practice"],
+      "focus_areas": [
+        "Specialized/Applied Practice"
+      ],
       "career_tracks": [
         "AI & Data Science",
         "Cybersecurity & Privacy",
@@ -1639,7 +1703,7 @@
       ],
       "data_type": "course"
     },
-    "chunk_id": "01076311_81",
+    "chunk_id": "course_082",
     "original_index": 81
   },
   {
@@ -1648,7 +1712,9 @@
       "course_name": "โครงงาน 2",
       "course_code": "01076312",
       "language": "th",
-      "focus_areas": ["Specialized/Applied Practice"],
+      "focus_areas": [
+        "Specialized/Applied Practice"
+      ],
       "career_tracks": [
         "AI & Data Science",
         "Cybersecurity & Privacy",
@@ -1659,7 +1725,7 @@
       ],
       "data_type": "course"
     },
-    "chunk_id": "01076312_82",
+    "chunk_id": "course_083",
     "original_index": 82
   },
   {
@@ -1668,7 +1734,9 @@
       "course_name": "PROJECT 2",
       "course_code": "01076312",
       "language": "en",
-      "focus_areas": ["Specialized/Applied Practice"],
+      "focus_areas": [
+        "Specialized/Applied Practice"
+      ],
       "career_tracks": [
         "AI & Data Science",
         "Cybersecurity & Privacy",
@@ -1679,7 +1747,7 @@
       ],
       "data_type": "course"
     },
-    "chunk_id": "01076312_83",
+    "chunk_id": "course_084",
     "original_index": 83
   },
   {
@@ -1688,7 +1756,9 @@
       "course_name": "สหกิจศึกษา",
       "course_code": "01006029",
       "language": "th",
-      "focus_areas": ["Specialized/Applied Practice"],
+      "focus_areas": [
+        "Specialized/Applied Practice"
+      ],
       "career_tracks": [
         "AI & Data Science",
         "Cybersecurity & Privacy",
@@ -1699,7 +1769,7 @@
       ],
       "data_type": "course"
     },
-    "chunk_id": "01006029_84",
+    "chunk_id": "course_085",
     "original_index": 84
   },
   {
@@ -1708,7 +1778,9 @@
       "course_name": "COOPERATIVE EDUCATION",
       "course_code": "01006029",
       "language": "en",
-      "focus_areas": ["Specialized/Applied Practice"],
+      "focus_areas": [
+        "Specialized/Applied Practice"
+      ],
       "career_tracks": [
         "AI & Data Science",
         "Cybersecurity & Privacy",
@@ -1719,7 +1791,7 @@
       ],
       "data_type": "course"
     },
-    "chunk_id": "01006029_85",
+    "chunk_id": "course_086",
     "original_index": 85
   },
   {
@@ -1728,7 +1800,9 @@
       "course_name": "การปฏิบัติการฝึกงานต่างประเทศ",
       "course_code": "01006005",
       "language": "th",
-      "focus_areas": ["Specialized/Applied Practice"],
+      "focus_areas": [
+        "Specialized/Applied Practice"
+      ],
       "career_tracks": [
         "AI & Data Science",
         "Cybersecurity & Privacy",
@@ -1739,7 +1813,7 @@
       ],
       "data_type": "course"
     },
-    "chunk_id": "01006005_86",
+    "chunk_id": "course_087",
     "original_index": 86
   },
   {
@@ -1748,7 +1822,9 @@
       "course_name": "OVERSEA TRAINING",
       "course_code": "01006005",
       "language": "en",
-      "focus_areas": ["Specialized/Applied Practice"],
+      "focus_areas": [
+        "Specialized/Applied Practice"
+      ],
       "career_tracks": [
         "AI & Data Science",
         "Cybersecurity & Privacy",
@@ -1759,7 +1835,7 @@
       ],
       "data_type": "course"
     },
-    "chunk_id": "01006005_87",
+    "chunk_id": "course_088",
     "original_index": 87
   },
   {
@@ -1781,7 +1857,7 @@
       ],
       "data_type": "course"
     },
-    "chunk_id": "01076411_88",
+    "chunk_id": "course_089",
     "original_index": 88
   },
   {
@@ -1803,7 +1879,7 @@
       ],
       "data_type": "course"
     },
-    "chunk_id": "01076411_89",
+    "chunk_id": "course_090",
     "original_index": 89
   },
   {
@@ -1825,7 +1901,7 @@
       ],
       "data_type": "course"
     },
-    "chunk_id": "01076418_90",
+    "chunk_id": "course_091",
     "original_index": 90
   },
   {
@@ -1847,7 +1923,7 @@
       ],
       "data_type": "course"
     },
-    "chunk_id": "01076418_91",
+    "chunk_id": "course_092",
     "original_index": 91
   },
   {
@@ -1869,11 +1945,11 @@
       ],
       "data_type": "course"
     },
-    "chunk_id": "01076420_92",
+    "chunk_id": "course_093",
     "original_index": 92
   },
   {
-    "content": "01076420 ADVANCED DIGITAL DESIGN USING HDL PREREQUISITE: 01076112 DIGITAL SYSTEM FUNDAMENTALS This course covers the systematic design of advanced digital systems using field-programmable gate arrays (FPGAs). The emphasis is on top-down design starting with a software application and translating it to high-level models using a hardware description language (such as VHDL or Verilog).",
+    "content": "01076420 ADVANCED DIGITAL DESIGN USING HDL PREREQUISITE: 01076112 DIGITAL SYSTEM FUNDAMENTALS This course covers the systematic design of advanced digital systems using field- programmable gate arrays (FPGAs). The emphasis is on top-down design starting with a software application and translating it to high-level models using a hardware description language (such as VHDL or Verilog).",
     "metadata": {
       "course_name": "ADVANCED DIGITAL DESIGN USING HDL",
       "course_code": "01076420",
@@ -1891,7 +1967,7 @@
       ],
       "data_type": "course"
     },
-    "chunk_id": "01076420_93",
+    "chunk_id": "course_094",
     "original_index": 93
   },
   {
@@ -1912,7 +1988,7 @@
       ],
       "data_type": "course"
     },
-    "chunk_id": "01076421_94",
+    "chunk_id": "course_095",
     "original_index": 94
   },
   {
@@ -1933,7 +2009,7 @@
       ],
       "data_type": "course"
     },
-    "chunk_id": "01076421_95",
+    "chunk_id": "course_096",
     "original_index": 95
   },
   {
@@ -1958,7 +2034,7 @@
       ],
       "data_type": "course"
     },
-    "chunk_id": "01076414_96",
+    "chunk_id": "course_097",
     "original_index": 96
   },
   {
@@ -1983,7 +2059,7 @@
       ],
       "data_type": "course"
     },
-    "chunk_id": "01076414_97",
+    "chunk_id": "course_098",
     "original_index": 97
   },
   {
@@ -1992,14 +2068,16 @@
       "course_name": "การสร้างคอมไพเลอร์",
       "course_code": "01076513",
       "language": "th",
-      "focus_areas": ["Networks & Security"],
+      "focus_areas": [
+        "Networks & Security"
+      ],
       "career_tracks": [
         "Cybersecurity & Privacy",
         "Systems & Cloud Infrastructure"
       ],
       "data_type": "course"
     },
-    "chunk_id": "01076513_98",
+    "chunk_id": "course_099",
     "original_index": 98
   },
   {
@@ -2008,14 +2086,16 @@
       "course_name": "COMPILER CONSTRUCTION",
       "course_code": "01076513",
       "language": "en",
-      "focus_areas": ["Networks & Security"],
+      "focus_areas": [
+        "Networks & Security"
+      ],
       "career_tracks": [
         "Cybersecurity & Privacy",
         "Systems & Cloud Infrastructure"
       ],
       "data_type": "course"
     },
-    "chunk_id": "01076513_99",
+    "chunk_id": "course_100",
     "original_index": 99
   },
   {
@@ -2036,7 +2116,7 @@
       ],
       "data_type": "course"
     },
-    "chunk_id": "01076564_100",
+    "chunk_id": "course_101",
     "original_index": 100
   },
   {
@@ -2057,7 +2137,7 @@
       ],
       "data_type": "course"
     },
-    "chunk_id": "01076564_101",
+    "chunk_id": "course_102",
     "original_index": 101
   },
   {
@@ -2076,7 +2156,7 @@
       ],
       "data_type": "course"
     },
-    "chunk_id": "01076568_102",
+    "chunk_id": "course_103",
     "original_index": 102
   },
   {
@@ -2095,7 +2175,7 @@
       ],
       "data_type": "course"
     },
-    "chunk_id": "01076568_103",
+    "chunk_id": "course_104",
     "original_index": 103
   },
   {
@@ -2108,10 +2188,13 @@
         "Systems & Infrastructure",
         "Software Engineering & Development"
       ],
-      "career_tracks": ["AI & Data Science", "Systems & Cloud Infrastructure"],
+      "career_tracks": [
+        "AI & Data Science",
+        "Systems & Cloud Infrastructure"
+      ],
       "data_type": "course"
     },
-    "chunk_id": "01076589_104",
+    "chunk_id": "course_105",
     "original_index": 104
   },
   {
@@ -2124,10 +2207,13 @@
         "Systems & Infrastructure",
         "Software Engineering & Development"
       ],
-      "career_tracks": ["AI & Data Science", "Systems & Cloud Infrastructure"],
+      "career_tracks": [
+        "AI & Data Science",
+        "Systems & Cloud Infrastructure"
+      ],
       "data_type": "course"
     },
-    "chunk_id": "01076589_105",
+    "chunk_id": "course_106",
     "original_index": 105
   },
   {
@@ -2147,7 +2233,7 @@
       ],
       "data_type": "course"
     },
-    "chunk_id": "01076599_106",
+    "chunk_id": "course_107",
     "original_index": 106
   },
   {
@@ -2167,7 +2253,7 @@
       ],
       "data_type": "course"
     },
-    "chunk_id": "01076599_107",
+    "chunk_id": "course_108",
     "original_index": 107
   },
   {
@@ -2180,10 +2266,12 @@
         "Computer Science Fundamentals",
         "Software Engineering & Development"
       ],
-      "career_tracks": ["Software Development & Engineering"],
+      "career_tracks": [
+        "Software Development & Engineering"
+      ],
       "data_type": "course"
     },
-    "chunk_id": "01076596_108",
+    "chunk_id": "course_109",
     "original_index": 108
   },
   {
@@ -2203,7 +2291,7 @@
       ],
       "data_type": "course"
     },
-    "chunk_id": "01076034_109",
+    "chunk_id": "course_110",
     "original_index": 109
   },
   {
@@ -2225,7 +2313,7 @@
       ],
       "data_type": "course"
     },
-    "chunk_id": "01076558_110",
+    "chunk_id": "course_111",
     "original_index": 110
   },
   {
@@ -2247,7 +2335,7 @@
       ],
       "data_type": "course"
     },
-    "chunk_id": "01076558_111",
+    "chunk_id": "course_112",
     "original_index": 111
   },
   {
@@ -2268,7 +2356,7 @@
       ],
       "data_type": "course"
     },
-    "chunk_id": "01076559_112",
+    "chunk_id": "course_113",
     "original_index": 112
   },
   {
@@ -2289,7 +2377,7 @@
       ],
       "data_type": "course"
     },
-    "chunk_id": "01076559_113",
+    "chunk_id": "course_114",
     "original_index": 113
   },
   {
@@ -2311,7 +2399,7 @@
       ],
       "data_type": "course"
     },
-    "chunk_id": "01076560_114",
+    "chunk_id": "course_115",
     "original_index": 114
   },
   {
@@ -2333,7 +2421,7 @@
       ],
       "data_type": "course"
     },
-    "chunk_id": "01076560_115",
+    "chunk_id": "course_116",
     "original_index": 115
   },
   {
@@ -2352,7 +2440,7 @@
       ],
       "data_type": "course"
     },
-    "chunk_id": "01076574_116",
+    "chunk_id": "course_117",
     "original_index": 116
   },
   {
@@ -2371,7 +2459,7 @@
       ],
       "data_type": "course"
     },
-    "chunk_id": "01076574_117",
+    "chunk_id": "course_118",
     "original_index": 117
   },
   {
@@ -2395,7 +2483,7 @@
       ],
       "data_type": "course"
     },
-    "chunk_id": "01076585_118",
+    "chunk_id": "course_119",
     "original_index": 118
   },
   {
@@ -2419,7 +2507,7 @@
       ],
       "data_type": "course"
     },
-    "chunk_id": "01076585_119",
+    "chunk_id": "course_120",
     "original_index": 119
   },
   {
@@ -2439,7 +2527,7 @@
       ],
       "data_type": "course"
     },
-    "chunk_id": "01076634_120",
+    "chunk_id": "course_121",
     "original_index": 120
   },
   {
@@ -2459,7 +2547,7 @@
       ],
       "data_type": "course"
     },
-    "chunk_id": "01076634_121",
+    "chunk_id": "course_122",
     "original_index": 121
   },
   {
@@ -2480,7 +2568,7 @@
       ],
       "data_type": "course"
     },
-    "chunk_id": "01076598_122",
+    "chunk_id": "course_123",
     "original_index": 122
   },
   {
@@ -2501,7 +2589,7 @@
       ],
       "data_type": "course"
     },
-    "chunk_id": "01076598_123",
+    "chunk_id": "course_124",
     "original_index": 123
   },
   {
@@ -2510,14 +2598,16 @@
       "course_name": "การประมวลผลภาพ",
       "course_code": "01076567",
       "language": "th",
-      "focus_areas": ["AI, Data & Intelligent Systems"],
+      "focus_areas": [
+        "AI, Data & Intelligent Systems"
+      ],
       "career_tracks": [
         "AI & Data Science",
         "Software Development & Engineering"
       ],
       "data_type": "course"
     },
-    "chunk_id": "01076567_124",
+    "chunk_id": "course_125",
     "original_index": 124
   },
   {
@@ -2526,14 +2616,16 @@
       "course_name": "IMAGE PROCESSING",
       "course_code": "01076567",
       "language": "en",
-      "focus_areas": ["AI, Data & Intelligent Systems"],
+      "focus_areas": [
+        "AI, Data & Intelligent Systems"
+      ],
       "career_tracks": [
         "AI & Data Science",
         "Software Development & Engineering"
       ],
       "data_type": "course"
     },
-    "chunk_id": "01076567_125",
+    "chunk_id": "course_126",
     "original_index": 125
   },
   {
@@ -2542,11 +2634,15 @@
       "course_name": "ระบบสื่อผสม",
       "course_code": "01076566",
       "language": "th",
-      "focus_areas": ["Software Engineering & Development"],
-      "career_tracks": ["Software Development & Engineering"],
+      "focus_areas": [
+        "Software Engineering & Development"
+      ],
+      "career_tracks": [
+        "Software Development & Engineering"
+      ],
       "data_type": "course"
     },
-    "chunk_id": "01076566_126",
+    "chunk_id": "course_127",
     "original_index": 126
   },
   {
@@ -2555,11 +2651,15 @@
       "course_name": "MULTIMEDIA SYSTEMS",
       "course_code": "01076566",
       "language": "en",
-      "focus_areas": ["Software Engineering & Development"],
-      "career_tracks": ["Software Development & Engineering"],
+      "focus_areas": [
+        "Software Engineering & Development"
+      ],
+      "career_tracks": [
+        "Software Development & Engineering"
+      ],
       "data_type": "course"
     },
-    "chunk_id": "01076566_127",
+    "chunk_id": "course_128",
     "original_index": 127
   },
   {
@@ -2580,7 +2680,7 @@
       ],
       "data_type": "course"
     },
-    "chunk_id": "01076583_128",
+    "chunk_id": "course_129",
     "original_index": 128
   },
   {
@@ -2601,7 +2701,7 @@
       ],
       "data_type": "course"
     },
-    "chunk_id": "01076583_129",
+    "chunk_id": "course_130",
     "original_index": 129
   },
   {
@@ -2620,7 +2720,7 @@
       ],
       "data_type": "course"
     },
-    "chunk_id": "01076597_130",
+    "chunk_id": "course_131",
     "original_index": 130
   },
   {
@@ -2639,7 +2739,7 @@
       ],
       "data_type": "course"
     },
-    "chunk_id": "01076597_131",
+    "chunk_id": "course_132",
     "original_index": 131
   },
   {
@@ -2662,7 +2762,7 @@
       ],
       "data_type": "course"
     },
-    "chunk_id": "01076532_132",
+    "chunk_id": "course_133",
     "original_index": 132
   },
   {
@@ -2685,7 +2785,7 @@
       ],
       "data_type": "course"
     },
-    "chunk_id": "01076532_133",
+    "chunk_id": "course_134",
     "original_index": 133
   },
   {
@@ -2706,7 +2806,7 @@
       ],
       "data_type": "course"
     },
-    "chunk_id": "01076582_134",
+    "chunk_id": "course_135",
     "original_index": 134
   },
   {
@@ -2727,7 +2827,7 @@
       ],
       "data_type": "course"
     },
-    "chunk_id": "01076582_135",
+    "chunk_id": "course_136",
     "original_index": 135
   },
   {
@@ -2748,7 +2848,7 @@
       ],
       "data_type": "course"
     },
-    "chunk_id": "01076533_136",
+    "chunk_id": "course_137",
     "original_index": 136
   },
   {
@@ -2769,7 +2869,7 @@
       ],
       "data_type": "course"
     },
-    "chunk_id": "01076533_137",
+    "chunk_id": "course_138",
     "original_index": 137
   },
   {
@@ -2788,7 +2888,7 @@
       ],
       "data_type": "course"
     },
-    "chunk_id": "01076595_138",
+    "chunk_id": "course_139",
     "original_index": 138
   },
   {
@@ -2807,7 +2907,7 @@
       ],
       "data_type": "course"
     },
-    "chunk_id": "01076595_139",
+    "chunk_id": "course_140",
     "original_index": 139
   },
   {
@@ -2827,7 +2927,7 @@
       ],
       "data_type": "course"
     },
-    "chunk_id": "01076627_140",
+    "chunk_id": "course_141",
     "original_index": 140
   },
   {
@@ -2847,7 +2947,7 @@
       ],
       "data_type": "course"
     },
-    "chunk_id": "01076627_141",
+    "chunk_id": "course_142",
     "original_index": 141
   },
   {
@@ -2856,14 +2956,16 @@
       "course_name": "การประเมินความมั่นคงเทคโนโลยีสารสนเทศ",
       "course_code": "01076628",
       "language": "th",
-      "focus_areas": ["Networks & Security"],
+      "focus_areas": [
+        "Networks & Security"
+      ],
       "career_tracks": [
         "Cybersecurity & Privacy",
         "Systems & Cloud Infrastructure"
       ],
       "data_type": "course"
     },
-    "chunk_id": "01076628_142",
+    "chunk_id": "course_143",
     "original_index": 142
   },
   {
@@ -2872,14 +2974,16 @@
       "course_name": "INFORMATION TECHNOLOGY SECURITY ASSESSMENT",
       "course_code": "01076628",
       "language": "en",
-      "focus_areas": ["Networks & Security"],
+      "focus_areas": [
+        "Networks & Security"
+      ],
       "career_tracks": [
         "Cybersecurity & Privacy",
         "Systems & Cloud Infrastructure"
       ],
       "data_type": "course"
     },
-    "chunk_id": "01076628_143",
+    "chunk_id": "course_144",
     "original_index": 143
   },
   {
@@ -2900,7 +3004,7 @@
       ],
       "data_type": "course"
     },
-    "chunk_id": "01076629_144",
+    "chunk_id": "course_145",
     "original_index": 144
   },
   {
@@ -2921,7 +3025,7 @@
       ],
       "data_type": "course"
     },
-    "chunk_id": "01076629_145",
+    "chunk_id": "course_146",
     "original_index": 145
   },
   {
@@ -2942,7 +3046,7 @@
       ],
       "data_type": "course"
     },
-    "chunk_id": "01076636_146",
+    "chunk_id": "course_147",
     "original_index": 146
   },
   {
@@ -2963,7 +3067,7 @@
       ],
       "data_type": "course"
     },
-    "chunk_id": "01076636_147",
+    "chunk_id": "course_148",
     "original_index": 147
   },
   {
@@ -2984,7 +3088,7 @@
       ],
       "data_type": "course"
     },
-    "chunk_id": "01076631_148",
+    "chunk_id": "course_149",
     "original_index": 148
   },
   {
@@ -3005,7 +3109,7 @@
       ],
       "data_type": "course"
     },
-    "chunk_id": "01076631_149",
+    "chunk_id": "course_150",
     "original_index": 149
   },
   {
@@ -3014,14 +3118,16 @@
       "course_name": "เทคโนโลยีเครือข่ายไร้สาย",
       "course_code": "01076632",
       "language": "th",
-      "focus_areas": ["Networks & Security"],
+      "focus_areas": [
+        "Networks & Security"
+      ],
       "career_tracks": [
         "Cybersecurity & Privacy",
         "Systems & Cloud Infrastructure"
       ],
       "data_type": "course"
     },
-    "chunk_id": "01076632_150",
+    "chunk_id": "course_151",
     "original_index": 150
   },
   {
@@ -3030,14 +3136,16 @@
       "course_name": "WIRELESS NETWORK TECHNOLOGY",
       "course_code": "01076632",
       "language": "en",
-      "focus_areas": ["Networks & Security"],
+      "focus_areas": [
+        "Networks & Security"
+      ],
       "career_tracks": [
         "Cybersecurity & Privacy",
         "Systems & Cloud Infrastructure"
       ],
       "data_type": "course"
     },
-    "chunk_id": "01076632_151",
+    "chunk_id": "course_152",
     "original_index": 151
   },
   {
@@ -3057,7 +3165,7 @@
       ],
       "data_type": "course"
     },
-    "chunk_id": "01076635_152",
+    "chunk_id": "course_153",
     "original_index": 152
   },
   {
@@ -3077,7 +3185,7 @@
       ],
       "data_type": "course"
     },
-    "chunk_id": "01076635_153",
+    "chunk_id": "course_154",
     "original_index": 153
   }
 ]

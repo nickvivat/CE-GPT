@@ -10,11 +10,11 @@
       "Software Codesign"
     ],
     "teaching_subjects": [
-      "01076051 - โครงงานไมโครคอนโทรลเลอร์",
-      "01076312 - โครงงาน 2",
-      "01076311 - โครงงาน 1",
       "01076050 - การประยุกต์และพัฒนาไมโครคอนโทรลเลอร์",
-      "01076052 - ระบบสมองกลฝังตัวแบบเรียลไทม์"
+      "01076051 - โครงงานไมโครคอนโทรลเลอร์",
+      "01076052 - ระบบสมองกลฝังตัวแบบเรียลไทม์",
+      "01076311 - โครงงาน 1",
+      "01076312 - โครงงาน 2"
     ],
     "textbooks": [],
     "degrees": [
@@ -26,12 +26,15 @@
   {
     "data_type": "professor",
     "name": "ผศ.อัครเดช วัชระภูพงษ์",
-    "research_areas": ["Computer Security", "Network Security"],
+    "research_areas": [
+      "Computer Security",
+      "Network Security"
+    ],
     "teaching_subjects": [
-      "01076312 - โครงงาน 2",
+      "01076118 - การดูแลแพลทฟอร์มระบบ",
       "01076311 - โครงงาน 1",
-      "01076629 - การทดสอบเจาะระบบและการแฮกแบบมีจริยธรรมเบื้องต้น",
-      "01076118 - การดูแลแพลทฟอร์มระบบ"
+      "01076312 - โครงงาน 2",
+      "01076629 - การทดสอบเจาะระบบและการแฮกแบบมีจริยธรรมเบื้องต้น"
     ],
     "textbooks": [],
     "degrees": [
@@ -50,14 +53,16 @@
       "Optical Computing"
     ],
     "teaching_subjects": [
+      "01076012 - โครงสร้างแบบดิสครีต",
       "01076042 - ความมั่นคงข้อมูลและคอมพิวเตอร์",
-      "01076312 - โครงงาน 2",
       "01076103 - พื้นฐานการเขียนโปรแกรมคอมพิวเตอร์",
-      "01076311 - โครงงาน 1",
       "01076104 - โครงงานโปรแกรมคอมพิวเตอร์",
-      "01076012 - โครงสร้างแบบดิสครีต"
+      "01076311 - โครงงาน 1",
+      "01076312 - โครงงาน 2"
     ],
-    "textbooks": ["Computers and Programming C and Java"],
+    "textbooks": [
+      "Computers and Programming C and Java"
+    ],
     "degrees": [
       "วศ.บ. (วิศวกรรมคอมพิวเตอร์) (เกียรตินิยม) สถาบันเทคโนโลยีพระจอมเกล้าเจ้าคุณทหารลาดกระบัง, 2542",
       "วศ.ม. (วิศวกรรมคอมพิวเตอร์) สถาบันเทคโนโลยีพระจอมเกล้าเจ้าคุณทหารลาดกระบัง, 2546",
@@ -68,12 +73,15 @@
   {
     "data_type": "professor",
     "name": "ผศ.ดร. ชมพูนุท เต็งเจริญ",
-    "research_areas": ["Human Computer Interaction", "Virtual Reality"],
+    "research_areas": [
+      "Human Computer Interaction",
+      "Virtual Reality"
+    ],
     "teaching_subjects": [
-      "01076312 - โครงงาน 2",
-      "01076311 - โครงงาน 1",
+      "01076036 - การออกแบบประสบการณ์และส่วนติดต่อผู้ใช้",
       "01076037 - โครงงานออกแบบประสบการณ์และส่วนติดต่อผู้ใช้",
-      "01076036 - การออกแบบประสบการณ์และส่วนติดต่อผู้ใช้"
+      "01076311 - โครงงาน 1",
+      "01076312 - โครงงาน 2"
     ],
     "textbooks": [],
     "degrees": [
@@ -95,15 +103,17 @@
       "Text Mining"
     ],
     "teaching_subjects": [
-      "01076105 - การเขียนโปรแกรมเชิงวัตถุ",
-      "01076532 - การเรียนรู้ของเครื่อง",
-      "01076312 - โครงงาน 2",
       "01076032 - สมการอนุพันธ์และพีชคณิตเชิงเส้นพื้นฐาน",
+      "01076105 - การเขียนโปรแกรมเชิงวัตถุ",
+      "01076106 - โครงงานโปรแกรมเชิงวัตถุ",
       "01076311 - โครงงาน 1",
-      "01076567 - การประมวลผลภาพ",
-      "01076106 - โครงงานโปรแกรมเชิงวัตถุ"
+      "01076312 - โครงงาน 2",
+      "01076532 - การเรียนรู้ของเครื่อง",
+      "01076567 - การประมวลผลภาพ"
     ],
-    "textbooks": ["Digital Image Processing (ทฤษฎีการประมวลผลภาพ)"],
+    "textbooks": [
+      "Digital Image Processing (ทฤษฎีการประมวลผลภาพ)"
+    ],
     "degrees": [
       "Ph.D. (Computer Engineering) University of Texas at Arlington, USA, 2544 - Visual Analytics",
       "M.S. (Computer Engineering) Arizona State University, USA, 2540",
@@ -120,13 +130,15 @@
       "Particle Swarm Optimization"
     ],
     "teaching_subjects": [
-      "01076312 - โครงงาน 2",
       "01076121 - ทฤษฎีการคำนวณ",
       "01076311 - โครงงาน 1",
+      "01076312 - โครงงาน 2",
       "01076533 - การเรียนรู้เชิงลึก",
       "01076582 - ปัญญาประดิษฐ์"
     ],
-    "textbooks": ["ทฤษฎีการคำนวณ (Theory of computation)"],
+    "textbooks": [
+      "ทฤษฎีการคำนวณ (Theory of computation)"
+    ],
     "degrees": [
       "วศ.ด. (วิศวกรรมไฟฟ้า) สถาบันเทคโนโลยีพระจอมเกล้าเจ้าคุณทหารลาดกระบัง, 2552",
       "M.S. (Computer Science) Oregon State University, USA, 2542",
@@ -144,14 +156,14 @@
       "Optical Communication"
     ],
     "teaching_subjects": [
-      "01076423 - การวางแผนเชิงกลยุทธ์โดยใช้บอร์ดและการ์ดเกม",
       "01076112 - พื้นฐานระบบดิจิตอล",
-      "01076312 - โครงงาน 2",
+      "01076113 - ปฏิบัติการพื้นฐานระบบดิจิตอล",
       "01076245 - ปฏิบัติการออกแบบระบบดิจิทัลขั้นสูง",
       "01076311 - โครงงาน 1",
+      "01076312 - โครงงาน 2",
       "01076420 - การออกแบบดิจิตอลขั้นสูงโดยใช้เฮชดีแอล",
-      "01076113 - ปฏิบัติการพื้นฐานระบบดิจิตอล",
-      "01076422 - การประกอบการและการจัดการด้านเทคโนโลยีสารสนเทศ"
+      "01076422 - การประกอบการและการจัดการด้านเทคโนโลยีสารสนเทศ",
+      "01076423 - การวางแผนเชิงกลยุทธ์โดยใช้บอร์ดและการ์ดเกม"
     ],
     "textbooks": [
       "การออกแบบไอซีดิจิตอลด้วย FPGA และ CPLD ภาคปฏิบัติโดยใช้ภาษา VHDL"
@@ -173,10 +185,10 @@
       "Wireless Information Networks"
     ],
     "teaching_subjects": [
-      "01076253 - ความน่าจะเป็นและสถิติ",
+      "01076140 - แคลคูลัส 1",
       "01076141 - แคลคูลัส 2",
-      "01076311 - โครงงาน 1",
-      "01076140 - แคลคูลัส 1"
+      "01076253 - ความน่าจะเป็นและสถิติ",
+      "01076311 - โครงงาน 1"
     ],
     "textbooks": [],
     "degrees": [
@@ -189,12 +201,16 @@
   {
     "data_type": "professor",
     "name": "ผศ.ดร.ชุติเมษฏ์ ศรีนิลทา",
-    "research_areas": ["Data Analytics", "Data Mining", "Machine Learning"],
+    "research_areas": [
+      "Data Analytics",
+      "Data Mining",
+      "Machine Learning"
+    ],
     "teaching_subjects": [
-      "01076312 - โครงงาน 2",
       "01076008 - กระบวนการพัฒนาซอฟต์แวร์",
+      "01076034 - หลักการของกระบวนการพัฒนาซอฟต์แวร์",
       "01076311 - โครงงาน 1",
-      "01076034 - หลักการของกระบวนการพัฒนาซอฟต์แวร์"
+      "01076312 - โครงงาน 2"
     ],
     "textbooks": [],
     "degrees": [
@@ -213,14 +229,16 @@
       "Reconfigurable Computing"
     ],
     "teaching_subjects": [
-      "01076312 - โครงงาน 2",
-      "01076311 - โครงงาน 1",
-      "01076114 - องค์ประกอบและสถาปัตยกรรมคอมพิวเตอร์",
       "01076021 - สถาปัตยกรรมคอมพิวเตอร์",
-      "01076418 - การประมวลผลสมรรถนะสูง",
-      "01076115 - ปฏิบัติการองค์ประกอบคอมพิวเตอร์"
+      "01076114 - องค์ประกอบและสถาปัตยกรรมคอมพิวเตอร์",
+      "01076115 - ปฏิบัติการองค์ประกอบคอมพิวเตอร์",
+      "01076311 - โครงงาน 1",
+      "01076312 - โครงงาน 2",
+      "01076418 - การประมวลผลสมรรถนะสูง"
     ],
-    "textbooks": ["ระบบปฏิบัติการคอมพิวเตอร์"],
+    "textbooks": [
+      "ระบบปฏิบัติการคอมพิวเตอร์"
+    ],
     "degrees": [
       "Ph.D.E.E. (Computer Engineering) University of Wisconsin, USA, 2545 - VLSI/FPGA Design - Video/Image Processing",
       "M.S.E.E. (Computer Engineering) University of Wisconsin, USA, 2540",
@@ -238,7 +256,10 @@
       "Pattern Recognition",
       "Remote Sensing"
     ],
-    "teaching_subjects": ["01076311 - โครงงาน 1", "01076263 - ระบบฐานข้อมูล"],
+    "teaching_subjects": [
+      "01076263 - ระบบฐานข้อมูล",
+      "01076311 - โครงงาน 1"
+    ],
     "textbooks": [
       "Advanced Image Processing Techniques for Remote Sensed Hyperspectral Data. Springer-Verlag, 2004"
     ],
@@ -251,15 +272,18 @@
   {
     "data_type": "professor",
     "name": "ผศ.ดร.อำนาจ ขาวเน",
-    "research_areas": ["Computer Networks", "Image Processing"],
+    "research_areas": [
+      "Computer Networks",
+      "Image Processing"
+    ],
     "teaching_subjects": [
       "01076107 - วงจรไฟฟ้าและอิเล็กทรอนิกส์",
       "01076108 - ปฏิบัติการวงจรไฟฟ้าและอิเล็กทรอนิกส์",
-      "01076421 - การออกแบบระบบสมองกลฝังตัว",
-      "01076312 - โครงงาน 2",
+      "01076232 - อิเล็กทรอนิกส์สำหรับวิศวกรรมคอมพิวเตอร์",
       "01076311 - โครงงาน 1",
-      "01076566 - ระบบสื่อผสม",
-      "01076232 - อิเล็กทรอนิกส์สำหรับวิศวกรรมคอมพิวเตอร์"
+      "01076312 - โครงงาน 2",
+      "01076421 - การออกแบบระบบสมองกลฝังตัว",
+      "01076566 - ระบบสื่อผสม"
     ],
     "textbooks": [],
     "degrees": [
@@ -272,11 +296,14 @@
   {
     "data_type": "professor",
     "name": "ผศ.ดร.รัฐชัย ชาวอุทัย",
-    "research_areas": ["Data Science", "User Experience"],
+    "research_areas": [
+      "Data Science",
+      "User Experience"
+    ],
     "teaching_subjects": [
-      "01076312 - โครงงาน 2",
-      "01076311 - โครงงาน 1",
       "01076035 - กระบวนการพัฒนาซอฟต์แวร์เชิงปฏิบัติ",
+      "01076311 - โครงงาน 1",
+      "01076312 - โครงงาน 2",
       "01076598 - การวิเคราะห์ข้อมูลเบื้องต้น"
     ],
     "textbooks": [],
@@ -290,14 +317,17 @@
   {
     "data_type": "professor",
     "name": "ผศ.ธนา หงษ์สุวรรณ",
-    "research_areas": ["Embedded Systems", "Internet of Things"],
+    "research_areas": [
+      "Embedded Systems",
+      "Internet of Things"
+    ],
     "teaching_subjects": [
       "01076016 - การเตรียมโครงงานวิศวกรรมคอมพิวเตอร์",
       "01076105 - การเขียนโปรแกรมเชิงวัตถุ",
-      "01076312 - โครงงาน 2",
+      "01076106 - โครงงานโปรแกรมเชิงวัตถุ",
       "01076117 - ปฏิบัติการเครือข่ายคอมพิวเตอร์",
       "01076311 - โครงงาน 1",
-      "01076106 - โครงงานโปรแกรมเชิงวัตถุ"
+      "01076312 - โครงงาน 2"
     ],
     "textbooks": [],
     "degrees": [
@@ -309,13 +339,15 @@
   {
     "data_type": "professor",
     "name": "ผศ.บัณฑิต พัสยา",
-    "research_areas": ["Information Retrieval"],
+    "research_areas": [
+      "Information Retrieval"
+    ],
     "teaching_subjects": [
-      "01076312 - โครงงาน 2",
-      "01076311 - โครงงาน 1",
       "01006012 - การเขียนโปรแกรมคอมพิวเตอร์",
-      "01076595 - การสืบค้นสารสนเทศและการค้นหาเว็บ",
-      "01076573 - การจัดเก็บและค้นคืนสารสนเทศ"
+      "01076311 - โครงงาน 1",
+      "01076312 - โครงงาน 2",
+      "01076573 - การจัดเก็บและค้นคืนสารสนเทศ",
+      "01076595 - การสืบค้นสารสนเทศและการค้นหาเว็บ"
     ],
     "textbooks": [],
     "degrees": [
@@ -327,13 +359,15 @@
   {
     "data_type": "professor",
     "name": "ผศ.วัจนพงศ์ เกษมศิริ",
-    "research_areas": ["Pattern Recognition"],
+    "research_areas": [
+      "Pattern Recognition"
+    ],
     "teaching_subjects": [
-      "01076311 - โครงงาน 1",
+      "01076011 - ระบบปฏิบัติการ",
+      "01076106 - โครงงานโปรแกรมเชิงวัตถุ",
       "01076119 - การพัฒนาโปรแกรมบนเว็บ",
       "01076120 - โครงงานพัฒนาโปรแกรมบนเว็บ",
-      "01076106 - โครงงานโปรแกรมเชิงวัตถุ",
-      "01076011 - ระบบปฏิบัติการ"
+      "01076311 - โครงงาน 1"
     ],
     "textbooks": [],
     "degrees": [
@@ -345,15 +379,17 @@
   {
     "data_type": "professor",
     "name": "ดร.จิระศักดิ์ สิทธิกร",
-    "research_areas": ["Image Processing"],
+    "research_areas": [
+      "Image Processing"
+    ],
     "teaching_subjects": [
-      "01076016 - การเตรียมโครงงานวิศวกรรมคอมพิวเตอร์",
-      "01076411 - การพัฒนาหุ่นยนต์ขนาดเล็ก",
-      "01076312 - โครงงาน 2",
-      "01076311 - โครงงาน 1",
       "01076001 - วิศวกรรมคอมพิวเตอร์เบื้องต้น",
+      "01076016 - การเตรียมโครงงานวิศวกรรมคอมพิวเตอร์",
+      "01076040 - มาตรฐานและเทคโนโลยีเครือข่าย",
       "01076041 - ปฏิบัติการมาตรฐานและเทคโนโลยีเครือข่าย",
-      "01076040 - มาตรฐานและเทคโนโลยีเครือข่าย"
+      "01076311 - โครงงาน 1",
+      "01076312 - โครงงาน 2",
+      "01076411 - การพัฒนาหุ่นยนต์ขนาดเล็ก"
     ],
     "textbooks": [],
     "degrees": [
@@ -366,11 +402,13 @@
   {
     "data_type": "professor",
     "name": "อ.คณัฐ ตังติสานนท์",
-    "research_areas": ["Analysis of Algorithms"],
+    "research_areas": [
+      "Analysis of Algorithms"
+    ],
     "teaching_subjects": [
-      "01076312 - โครงงาน 2",
       "01076110 - โครงงานโครงสร้างข้อมูลเชิงวัตถุ",
-      "01076311 - โครงงาน 1"
+      "01076311 - โครงงาน 1",
+      "01076312 - โครงงาน 2"
     ],
     "textbooks": [],
     "degrees": [
@@ -382,13 +420,15 @@
   {
     "data_type": "professor",
     "name": "อ.เกียรติณรงค์ ทองประเสริฐ",
-    "research_areas": ["Information Retrieval"],
+    "research_areas": [
+      "Information Retrieval"
+    ],
     "teaching_subjects": [
-      "01076312 - โครงงาน 2",
+      "01006012 - การเขียนโปรแกรมคอมพิวเตอร์",
+      "01076109 - โครงสร้างข้อมูลเชิงวัตถุ",
       "01076110 - โครงงานโครงสร้างข้อมูลเชิงวัตถุ",
       "01076311 - โครงงาน 1",
-      "01006012 - การเขียนโปรแกรมคอมพิวเตอร์",
-      "01076109 - โครงสร้างข้อมูลเชิงวัตถุ"
+      "01076312 - โครงงาน 2"
     ],
     "textbooks": [],
     "degrees": [
@@ -402,12 +442,12 @@
     "name": "ดร. ปริญญา เอกปริญญา",
     "research_areas": [],
     "teaching_subjects": [
-      "01076116 - เครือข่ายคอมพิวเตอร์",
-      "01076312 - โครงงาน 2",
-      "01076117 - ปฏิบัติการเครือข่ายคอมพิวเตอร์",
       "01076043 - สถาปัตยกรรมคลาวด์เบื้องต้น",
+      "01076044 - ปฏิบัติการสถาปัตยกรรมคลาวด์เบื้องต้น",
+      "01076116 - เครือข่ายคอมพิวเตอร์",
+      "01076117 - ปฏิบัติการเครือข่ายคอมพิวเตอร์",
       "01076311 - โครงงาน 1",
-      "01076044 - ปฏิบัติการสถาปัตยกรรมคลาวด์เบื้องต้น"
+      "01076312 - โครงงาน 2"
     ],
     "textbooks": [],
     "degrees": [
@@ -428,9 +468,9 @@
       "Cloud Computing"
     ],
     "teaching_subjects": [
+      "01076311 - โครงงาน 1",
       "01076312 - โครงงาน 2",
       "01076627 - สถาปัตยกรรมและการบริหารความมั่นคงไอซีที",
-      "01076311 - โครงงาน 1",
       "01076628 - การประเมินความมั่นคงเทคโนโลยีสารสนเทศ"
     ],
     "textbooks": [],
@@ -450,11 +490,11 @@
       "Language Models"
     ],
     "teaching_subjects": [
-      "01076532 - การเรียนรู้ของเครื่อง",
-      "01076641 - การเรียนรู้ของเครื่องและการเรียนรู้เชิงลึกเบื้องต้น",
-      "01076421 - การออกแบบระบบสมองกลฝังตัว",
+      "01076001 - วิศวกรรมคอมพิวเตอร์เบื้องต้น",
       "01076312 - โครงงาน 2",
-      "01076001 - วิศวกรรมคอมพิวเตอร์เบื้องต้น"
+      "01076421 - การออกแบบระบบสมองกลฝังตัว",
+      "01076532 - การเรียนรู้ของเครื่อง",
+      "01076641 - การเรียนรู้ของเครื่องและการเรียนรู้เชิงลึกเบื้องต้น"
     ],
     "textbooks": [],
     "degrees": [
@@ -475,11 +515,11 @@
       "Software Codesign"
     ],
     "teaching_subjects": [
-      "01076051 - MICROCONTROLLER PROJECT",
       "01076050 - MICROCONTROLLER APPLICATION AND DEVELOPMENT",
-      "01076312 - PROJECT 2",
+      "01076051 - MICROCONTROLLER PROJECT",
+      "01076052 - REAL-TIME EMBEDDED SYSTEMS",
       "01076311 - PROJECT 1",
-      "01076052 - REAL-TIME EMBEDDED SYSTEMS"
+      "01076312 - PROJECT 2"
     ],
     "textbooks": [],
     "degrees": [
@@ -491,12 +531,15 @@
   {
     "data_type": "professor",
     "name": "Prof. AKKRADACH WATCHARAPUPONG",
-    "research_areas": ["Computer Security", "Network Security"],
+    "research_areas": [
+      "Computer Security",
+      "Network Security"
+    ],
     "teaching_subjects": [
       "01076118 - SYSTEM PLATFORM ADMINISTRATION",
       "01076311 - PROJECT 1",
-      "01076629 - BASIC PENETRATION TESTING AND ETHICAL HACKING",
-      "01076312 - PROJECT 2"
+      "01076312 - PROJECT 2",
+      "01076629 - BASIC PENETRATION TESTING AND ETHICAL HACKING"
     ],
     "textbooks": [],
     "degrees": [
@@ -514,14 +557,16 @@
       "Optical Computing"
     ],
     "teaching_subjects": [
-      "01076104 - PROGRAMMING PROJECT",
-      "01076312 - PROJECT 2",
-      "01076103 - PROGRAMMING FUNDAMENTAL",
+      "01076012 - DISCRETE STRUCTURE",
       "01076042 - INFORMATION AND COMPUTER SECURITY",
+      "01076103 - PROGRAMMING FUNDAMENTAL",
+      "01076104 - PROGRAMMING PROJECT",
       "01076311 - PROJECT 1",
-      "01076012 - DISCRETE STRUCTURE"
+      "01076312 - PROJECT 2"
     ],
-    "textbooks": ["Computers and Programming C and Java"],
+    "textbooks": [
+      "Computers and Programming C and Java"
+    ],
     "degrees": [
       "B.Eng. (Computer Engineering) (First Class Honors), King Mongkut's Institute of Technology Ladkrabang, 1999",
       "M.Eng. (Computer Engineering), King Mongkut's Institute of Technology Ladkrabang, 2003",
@@ -532,11 +577,14 @@
   {
     "data_type": "professor",
     "name": "Prof. CHOMPOONUCH TENGCHAROEN",
-    "research_areas": ["Human Computer Interaction", "Virtual Reality"],
+    "research_areas": [
+      "Human Computer Interaction",
+      "Virtual Reality"
+    ],
     "teaching_subjects": [
       "01076036 - USER EXPERIENCE AND USER INTERFACE DESIGN",
-      "01076311 - PROJECT 1",
       "01076037 - USER EXPERIENCE AND USER INTERFACE PROJECT",
+      "01076311 - PROJECT 1",
       "01076312 - PROJECT 2"
     ],
     "textbooks": [],
@@ -559,15 +607,17 @@
       "Text Mining"
     ],
     "teaching_subjects": [
-      "01076105 - OBJECT ORIENTED PROGRAMMING",
       "01076032 - ELEMENTARY DIFFERENTIAL EQUATIONS AND LINEAR ALGEBRA",
-      "01076312 - PROJECT 2",
-      "01076567 - IMAGE PROCESSING",
-      "01076532 - MACHINE LEARNING",
+      "01076105 - OBJECT ORIENTED PROGRAMMING",
+      "01076106 - OBJECT ORIENTED PROGRAMMING PROJECT",
       "01076311 - PROJECT 1",
-      "01076106 - OBJECT ORIENTED PROGRAMMING PROJECT"
+      "01076312 - PROJECT 2",
+      "01076532 - MACHINE LEARNING",
+      "01076567 - IMAGE PROCESSING"
     ],
-    "textbooks": ["Digital Image Processing (Theory of Image Processing)"],
+    "textbooks": [
+      "Digital Image Processing (Theory of Image Processing)"
+    ],
     "degrees": [
       "Ph.D. (Computer Engineering), University of Texas at Arlington, USA, 2001 - Visual Analytics",
       "M.S. (Computer Engineering), Arizona State University, USA, 1997",
@@ -584,13 +634,15 @@
       "Particle Swarm Optimization"
     ],
     "teaching_subjects": [
-      "01076312 - PROJECT 2",
       "01076121 - THEORY OF COMPUTATION",
-      "01076533 - DEEP LEARNING",
       "01076311 - PROJECT 1",
+      "01076312 - PROJECT 2",
+      "01076533 - DEEP LEARNING",
       "01076582 - ARTIFICIAL INTELLIGENCE"
     ],
-    "textbooks": ["Theory of Computation"],
+    "textbooks": [
+      "Theory of Computation"
+    ],
     "degrees": [
       "D.Eng. (Electrical Engineering), King Mongkut's Institute of Technology Ladkrabang, 2009",
       "M.S. (Computer Science), Oregon State University, USA, 1999",
@@ -608,14 +660,14 @@
       "Optical Communication"
     ],
     "teaching_subjects": [
-      "01076420 - ADVANCED DIGITAL DESIGN USING HDL",
-      "01076113 - DIGITAL SYSTEM FUNDAMENTALS IN PRACTICE",
       "01076112 - DIGITAL SYSTEM FUNDAMENTALS",
-      "01076423 - STRATEGIC PLANNING USING BOARD AND CARD GAME",
-      "01076422 - IT ENTREPRENEURSHIP AND MANAGEMENT",
-      "01076312 - PROJECT 2",
+      "01076113 - DIGITAL SYSTEM FUNDAMENTALS IN PRACTICE",
+      "01076245 - ADVANCED DIGITAL SYSTEM DESIGN LABORATORY",
       "01076311 - PROJECT 1",
-      "01076245 - ADVANCED DIGITAL SYSTEM DESIGN LABORATORY"
+      "01076312 - PROJECT 2",
+      "01076420 - ADVANCED DIGITAL DESIGN USING HDL",
+      "01076422 - IT ENTREPRENEURSHIP AND MANAGEMENT",
+      "01076423 - STRATEGIC PLANNING USING BOARD AND CARD GAME"
     ],
     "textbooks": [
       "Digital IC Design with FPGA and CPLD Practical with VHDL Language"
@@ -637,9 +689,9 @@
       "Wireless Information Networks"
     ],
     "teaching_subjects": [
-      "01076253 - PROBABILITY AND STATISTICS",
-      "01076141 - CALCULUS 2",
       "01076140 - CALCULUS 1",
+      "01076141 - CALCULUS 2",
+      "01076253 - PROBABILITY AND STATISTICS",
       "01076311 - PROJECT 1"
     ],
     "textbooks": [],
@@ -653,12 +705,16 @@
   {
     "data_type": "professor",
     "name": "Prof. CHUTIMET SRINILTA",
-    "research_areas": ["Data Analytics", "Data Mining", "Machine Learning"],
+    "research_areas": [
+      "Data Analytics",
+      "Data Mining",
+      "Machine Learning"
+    ],
     "teaching_subjects": [
-      "01076311 - PROJECT 1",
       "01076008 - SOFTWARE DEVELOPMENT PROCESSES",
-      "01076312 - PROJECT 2",
-      "01076034 - PRINCIPLES OF SOFTWARE DEVELOPMENT PROCESS"
+      "01076034 - PRINCIPLES OF SOFTWARE DEVELOPMENT PROCESS",
+      "01076311 - PROJECT 1",
+      "01076312 - PROJECT 2"
     ],
     "textbooks": [],
     "degrees": [
@@ -677,14 +733,16 @@
       "Reconfigurable Computing"
     ],
     "teaching_subjects": [
-      "01076114 - COMPUTER ORGANIZATION AND ARCHITECTURE",
       "01076021 - COMPUTER ARCHITECTURE",
-      "01076312 - PROJECT 2",
-      "01076418 - HIGH PERFORMANCE COMPUTING",
+      "01076114 - COMPUTER ORGANIZATION AND ARCHITECTURE",
+      "01076115 - COMPUTER ORGANIZATION IN PRACTICE",
       "01076311 - PROJECT 1",
-      "01076115 - COMPUTER ORGANIZATION IN PRACTICE"
+      "01076312 - PROJECT 2",
+      "01076418 - HIGH PERFORMANCE COMPUTING"
     ],
-    "textbooks": ["Computer Operating Systems"],
+    "textbooks": [
+      "Computer Operating Systems"
+    ],
     "degrees": [
       "Ph.D.E.E. (Computer Engineering), University of Wisconsin, USA, 2002 - VLSI/FPGA Design - Video/Image Processing",
       "M.S.E.E. (Computer Engineering), University of Wisconsin, USA, 1997",
@@ -703,8 +761,8 @@
       "Remote Sensing"
     ],
     "teaching_subjects": [
-      "01076311 - PROJECT 1",
-      "01076263 - DATABASE SYSTEMS"
+      "01076263 - DATABASE SYSTEMS",
+      "01076311 - PROJECT 1"
     ],
     "textbooks": [
       "Advanced Image Processing Techniques for Remote Sensed Hyperspectral Data. Springer-Verlag, 2004"
@@ -718,15 +776,18 @@
   {
     "data_type": "professor",
     "name": "Prof. AMNACH KHAWNE",
-    "research_areas": ["Computer Networks", "Image Processing"],
+    "research_areas": [
+      "Computer Networks",
+      "Image Processing"
+    ],
     "teaching_subjects": [
-      "01076108 - CIRCUITS AND ELECTRONICS IN PRACTICE",
       "01076107 - CIRCUITS AND ELECTRONICS",
-      "01076421 - EMBEDED SYSTEM DESIGN",
-      "01076312 - PROJECT 2",
+      "01076108 - CIRCUITS AND ELECTRONICS IN PRACTICE",
       "01076232 - ELECTRONICS FOR COMPUTER ENGINEERING",
-      "01076566 - MULTIMEDIA SYSTEMS",
-      "01076311 - PROJECT 1"
+      "01076311 - PROJECT 1",
+      "01076312 - PROJECT 2",
+      "01076421 - EMBEDED SYSTEM DESIGN",
+      "01076566 - MULTIMEDIA SYSTEMS"
     ],
     "textbooks": [],
     "degrees": [
@@ -739,12 +800,15 @@
   {
     "data_type": "professor",
     "name": "Prof. RATHACHAI CHAWUTHAI",
-    "research_areas": ["Data Science", "User Experience"],
+    "research_areas": [
+      "Data Science",
+      "User Experience"
+    ],
     "teaching_subjects": [
+      "01076035 - SOFTWARE DEVELOPMENT PROCESS IN PRACTICE",
       "01076311 - PROJECT 1",
-      "01076598 - INTRODUCTION TO DATA ANALYTICS",
       "01076312 - PROJECT 2",
-      "01076035 - SOFTWARE DEVELOPMENT PROCESS IN PRACTICE"
+      "01076598 - INTRODUCTION TO DATA ANALYTICS"
     ],
     "textbooks": [],
     "degrees": [
@@ -757,14 +821,17 @@
   {
     "data_type": "professor",
     "name": "Prof. THANA HONGSUWAN",
-    "research_areas": ["Embedded Systems", "Internet of Things"],
+    "research_areas": [
+      "Embedded Systems",
+      "Internet of Things"
+    ],
     "teaching_subjects": [
-      "01076105 - OBJECT ORIENTED PROGRAMMING",
-      "01076312 - PROJECT 2",
       "01076016 - COMPUTER ENGINEERING PROJECT PREPARATION",
+      "01076105 - OBJECT ORIENTED PROGRAMMING",
+      "01076106 - OBJECT ORIENTED PROGRAMMING PROJECT",
       "01076117 - COMPUTER NETWORKS IN PRACTICE",
       "01076311 - PROJECT 1",
-      "01076106 - OBJECT ORIENTED PROGRAMMING PROJECT"
+      "01076312 - PROJECT 2"
     ],
     "textbooks": [],
     "degrees": [
@@ -776,13 +843,15 @@
   {
     "data_type": "professor",
     "name": "Prof. BUNDIT PASAYA",
-    "research_areas": ["Information Retrieval"],
+    "research_areas": [
+      "Information Retrieval"
+    ],
     "teaching_subjects": [
-      "01076573 - INFORMATION STORAGE AND RETRIEVAL",
-      "01076312 - PROJECT 2",
       "01006012 - COMPUTER PROGRAMMING",
-      "01076595 - INFORMATION STORAGE AND WEB SEARCH",
-      "01076311 - PROJECT 1"
+      "01076311 - PROJECT 1",
+      "01076312 - PROJECT 2",
+      "01076573 - INFORMATION STORAGE AND RETRIEVAL",
+      "01076595 - INFORMATION STORAGE AND WEB SEARCH"
     ],
     "textbooks": [],
     "degrees": [
@@ -794,13 +863,15 @@
   {
     "data_type": "professor",
     "name": "Prof. WATJANAPONG KASEMSIRI",
-    "research_areas": ["Pattern Recognition"],
+    "research_areas": [
+      "Pattern Recognition"
+    ],
     "teaching_subjects": [
       "01076011 - OPERATING SYSTEMS",
-      "01076120 - WEB APPLICATION DEVELOPMENT PROJECT",
-      "01076311 - PROJECT 1",
+      "01076106 - OBJECT ORIENTED PROGRAMMING PROJECT",
       "01076119 - WEB APPLICATION DEVELOPMENT",
-      "01076106 - OBJECT ORIENTED PROGRAMMING PROJECT"
+      "01076120 - WEB APPLICATION DEVELOPMENT PROJECT",
+      "01076311 - PROJECT 1"
     ],
     "textbooks": [],
     "degrees": [
@@ -812,15 +883,17 @@
   {
     "data_type": "professor",
     "name": "Prof. JIRASAK SITTIGORN",
-    "research_areas": ["Image Processing"],
+    "research_areas": [
+      "Image Processing"
+    ],
     "teaching_subjects": [
-      "01076040 - INTERNETWORKING STANDARDS AND TECHNOLOGIES",
-      "01076411 - MICRO ROBOT DEVELOPMENT",
-      "01076041 - INTERNETWORKING STANDARDS AND TECHNOLOGIES IN PRACTICE",
-      "01076312 - PROJECT 2",
-      "01076016 - COMPUTER ENGINEERING PROJECT PREPARATION",
       "01076001 - INTRODUCTION TO COMPUTER ENGINEERING",
-      "01076311 - PROJECT 1"
+      "01076016 - COMPUTER ENGINEERING PROJECT PREPARATION",
+      "01076040 - INTERNETWORKING STANDARDS AND TECHNOLOGIES",
+      "01076041 - INTERNETWORKING STANDARDS AND TECHNOLOGIES IN PRACTICE",
+      "01076311 - PROJECT 1",
+      "01076312 - PROJECT 2",
+      "01076411 - MICRO ROBOT DEVELOPMENT"
     ],
     "textbooks": [],
     "degrees": [
@@ -833,11 +906,13 @@
   {
     "data_type": "professor",
     "name": "Prof. KANUT TANGTISANON",
-    "research_areas": ["Analysis of Algorithms"],
+    "research_areas": [
+      "Analysis of Algorithms"
+    ],
     "teaching_subjects": [
+      "01076110 - OBJECT ORIENTED DATA STRUCTURES PROJECT",
       "01076311 - PROJECT 1",
-      "01076312 - PROJECT 2",
-      "01076110 - OBJECT ORIENTED DATA STRUCTURES PROJECT"
+      "01076312 - PROJECT 2"
     ],
     "textbooks": [],
     "degrees": [
@@ -849,13 +924,15 @@
   {
     "data_type": "professor",
     "name": "Prof. KIATNARONG TONGPRASERT",
-    "research_areas": ["Information Retrieval"],
+    "research_areas": [
+      "Information Retrieval"
+    ],
     "teaching_subjects": [
-      "01076110 - OBJECT ORIENTED DATA STRUCTURES PROJECT",
-      "01076312 - PROJECT 2",
       "01006012 - COMPUTER PROGRAMMING",
+      "01076109 - OBJECT ORIENTED DATA STRUCTURES",
+      "01076110 - OBJECT ORIENTED DATA STRUCTURES PROJECT",
       "01076311 - PROJECT 1",
-      "01076109 - OBJECT ORIENTED DATA STRUCTURES"
+      "01076312 - PROJECT 2"
     ],
     "textbooks": [],
     "degrees": [
@@ -869,12 +946,12 @@
     "name": "Prof. PARINYA EKPARINYA",
     "research_areas": [],
     "teaching_subjects": [
+      "01076043 - INTRODUCTION TO CLOUD ARCHITECTURE",
       "01076044 - INTRODUCTION TO CLOUD ARCHITECTURE IN PRACTICE",
-      "01076312 - PROJECT 2",
       "01076116 - COMPUTER NETWORKS",
       "01076117 - COMPUTER NETWORKS IN PRACTICE",
       "01076311 - PROJECT 1",
-      "01076043 - INTRODUCTION TO CLOUD ARCHITECTURE"
+      "01076312 - PROJECT 2"
     ],
     "textbooks": [],
     "degrees": [
@@ -896,8 +973,8 @@
     ],
     "teaching_subjects": [
       "01076311 - PROJECT 1",
-      "01076627 - ICT SECURITY ARCHITECTURE AND MANAGEMENT",
       "01076312 - PROJECT 2",
+      "01076627 - ICT SECURITY ARCHITECTURE AND MANAGEMENT",
       "01076628 - INFORMATION TECHNOLOGY SECURITY ASSESSMENT"
     ],
     "textbooks": [],
@@ -917,11 +994,11 @@
       "Language Models"
     ],
     "teaching_subjects": [
-      "01076421 - EMBEDED SYSTEM DESIGN",
-      "01076641 - INTRODUCTION TO MACHINE LEARNING AND DEEP LEARNING",
-      "01076312 - PROJECT 2",
       "01076001 - INTRODUCTION TO COMPUTER ENGINEERING",
-      "01076532 - MACHINE LEARNING"
+      "01076312 - PROJECT 2",
+      "01076421 - EMBEDED SYSTEM DESIGN",
+      "01076532 - MACHINE LEARNING",
+      "01076641 - INTRODUCTION TO MACHINE LEARNING AND DEEP LEARNING"
     ],
     "textbooks": [],
     "degrees": [
