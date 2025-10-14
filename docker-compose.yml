@@ -1,0 +1,23 @@
+services:
+  # RAG API service for local development
+  rag-api:
+    build: .
+    container_name: ce-rag-dev
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    environment:
+      # Override specific settings if needed
+      - API_HOST=0.0.0.0
+      - API_PORT=8000
+      - API_RELOAD=true
+      - EMBEDDING_MODEL=google/embeddinggemma-300m
+      - OLLAMA_URL=http://host.docker.internal:11434
+    volumes:
+      - .:/app
+      - ./data:/app/data
+      - ./cache:/app/cache
+      - ./chroma_db:/app/chroma_db
+      - ./logs:/app/logs
+    restart: unless-stopped
