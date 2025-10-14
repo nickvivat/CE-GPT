@@ -75,17 +75,12 @@ class ResponseGenerator:
 			
 			for i, result in enumerate(courses, 1):
 				metadata = result.get('metadata', {})
-				content = result.get('content', '')
 				
 				# Create concise course entry
 				course_name = metadata.get('course_name', 'N/A')
 				course_code = metadata.get('course_code', 'N/A')
 				
 				context_part = f"{i}. {course_name} ({course_code})"
-				
-				# Add truncated description
-				if content:
-					clean_content = self._clean_content(content)
 				
 				context_parts.append(context_part)
 		
@@ -112,8 +107,9 @@ class ResponseGenerator:
 				# Add teaching subjects if available
 				if metadata.get('teaching_subjects'):
 					context_part += f"\n   **Teaching:**"
-					for subject in metadata['teaching_subjects']:
-						context_part += f"\n   - {subject}"
+					for subject in metadata.get('teaching_subjects', []):
+						if subject not in ["01076311 - PROJECT 1", "01076312 - PROJECT 2"]:
+							context_part += f"\n   - {subject}"
 				
 				context_parts.append(context_part)
 		
