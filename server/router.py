@@ -198,6 +198,20 @@ async def generate_response_stream(request: GenerateRequest):
                 # Send search results info
                 yield f"data: {json.dumps({'type': 'search_results', 'count': len(search_results)})}\n\n"
                 
+                if request.include_sources and search_results:
+                    sources = [
+                        {
+                            "content": result.get("content", ""),
+                            "metadata": result.get("metadata", {}),
+                            "similarity_score": result.get("similarity_score", 0.0),
+                            "rerank_score": result.get("rerank_score", 0.0),
+                            "chunk_id": result.get("chunk_id", ""),
+                            "original_index": result.get("original_index", 0)
+                        }
+                        for result in search_results
+                    ]
+                    yield f"data: {json.dumps({'type': 'sources', 'sources': sources})}\n\n"
+                
                 # Get streaming response from RAG system and iterate over it
                 async for chunk in rag_system.generate_response_stream(
                     query=request.query,
@@ -210,8 +224,13 @@ async def generate_response_stream(request: GenerateRequest):
                         yield f"data: {json.dumps({'type': 'chunk', 'content': chunk})}\n\n"
                         await asyncio.sleep(0.01)  # Small delay for smooth streaming
                 
-                # Send completion signal
-                yield f"data: {json.dumps({'type': 'complete', 'message': 'Generation complete'})}\n\n"
+                completion_data = {
+                    'type': 'complete', 
+                    'message': 'Generation complete',
+                    'language_detected': rag_system._detect_language(request.query),
+                    'total_sources': len(search_results)
+                }
+                yield f"data: {json.dumps(completion_data)}\n\n"
                 
             except Exception as e:
                 logger.error(f"Error in streaming generation: {e}")

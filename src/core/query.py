@@ -257,7 +257,7 @@ class Query:
             logger.error("Using default metadata.")
             return {"tags": ["general"], "query_intent": "general"}
 
-    async def enhance_query_async(self, query: str, conversation_context: str = "") -> Tuple[str, Optional[Dict[str, any]]]:
+    async def enhance_query_async(self, query: str) -> Tuple[str, Optional[Dict[str, any]]]:
         """
         Async version of enhance_query that runs classification, enhancement, and metadata generation in parallel.
         Returns: (enhanced_query, metadata)
@@ -381,7 +381,7 @@ class Query:
             logger.error("Using original query as single term.")
             return [query]
 
-    def enhance_query(self, query: str, conversation_context: str = "") -> str:
+    def enhance_query(self, query: str) -> str:
         """
         Two-step query processing: classify first, then enhance if needed.
         Uses ASCII-based language detection instead of prompt-based detection.
