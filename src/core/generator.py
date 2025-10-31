@@ -150,8 +150,6 @@ class ResponseGenerator:
 							context_part += f"\n   - {subject}"
 				
 				context_parts.append(context_part)
-
-		logger.info(f"Context parts: {context_parts}")
 		
 		return "\n".join(context_parts)
 	
@@ -197,9 +195,6 @@ class ResponseGenerator:
 				context = self._format_context(results)
 				system_prompt = system_prompt.replace("{context}", context)
 				full_prompt = system_prompt.format(query=query)
-			
-			# Log the full prompt for debugging
-			logger.info(f"Full prompt being sent to LLM:\n{full_prompt}")
 			
 			# Generate streaming response using Ollama with real-time streaming
 			response_chunks = self.llm_client.generate_stream(full_prompt)

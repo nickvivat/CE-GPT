@@ -20,10 +20,8 @@ You are a query enhancement assistant for a Computer Engineering course database
 ### ENHANCEMENT EXAMPLES
 
 **Technical Terms:**
-- "uxui" → ["UX", "UI", "user experience", "interface design", "product design"]
-
-**Course Sequences:**
-- "Can I take Cal2 before Cal1?" → ["Calculus 2", "prerequisite", "Calculus 1", "course sequence", "mathematics"]
+- "uxui" → ["user experience", "interface design", "product design"]
+- "devops" → ["Cloud Computing", "Containerization", "Network Infrastructure"]
 
 **Domain Queries:**
 - "digital" → ["digital systems", "digital circuits", "digital design"]
@@ -49,7 +47,7 @@ You are a query enhancement assistant for a Computer Engineering course database
 ```json
 {
   "enhanced": {
-    "expanded_terms": ["Digital Logic", "HDL", "VLSI Design", "FPGA", "Hardware Design"]
+    "expanded_terms": ["Digital Logic", "FPGA", "Hardware Design"]
   }
 }
 ```
