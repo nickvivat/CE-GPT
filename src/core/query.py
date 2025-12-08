@@ -10,7 +10,7 @@ import json
 import re
 import asyncio
 import aiohttp
-from typing import List, Dict, Optional, Tuple
+from typing import List, Dict, Optional, Tuple, Any
 
 from ..utils.config import config
 from ..utils.logger import get_logger
@@ -200,7 +200,7 @@ class Query:
             logger.error("Using original query as single term.")
             return [query]
 
-    async def generate_metadata(self, query: str) -> Optional[Dict[str, any]]:
+    async def generate_metadata(self, query: str) -> Optional[Dict[str, Any]]:
         """
         Generate metadata tags for the query using async Ollama call.
         Returns: Dict with tags and query_intent or None if error
@@ -257,7 +257,7 @@ class Query:
             logger.error("Using default metadata.")
             return {"tags": ["general"], "query_intent": "general"}
 
-    async def enhance_query_async(self, query: str) -> Tuple[str, Optional[Dict[str, any]]]:
+    async def enhance_query_async(self, query: str) -> Tuple[str, Optional[Dict[str, Any]]]:
         """
         Async version of enhance_query that runs classification, enhancement, and metadata generation in parallel.
         Returns: (enhanced_query, metadata)

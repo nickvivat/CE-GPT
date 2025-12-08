@@ -32,7 +32,7 @@ async def lifespan(app: FastAPI):
     try:
         # Initialize RAG system
         initialize_rag_system()
-        logger.info("RAG system initialized successfully")
+        logger.debug("RAG system initialized successfully")
     except Exception as e:
         logger.error(f"Failed to initialize RAG system: {e}")
         logger.warning("API will start but may not function properly")

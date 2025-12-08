@@ -10,7 +10,7 @@ scikit-learn>=1.0.1
 langchain>=0.1.0
 # Core RAG System Dependencies
 langchain-community>=0.0.10
-chromadb>=0.4.0
+qdrant-client>=1.7.0
 
 # Performance Monitoring
 psutil>=5.9.0

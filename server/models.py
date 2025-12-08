@@ -19,7 +19,7 @@ class LanguageEnum(str, Enum):
 
 
 class GenerateRequest(BaseModel):
-    query: str = Field(..., description="User query for response generation")
+    query: str = Field(..., min_length=1, max_length=1000, description="User query for response generation")
     top_k: int = Field(default=5, ge=1, le=10, description="Number of sources to retrieve")
     language: str = Field(default="auto", description="Language preference (auto, en, th)")
     use_reranking: bool = Field(default=True, description="Whether to use reranking for better results")

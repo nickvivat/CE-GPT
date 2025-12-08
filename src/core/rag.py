@@ -7,12 +7,10 @@ Main system that orchestrates all components
 import os
 import time
 import hashlib
-import json
 import numpy as np
 from typing import List, Dict, Any, Optional
 
-# Core components
-from ..preprocess.data_processor import DataProcessor, DataChunk
+from ..preprocess.data_processor import DataProcessor
 from .embedder import Embedder
 from .reranker import Reranker
 from .query import Query
@@ -64,89 +62,77 @@ class RAGSystem:
         self.use_query_enhancement = use_query_enhancement
         self.auto_load_data = auto_load_data
         
-        # Initialize error handling components
         self.circuit_breaker = CircuitBreaker(failure_threshold=3, recovery_timeout=30.0)
         
-        # Initialize components with error handling
         try:
             self.data_processor = DataProcessor()
             self.embedder = Embedder()
             
-            # Initialize reranker with error handling
+            initialized_components = []
+            
             if use_reranker:
                 try:
                     self.reranker = Reranker()
-                    logger.info("Reranker initialized successfully")
+                    initialized_components.append("reranker")
                 except Exception as e:
                     logger.warning(f"Failed to initialize reranker: {e}. Continuing without reranking.")
                     self.reranker = None
             else:
                 self.reranker = None
             
-            # Initialize query enhancer with error handling
             if use_query_enhancement:
                 try:
                     self.query = Query()
-                    logger.info("Query enhancer initialized successfully")
+                    initialized_components.append("query_enhancer")
                 except Exception as e:
                     logger.warning(f"Failed to initialize query enhancer: {e}. Continuing without query enhancement.")
                     self.query = None
             else:
                 self.query = None
             
-            # Initialize vector store
             self.vector_store = create_vector_store()
+            initialized_components.append("vector_store")
             
-            # Initialize response generator
             try:
                 self.response_generator = ResponseGenerator()
-                logger.info("Response generator initialized successfully")
+                initialized_components.append("response_generator")
             except Exception as e:
                 logger.warning(f"Failed to initialize response generator: {e}. Continuing without generation.")
                 self.response_generator = None
             
-            logger.info("RAG system components initialized successfully")
+            logger.info(f"RAG system initialized: {', '.join(initialized_components)}")
             
         except Exception as e:
             logger.error(f"Failed to initialize RAG system: {e}")
             raise e
         
-        # Data storage
         self.chunks = None
         self.embeddings = None
-        
-        # Conversation context
         self.conversation_context = ""
         self.last_query = ""
         self.last_results = []
         
-        # Auto-load data if enabled
         if self.auto_load_data:
             self._auto_load_data()
     
     def _auto_load_data(self):
         """Auto-load both course and professor data"""
         try:
-            logger.info("Auto-loading course and professor data...")
-            
-            # Define data sources
             data_sources = [
                 {'file_path': 'data/raw/course_detail.json', 'data_type': 'course'},
                 {'file_path': 'data/raw/professor_detail.json', 'data_type': 'professor'}
             ]
             
-            # Load multiple data sources
             success = self.load_multiple_data_sources(data_sources)
             
             if success:
-                # Build vector index
                 self.build_vector_index()
-                logger.info("Auto-loading completed successfully")
+                logger.info("Data loading completed successfully")
             else:
-                logger.warning("Auto-loading failed, but system will continue")
+                logger.warning("Data loading failed, but system will continue")
                 
         except Exception as e:
-            logger.error(f"Error during auto-loading: {e}")
+            logger.error(f"Error during data loading: {e}")
             logger.warning("System will continue without auto-loaded data")
         
     @monitor_operation("data_loading")
@@ -155,12 +141,10 @@ class RAGSystem:
         """Load and process data using unified processor"""
         logger.info(f"Loading and processing {data_type} data...")
         
-        # Try to load from cache first
         base_name = os.path.splitext(os.path.basename(data_file))[0]
         processed_dir = os.path.join(os.path.dirname(os.path.dirname(data_file)), "processed")
         os.makedirs(processed_dir, exist_ok=True)
         
-        # Use consistent naming: course_detail_processed.json and professor_detail_processed.json
         if data_type == "course":
             cache_file = os.path.join(processed_dir, "course_detail_processed.json")
         elif data_type == "professor":
@@ -169,21 +153,17 @@ class RAGSystem:
             cache_file = os.path.join(processed_dir, f"{base_name}_{data_type}_processed.json")
         
         if os.path.exists(cache_file):
-            logger.info("Loading preprocessed chunks from cache...")
             self.chunks = self.data_processor.load_processed_chunks(cache_file)
             if self.chunks:
-                logger.info(f"Loaded {len(self.chunks)} processed chunks from cache")
                 stats = self.data_processor.get_statistics(self.chunks)
-                logger.info(f"Data statistics: {stats}")
+                logger.info(f"Loaded {len(self.chunks)} processed chunks from cache - {stats}")
                 return True
         
-        # Process data if cache not available
         self.chunks = self.data_processor.process_file(data_file, data_type)
         if not self.chunks:
             logger.error(f"Failed to process {data_type} data")
             return False
             
-        # Save to cache
         self.data_processor.save_processed_chunks(self.chunks, cache_file)
         
         stats = self.data_processor.get_statistics(self.chunks)
@@ -193,8 +173,6 @@ class RAGSystem:
     
     def load_multiple_data_sources(self, data_sources: List[Dict[str, str]]) -> bool:
         """Load multiple data sources of different types with caching"""
-        logger.info(f"Loading {len(data_sources)} data sources...")
-        
         all_chunks = []
         
         for source in data_sources:
@@ -205,12 +183,10 @@ class RAGSystem:
                 logger.warning(f"File not found: {file_path}")
                 continue
             
-            # Try to load from cache first
             base_name = os.path.splitext(os.path.basename(file_path))[0]
             processed_dir = os.path.join(os.path.dirname(os.path.dirname(file_path)), "processed")
             os.makedirs(processed_dir, exist_ok=True)
             
-            # Use consistent naming: course_detail_processed.json and professor_detail_processed.json
             if data_type == "course":
                 cache_file = os.path.join(processed_dir, "course_detail_processed.json")
             elif data_type == "professor":
@@ -220,25 +196,21 @@ class RAGSystem:
             
             chunks = []
             if os.path.exists(cache_file):
-                logger.info(f"Loading preprocessed {data_type} chunks from cache...")
                 chunks = self.data_processor.load_processed_chunks(cache_file)
                 if chunks:
-                    logger.info(f"Loaded {len(chunks)} processed {data_type} chunks from cache")
+                    logger.info(f"Loaded {len(chunks)} {data_type} chunks from cache")
             
-            # Process data if cache not available
             if not chunks:
                 logger.info(f"Processing {data_type} data from {file_path}...")
                 chunks = self.data_processor.process_file(file_path, data_type)
                 if chunks:
-                    # Save to cache
                     self.data_processor.save_processed_chunks(chunks, cache_file)
-                    logger.info(f"Saved {len(chunks)} processed {data_type} chunks to cache")
+                    logger.info(f"Processed and cached {len(chunks)} {data_type} chunks")
                 else:
                     logger.warning(f"Failed to process {data_type} data from {file_path}")
                     continue
             
             all_chunks.extend(chunks)
-            logger.info(f"Added {len(chunks)} {data_type} chunks to combined dataset")
         
         if not all_chunks:
             logger.error("No data loaded from any source")
@@ -267,56 +239,47 @@ class RAGSystem:
                 
             logger.info("Building vector index...")
             
-            # Check if embeddings cache exists and is valid
             cache_dir = config.cache.embeddings_dir
             embeddings_cache_file = os.path.join(cache_dir, "course_embeddings.npy")
             chunks_hash_file = os.path.join(cache_dir, "chunks_hash.txt")
             
-            # Calculate hash of current chunks to check if cache is still valid
             chunks_content = "".join([chunk.content for chunk in self.chunks])
             chunks_metadata = "".join([str(chunk.metadata) for chunk in self.chunks])
             current_hash = hashlib.md5((chunks_content + chunks_metadata).encode()).hexdigest()
             
-            # Check if data has changed by comparing with cached hash
             data_changed = True
-            if (os.path.exists(chunks_hash_file)):
+            if os.path.exists(chunks_hash_file):
                 try:
                     with open(chunks_hash_file, 'r') as f:
                         cached_hash = f.read().strip()
                     
                     if cached_hash == current_hash:
                         data_changed = False
-                        logger.info("Data has not changed, checking existing cache...")
+                        logger.debug("Data has not changed, checking existing cache...")
                     else:
-                        logger.info("Data has changed, will regenerate embeddings...")
+                        logger.debug("Data has changed, will regenerate embeddings...")
                 except Exception as e:
                     logger.warning(f"Failed to read cached hash: {e}, will regenerate...")
             
-            # If data hasn't changed, check if we can use existing cache
             if not data_changed:
-                # Check if vector store already has data
                 if self.vector_store.get_count() > 0:
-                    logger.info("Vector store already contains embeddings and data unchanged, skipping rebuild")
+                    logger.debug("Vector store already contains embeddings and data unchanged, skipping rebuild")
                     return True
                 
-                # Try to load cached embeddings if they exist
-                if (os.path.exists(embeddings_cache_file) and 
-                    os.path.getsize(embeddings_cache_file) > 0):
+                if os.path.exists(embeddings_cache_file) and os.path.getsize(embeddings_cache_file) > 0:
                     try:
-                        logger.info("Loading embeddings from cache...")
                         self.embeddings = np.load(embeddings_cache_file)
-                        logger.info(f"Loaded {len(self.embeddings)} embeddings from cache")
+                        logger.debug(f"Loaded {len(self.embeddings)} embeddings from cache")
                     except Exception as e:
                         logger.warning(f"Failed to load cached embeddings: {e}, regenerating...")
                         self.embeddings = None
                 else:
-                    logger.info("No embedding cache found, generating embeddings...")
+                    logger.debug("No embedding cache found, generating embeddings...")
                     self.embeddings = None
             else:
-                logger.info("Data changed, regenerating embeddings...")
+                logger.debug("Data changed, regenerating embeddings...")
                 self.embeddings = None
             
-            # Generate embeddings if not loaded from cache
             if self.embeddings is None:
                 chunk_texts = [get_chunk_content(chunk) for chunk in self.chunks]
                 self.embeddings = self.embedder.get_embeddings(chunk_texts)
@@ -324,7 +287,6 @@ class RAGSystem:
                     logger.error("Failed to generate embeddings")
                     return False
                 
-                # Save embeddings to cache (only when generating new embeddings)
                 try:
                     os.makedirs(cache_dir, exist_ok=True)
                     np.save(embeddings_cache_file, self.embeddings)
@@ -339,15 +301,17 @@ class RAGSystem:
                 self.vector_store.clear()
             
             if self.vector_store.get_count() == 0:
-                chunk_metadata = [chunk.metadata for chunk in self.chunks]
+                chunk_metadata = []
+                for chunk in self.chunks:
+                    meta = dict(chunk.metadata)
+                    meta['content'] = get_chunk_content(chunk)
+                    chunk_metadata.append(meta)
                 if not self.vector_store.add_embeddings(self.embeddings, chunk_metadata):
                     logger.error("Failed to add embeddings to vector store")
                     return False
-                logger.info("Added embeddings to vector store")
+                logger.info(f"Vector index built: {len(self.embeddings)} embeddings indexed")
             else:
-                logger.info("Vector store already contains embeddings, skipping addition")
-                
-            logger.info("Vector index built successfully")
+                logger.debug("Vector store already contains embeddings, skipping addition")
             return True
             
         except Exception as e:
@@ -363,11 +327,9 @@ class RAGSystem:
         query_lower = query.lower().strip()
         logger.info(f"Processing query: '{query}'")
         
-        # Detect professor-related queries and increase top_k to ensure professor results are included
         professor_keywords = ['who', 'teach', 'teaches', 'instructor', 'professor', 'อาจารย์', 'สอน', 'who is', 'who are', 'teaching']
         is_professor_query = any(keyword in query_lower for keyword in professor_keywords)
         
-        # Use circuit breaker for critical operations
         async def _perform_search():
             current_query = query
             enhanced_query = None
@@ -438,24 +400,19 @@ class RAGSystem:
                 
                 query_embedding = self.embedder.get_single_embedding(current_query)
                 
-                # Build filter metadata from language and query metadata
                 filter_metadata = {}
                 if detected_language:
                     filter_metadata["language"] = detected_language
                     logger.info(f"Applying language filter: {detected_language} (based on original query)")
                 
-                # Add metadata-based filtering if available
                 if metadata and metadata.get("tags"):
                     tags = metadata.get("tags", [])
                     query_intent = metadata.get("query_intent", "course_search")
                     
-                    # Override query_intent with early professor detection if needed
                     if is_professor_query and query_intent != "professor_search":
                         query_intent = "professor_search"
                         logger.info(f"Overriding query_intent to 'professor_search' based on early detection")
                     
-                    # For now, just use data_type filtering to test basic functionality
-                    # TODO: Implement proper metadata filtering with comma-separated strings
                     if query_intent == "professor_search":
                         filter_metadata["data_type"] = "professor"
                         logger.info("Applying professor filter")
@@ -465,14 +422,10 @@ class RAGSystem:
                     
                     logger.info(f"Metadata tags available: {tags} (intent: {query_intent})")
                 elif is_professor_query:
-                    # If no metadata but early detection found professor query, apply professor filter
                     filter_metadata["data_type"] = "professor"
                     logger.info("Applying professor filter based on early detection (no metadata)")
                 
-                # If we have multiple conditions, we need to use $and to combine them
-                # ChromaDB requires a single operator, so we'll use $and for multiple conditions
                 if len(filter_metadata) > 1:
-                    # Convert to $and structure for ChromaDB
                     and_conditions = []
                     for key, value in filter_metadata.items():
                         and_conditions.append({key: value})
@@ -566,15 +519,12 @@ class RAGSystem:
                     )
                     logger.error(f"Reranking failed: {e}")
             
-            logger.info(f"Search completed, returned {len(results)} results")
             return results
         
-        # Execute the async search function
         try:
             results = await _perform_search()
             total_duration = time.time() - start_time
             
-            # Log overall search performance
             csv_logger.log_overall_rag(
                 query=query,
                 duration=total_duration,
@@ -583,7 +533,7 @@ class RAGSystem:
                 total_duration=total_duration
             )
             
-            logger.info(f"Search completed, returned {len(results)} results")
+            logger.info(f"Search completed: {len(results)} results in {total_duration:.2f}s")
             return results
         except Exception as e:
             total_duration = time.time() - start_time
@@ -610,6 +560,7 @@ class RAGSystem:
                     search_results = await self.search(query, top_k=top_k, language=language, use_reranking=use_reranking)
                 
                 response_duration = time.time() - response_generation_start
+                response = ""
                 
                 csv_logger.log_response_generation(
                     query=query,
@@ -627,9 +578,8 @@ class RAGSystem:
             if language is None:
                 language = self._detect_language(query)
             
-            # Use provided search results or perform search if none provided
             if search_results is None:
-                search_results = self.search(query, top_k=top_k, language=language, use_reranking=use_reranking)
+                search_results = await self.search(query, top_k=top_k, language=language, use_reranking=use_reranking)
             
             if not search_results:
                 logger.warning(f"No search results found for query: '{query}'")
@@ -652,7 +602,6 @@ class RAGSystem:
                 
                 return response
             
-            # Collect chunks from generator for contextual response
             response = ""
             for chunk in self.response_generator.generate_response(query, search_results, language):
                 if chunk:
@@ -688,7 +637,6 @@ class RAGSystem:
                 context_length=len(search_results) if search_results else 0
             )
             
-            # Fallback to search results only
             try:
                 if not search_results:
                     search_results = await self.search(query, top_k=top_k, language=language, use_reranking=use_reranking)
@@ -705,21 +653,18 @@ class RAGSystem:
                 logger.warning("Response generator not available, falling back to search results")
                 if not search_results:
                     search_results = await self.search(query, top_k=top_k, language=language, use_reranking=use_reranking)
-                # Return fallback response as a single chunk
-                fallback_response = self.response_generator._format_fallback_response(query, search_results)
+                fallback_response = self.response_generator._format_fallback_response(query, search_results) if self.response_generator else ""
                 yield fallback_response
                 return
             
             if language is None:
                 language = self._detect_language(query)
             
-            # Use provided search results or perform search if none provided
             if search_results is None:
-                search_results = self.search(query, top_k=top_k, language=language, use_reranking=use_reranking)
+                search_results = await self.search(query, top_k=top_k, language=language, use_reranking=use_reranking)
             
             if not search_results:
                 logger.warning(f"No search results found for query: '{query}'")
-                # Collect chunks from generator for conversational response
                 conversational_response = ""
                 for chunk in self.response_generator.generate_response(query, [], language):
                     if chunk:
@@ -727,14 +672,12 @@ class RAGSystem:
                 yield conversational_response
                 return
             
-            # Get streaming response from generator
             for chunk in self.response_generator.generate_response(query, search_results, language):
                 if chunk:
                     yield chunk
                     
         except Exception as e:
             logger.error(f"Error generating streaming response: {e}")
-            # Fallback to search results only
             try:
                 if not search_results:
                     search_results = await self.search(query, top_k=top_k, language=language, use_reranking=use_reranking)
@@ -817,7 +760,6 @@ class RAGSystem:
 
     def _detect_language(self, text: str) -> str:
         """Detect if text is Thai or English using ASCII check"""
-        # If any character is not ASCII, assume it's Thai (or non-English)
         if any(ord(c) > 127 for c in text):
             return "th"
         return "en"

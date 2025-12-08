@@ -8,7 +8,7 @@ from ..preprocess.data_processor import DataProcessor
 from .embedder import Embedder
 from .reranker import Reranker
 from .query import Query
-from .vector_store import VectorStore, ChromaVectorStore, create_vector_store
+from .vector_store import VectorStore, QdrantVectorStore, create_vector_store
 from .generator import ResponseGenerator
 
 __all__ = [
@@ -18,7 +18,7 @@ __all__ = [
     'Reranker',
     'Query',
     'VectorStore',
-    'ChromaVectorStore',
+    'QdrantVectorStore',
     'create_vector_store',
     'ResponseGenerator'
 ]

@@ -9,7 +9,7 @@ from .preprocess.data_processor import DataProcessor
 from .core.embedder import Embedder
 from .core.reranker import Reranker
 from .core.query import Query
-from .core.vector_store import VectorStore, ChromaVectorStore, create_vector_store
+from .core.vector_store import VectorStore, QdrantVectorStore, create_vector_store
 from .core.generator import ResponseGenerator
 
 __all__ = [
@@ -19,7 +19,7 @@ __all__ = [
     'Reranker',
     'Query',
     'VectorStore',
-    'ChromaVectorStore',
+    'QdrantVectorStore',
     'create_vector_store',
     'ResponseGenerator'
 ]

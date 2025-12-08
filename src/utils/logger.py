@@ -37,6 +37,12 @@ def setup_logger(
     log_level = log_level or config.debug.log_level
     enable_console = enable_console if enable_console is not None else True
     
+    logging.getLogger("httpx").setLevel(logging.WARNING)
+    logging.getLogger("httpcore").setLevel(logging.WARNING)
+    logging.getLogger("sentence_transformers").setLevel(logging.WARNING)
+    logging.getLogger("transformers").setLevel(logging.WARNING)
+    logging.getLogger("urllib3").setLevel(logging.WARNING)
+    
     # Create logger
     logger = logging.getLogger(name)
     logger.setLevel(getattr(logging, log_level.upper()))

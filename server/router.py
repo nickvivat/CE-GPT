@@ -50,7 +50,7 @@ def initialize_rag_system():
         if not rag_system.chunks or len(rag_system.chunks) == 0:
             raise Exception("No data loaded by RAG system")
         
-        logger.info("RAG system initialized successfully for API")
+        logger.info("RAG system ready for API requests")
         
     except Exception as e:
         logger.error(f"Failed to initialize RAG system: {e}")
