@@ -20,13 +20,13 @@ logger = get_logger(__name__)
 class ResponseGenerator:
 	"""Generates contextual responses using retrieved data and LLM"""
 	
-	def __init__(self, model_name: str = None):
+	def __init__(self, model_name: str = None, chat_history_manager=None):
 		"""Initialize the response generator"""
 		self.llm_client = LLMClient(
 			provider=LLMProvider.OLLAMA,
 			model_name=model_name
 		)
-		self.chat_history = []
+		self.chat_history_manager = chat_history_manager
 	
 	def _detect_language(self, text: str) -> str:
 		"""Detect if text contains any Thai character; if so, respond in Thai, else English"""
@@ -153,7 +153,13 @@ class ResponseGenerator:
 		
 		return "\n".join(context_parts)
 	
-	def generate_response(self, query: str, results: List[Dict[str, Any]], user_language: str = None):
+	def generate_response(
+		self,
+		query: str,
+		results: List[Dict[str, Any]],
+		user_language: str = None,
+		session_id: str = None
+	):
 		"""Generate a streaming response generator - the only method needed for all response generation"""
 		try:
 			if user_language is None:
@@ -174,18 +180,37 @@ class ResponseGenerator:
 				yield fallback_response
 				return
 			
-			# Handle conversational responses (when results are empty)
-			if not results:
-				# Build chat history section for conversational responses
-				chat_history_section = ""
-				if self.chat_history:
+			# Build chat history section from database if session_id is provided
+			chat_history_section = ""
+			if session_id and self.chat_history_manager:
+				recent_messages = self.chat_history_manager.get_recent_messages(session_id, n=6)
+				if recent_messages:
 					chat_history_section = "\n**Recent Conversation:**\n"
-					for i, (user_msg, assistant_msg) in enumerate(self.chat_history[-3:], 1):
-						chat_history_section += f"{i}. User: {user_msg}\n   Assistant: {assistant_msg}\n"
+					for msg in recent_messages[-3:]:  # Last 3 exchanges
+						role_label = "User" if msg.role == "user" else "Assistant"
+						chat_history_section += f"{role_label}: {msg.content[:200]}\n"
 					chat_history_section += "\n"
+			
+			if not results:
+				# For conversational responses, insert chat history if available
+				if chat_history_section:
+					# Insert chat history before the USER QUERY section
+					query_marker = "## USER QUERY"
+					if query_marker in system_prompt:
+						system_prompt_with_history = system_prompt.replace(
+							query_marker,
+							chat_history_section + "\n" + query_marker
+						)
+					else:
+						# Fallback: insert before {query} placeholder
+						system_prompt_with_history = system_prompt.replace(
+							"{query}",
+							chat_history_section + "\n\n{query}"
+						)
+				else:
+					system_prompt_with_history = system_prompt
 				
-				full_prompt = system_prompt.format(
-					chat_history=chat_history_section,
+				full_prompt = system_prompt_with_history.format(
 					query=query,
 					context="",
 					num_results=0
@@ -193,8 +218,23 @@ class ResponseGenerator:
 			else:
 				# Format context from retrieved results for contextual responses
 				context = self._format_context(results)
-				system_prompt = system_prompt.replace("{context}", context)
-				full_prompt = system_prompt.format(query=query)
+				if chat_history_section:
+					context_marker = "## CONTEXT INFORMATION"
+					if context_marker in system_prompt:
+						system_prompt_with_history = system_prompt.replace(
+							context_marker,
+							chat_history_section + "\n" + context_marker
+						)
+					else:
+						system_prompt_with_history = system_prompt.replace(
+							"{context}",
+							chat_history_section + "\n\n{context}"
+						)
+				else:
+					system_prompt_with_history = system_prompt
+				
+				system_prompt_with_context = system_prompt_with_history.replace("{context}", context)
+				full_prompt = system_prompt_with_context.format(query=query)
 			
 			# Generate streaming response using Ollama with real-time streaming
 			response_chunks = self.llm_client.generate_stream(full_prompt)
@@ -206,8 +246,6 @@ class ResponseGenerator:
 						response_text += chunk
 						yield chunk
 				 
-				# Update chat history
-				self._update_chat_history(query, response_text.strip())
 			else:
 				# Fallback response
 				fallback_response = self._format_fallback_response(query, results, user_language)
@@ -229,12 +267,6 @@ class ResponseGenerator:
 		thai_range = range(0x0E00, 0x0E7F)
 		return any(ord(char) in thai_range for char in text)
 	
-	def _update_chat_history(self, user_query: str, assistant_response: str):
-		"""Update chat history with the latest exchange"""
-		self.chat_history.append((user_query, assistant_response))
-		
-		if len(self.chat_history) > 10:
-			self.chat_history = self.chat_history[-10:]
 	
 	def _get_fallback_response(self, detected_lang: str) -> str:
 		"""Get a simple fallback response in the detected language"""

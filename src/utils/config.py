@@ -16,7 +16,7 @@ class ModelConfig:
     embedding_model: str = "google/embeddinggemma-300m"
     reranker_model: str = "BAAI/bge-reranker-v2-m3"
     ollama_url: str = "http://localhost:11434"
-    ollama_model: str = "gemma3:4b-it-qat"
+    ollama_model: str = "gemma3:27b"
     
     def __post_init__(self):
         """Validate model configurations."""
@@ -36,7 +36,7 @@ class ModelConfig:
             embedding_model=os.getenv("EMBEDDING_MODEL", "google/embeddinggemma-300m"),
             reranker_model=os.getenv("RERANKER_MODEL", "BAAI/bge-reranker-v2-m3"),
             ollama_url=os.getenv("OLLAMA_URL", "http://localhost:11434"),
-            ollama_model=os.getenv("OLLAMA_MODEL", "gemma3:4b-it-qat")
+            ollama_model=os.getenv("OLLAMA_MODEL", "gemma3:27b")
         )
 
 
@@ -189,6 +189,76 @@ class DebugConfig:
 
 
 @dataclass
+class DatabaseConfig:
+    """Configuration for database settings.
+    """
+    
+    url: str = field(init=False)
+    pool_size: int = 5
+    max_overflow: int = 10
+    echo: bool = False
+    
+    def __post_init__(self):
+        """Initialize database configurations (validation deferred)."""
+        self.url = os.getenv("DATABASE_URL", "")
+        
+        if self.pool_size <= 0:
+            raise ValueError("pool_size must be positive")
+        if self.max_overflow < 0:
+            raise ValueError("max_overflow must be non-negative")
+    
+    def get_url(self) -> str:
+        """Get database URL with validation.
+        
+        Raises ValueError if DATABASE_URL is not set.
+        This method should be called when database connection is needed.
+        """
+        if not self.url:
+            raise ValueError(
+                "DATABASE_URL environment variable is required but not set. "
+            )
+        return self.url
+    
+    @classmethod
+    def from_env(cls) -> 'DatabaseConfig':
+        """Create configuration from environment variables."""
+        return cls()
+
+
+@dataclass
+class SessionConfig:
+    """Configuration for session management."""
+    
+    default_ttl_hours: int = 24
+    auto_create: bool = True
+    cleanup_interval_minutes: int = 60
+    max_messages_per_session: int = 1000
+    context_window_tokens: int = 4000
+    
+    def __post_init__(self):
+        """Validate session configurations."""
+        if self.default_ttl_hours <= 0:
+            raise ValueError("default_ttl_hours must be positive")
+        if self.cleanup_interval_minutes <= 0:
+            raise ValueError("cleanup_interval_minutes must be positive")
+        if self.max_messages_per_session <= 0:
+            raise ValueError("max_messages_per_session must be positive")
+        if self.context_window_tokens <= 0:
+            raise ValueError("context_window_tokens must be positive")
+    
+    @classmethod
+    def from_env(cls) -> 'SessionConfig':
+        """Create configuration from environment variables."""
+        return cls(
+            default_ttl_hours=int(os.getenv("SESSION_DEFAULT_TTL_HOURS", "24")),
+            auto_create=os.getenv("SESSION_AUTO_CREATE", "true").lower() == "true",
+            cleanup_interval_minutes=int(os.getenv("SESSION_CLEANUP_INTERVAL_MINUTES", "60")),
+            max_messages_per_session=int(os.getenv("SESSION_MAX_MESSAGES", "1000")),
+            context_window_tokens=int(os.getenv("CONTEXT_WINDOW_TOKENS", "4000"))
+        )
+
+
+@dataclass
 class Config:
     """Main configuration class that combines all configuration sections."""
     
@@ -198,6 +268,8 @@ class Config:
     cache: CacheConfig = field(default_factory=CacheConfig.from_env)
     api: APIConfig = field(default_factory=APIConfig.from_env)
     debug: DebugConfig = field(default_factory=DebugConfig.from_env)
+    database: DatabaseConfig = field(default_factory=DatabaseConfig.from_env)
+    session: SessionConfig = field(default_factory=SessionConfig.from_env)
     
     def __post_init__(self):
         """Validate overall configuration."""
@@ -213,7 +285,9 @@ class Config:
             "processing": self.processing.__dict__,
             "cache": self.cache.__dict__,
             "api": self.api.__dict__,
-            "debug": self.debug.__dict__
+            "debug": self.debug.__dict__,
+            "database": self.database.__dict__,
+            "session": self.session.__dict__
         }
     
     def update_from_env(self):
@@ -224,6 +298,8 @@ class Config:
         self.cache = CacheConfig.from_env()
         self.api = APIConfig.from_env()
         self.debug = DebugConfig.from_env()
+        self.database = DatabaseConfig.from_env()
+        self.session = SessionConfig.from_env()
 
 
 # Global configuration instance

@@ -56,11 +56,18 @@ def get_chunk_content(chunk) -> str:
 class RAGSystem:
     """Main RAG system for multilingual course search and generation"""
     
-    def __init__(self, use_reranker: bool = True, use_query_enhancement: bool = True, auto_load_data: bool = True):
+    def __init__(
+        self,
+        use_reranker: bool = True,
+        use_query_enhancement: bool = True,
+        auto_load_data: bool = True,
+        chat_history_manager = None
+    ):
         """Initialize the RAG system"""
         self.use_reranker = use_reranker
         self.use_query_enhancement = use_query_enhancement
         self.auto_load_data = auto_load_data
+        self.chat_history_manager = chat_history_manager
         
         self.circuit_breaker = CircuitBreaker(failure_threshold=3, recovery_timeout=30.0)
         
@@ -114,6 +121,10 @@ class RAGSystem:
         
         if self.auto_load_data:
             self._auto_load_data()
+        
+        # Update response generator with chat history manager if available
+        if self.response_generator and self.chat_history_manager:
+            self.response_generator.chat_history_manager = self.chat_history_manager
     
     def _auto_load_data(self):
         """Auto-load both course and professor data"""
@@ -320,8 +331,14 @@ class RAGSystem:
     
     @monitor_operation("vector_search")
     @handle_errors(ErrorType.VECTOR_SEARCH, fallback_value=[])
-    async def search(self, query: str, top_k: int = 5, language: str = None, 
-               use_reranking: bool = True) -> List[Dict[str, Any]]:
+    async def search(
+        self,
+        query: str,
+        top_k: int = 5,
+        language: str = None,
+        use_reranking: bool = True,
+        session_id: str = None
+    ) -> List[Dict[str, Any]]:
         """Search for relevant courses and professors with detailed performance logging"""
         start_time = time.time()
         query_lower = query.lower().strip()
@@ -395,7 +412,23 @@ class RAGSystem:
             embedding_search_start = time.time()
             try:
                 self.last_query = current_query
-                if self.conversation_context:
+                
+                # Load chat history if session_id is provided
+                chat_history_loaded = False
+                if session_id and self.chat_history_manager:
+                    recent_messages = self.chat_history_manager.get_recent_messages(session_id, n=5)
+                    if recent_messages:
+                        # Build conversation context from recent messages
+                        context_parts = []
+                        for msg in recent_messages[-3:]:  # Last 3 messages for context
+                            context_parts.append(f"{msg.role}: {msg.content[:200]}")  # Limit length
+                        self.conversation_context = " | ".join(context_parts)
+                        chat_history_loaded = True
+                        logger.debug(f"Loaded conversation context from session {session_id}")
+                
+                # Only set generic conversation context if chat history wasn't loaded
+                # Chat history from database is more valuable than the generic context
+                if not chat_history_loaded and self.conversation_context:
                     self.conversation_context = f"Last query: {self.last_query}. Previous results: {len(self.last_results)} courses found."
                 
                 query_embedding = self.embedder.get_single_embedding(current_query)
@@ -548,8 +581,16 @@ class RAGSystem:
             logger.error(f"Search failed: {e}")
             return []
     
-    async def generate_response(self, query: str, top_k: int = 5, language: str = None, 
-                         use_reranking: bool = True, stream: bool = False, search_results: List[Dict[str, Any]] = None) -> str:
+    async def generate_response(
+        self,
+        query: str,
+        top_k: int = 5,
+        language: str = None,
+        use_reranking: bool = True,
+        stream: bool = False,
+        search_results: List[Dict[str, Any]] = None,
+        session_id: str = None
+    ) -> str:
         """Generate a contextual response based on retrieved data with performance logging"""
         response_generation_start = time.time()
         
@@ -557,7 +598,9 @@ class RAGSystem:
             if not self.response_generator:
                 logger.warning("Response generator not available, falling back to search results")
                 if not search_results:
-                    search_results = await self.search(query, top_k=top_k, language=language, use_reranking=use_reranking)
+                    search_results = await self.search(
+                        query, top_k=top_k, language=language, use_reranking=use_reranking, session_id=session_id
+                    )
                 
                 response_duration = time.time() - response_generation_start
                 response = ""
@@ -579,12 +622,14 @@ class RAGSystem:
                 language = self._detect_language(query)
             
             if search_results is None:
-                search_results = await self.search(query, top_k=top_k, language=language, use_reranking=use_reranking)
+                search_results = await self.search(
+                    query, top_k=top_k, language=language, use_reranking=use_reranking, session_id=session_id
+                )
             
             if not search_results:
                 logger.warning(f"No search results found for query: '{query}'")
                 response = ""
-                for chunk in self.response_generator.generate_response(query, [], language):
+                for chunk in self.response_generator.generate_response(query, [], language, session_id=session_id):
                     if chunk:
                         response += chunk
                 response_duration = time.time() - response_generation_start
@@ -603,7 +648,9 @@ class RAGSystem:
                 return response
             
             response = ""
-            for chunk in self.response_generator.generate_response(query, search_results, language):
+            for chunk in self.response_generator.generate_response(
+                query, search_results, language, session_id=session_id
+            ):
                 if chunk:
                     response += chunk
             
@@ -639,20 +686,35 @@ class RAGSystem:
             
             try:
                 if not search_results:
-                    search_results = await self.search(query, top_k=top_k, language=language, use_reranking=use_reranking)
-                return self.response_generator._format_fallback_response(query, search_results, language)
+                    search_results = await self.search(
+                        query, top_k=top_k, language=language, use_reranking=use_reranking, session_id=session_id
+                    )
+                if self.response_generator:
+                    return self.response_generator._format_fallback_response(query, search_results, language)
+                else:
+                    # If response_generator is None, return a simple error message
+                    return "ขออภัย เกิดข้อผิดพลาดในการประมวลผลคำขอของคุณ" if language == "th" else "Sorry, an error occurred while processing your request."
             except Exception as fallback_error:
                 logger.error(f"Fallback also failed: {fallback_error}")
                 return "ขออภัย เกิดข้อผิดพลาดในการประมวลผลคำขอของคุณ" if language == "th" else "Sorry, an error occurred while processing your request."
     
-    async def generate_response_stream(self, query: str, top_k: int = 5, language: str = None, 
-                               use_reranking: bool = True, search_results: List[Dict[str, Any]] = None):
+    async def generate_response_stream(
+        self,
+        query: str,
+        top_k: int = 5,
+        language: str = None,
+        use_reranking: bool = True,
+        search_results: List[Dict[str, Any]] = None,
+        session_id: str = None
+    ):
         """Generate a streaming response generator for real-time output"""
         try:
             if not self.response_generator:
                 logger.warning("Response generator not available, falling back to search results")
                 if not search_results:
-                    search_results = await self.search(query, top_k=top_k, language=language, use_reranking=use_reranking)
+                    search_results = await self.search(
+                        query, top_k=top_k, language=language, use_reranking=use_reranking, session_id=session_id
+                    )
                 fallback_response = self.response_generator._format_fallback_response(query, search_results) if self.response_generator else ""
                 yield fallback_response
                 return
@@ -661,18 +723,24 @@ class RAGSystem:
                 language = self._detect_language(query)
             
             if search_results is None:
-                search_results = await self.search(query, top_k=top_k, language=language, use_reranking=use_reranking)
+                search_results = await self.search(
+                    query, top_k=top_k, language=language, use_reranking=use_reranking, session_id=session_id
+                )
             
             if not search_results:
                 logger.warning(f"No search results found for query: '{query}'")
                 conversational_response = ""
-                for chunk in self.response_generator.generate_response(query, [], language):
+                for chunk in self.response_generator.generate_response(
+                    query, [], language, session_id=session_id
+                ):
                     if chunk:
                         conversational_response += chunk
                 yield conversational_response
                 return
             
-            for chunk in self.response_generator.generate_response(query, search_results, language):
+            for chunk in self.response_generator.generate_response(
+                query, search_results, language, session_id=session_id
+            ):
                 if chunk:
                     yield chunk
                     
@@ -680,9 +748,16 @@ class RAGSystem:
             logger.error(f"Error generating streaming response: {e}")
             try:
                 if not search_results:
-                    search_results = await self.search(query, top_k=top_k, language=language, use_reranking=use_reranking)
-                fallback_response = self.response_generator._format_fallback_response(query, search_results, language)
-                yield fallback_response
+                    search_results = await self.search(
+                        query, top_k=top_k, language=language, use_reranking=use_reranking, session_id=session_id
+                    )
+                if self.response_generator:
+                    fallback_response = self.response_generator._format_fallback_response(query, search_results, language)
+                    yield fallback_response
+                else:
+                    # If response_generator is None, yield a simple error message
+                    error_msg = "ขออภัย เกิดข้อผิดพลาดในการประมวลผลคำขอของคุณ" if language == "th" else "Sorry, an error occurred while processing your request."
+                    yield error_msg
             except Exception as fallback_error:
                 logger.error(f"Fallback also failed: {fallback_error}")
                 error_msg = "ขออภัย เกิดข้อผิดพลาดในการประมวลผลคำขอของคุณ" if language == "th" else "Sorry, an error occurred while processing your request."

@@ -41,6 +41,11 @@ async def lifespan(app: FastAPI):
     
     # Shutdown
     logger.info("Shutting down CE RAG API server...")
+    try:
+        from src.utils.database import close_database
+        close_database()
+    except Exception as e:
+        logger.warning(f"Error closing database: {e}")
 
 
 # Create FastAPI application
