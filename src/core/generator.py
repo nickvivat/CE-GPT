@@ -81,6 +81,40 @@ class ResponseGenerator:
 		
 		return filtered_results
 	
+	def _format_history(self, session_id: str, max_messages: int = 6, current_query: str = None) -> str:
+		"""Format chat history from database for the prompt"""
+		if not session_id or not self.chat_history_manager:
+			return "No previous conversation."
+		
+		try:
+			recent_messages = self.chat_history_manager.get_recent_messages(session_id, n=max_messages)
+			if not recent_messages:
+				return "No previous conversation."
+			
+			messages_to_format = recent_messages
+			if current_query and recent_messages:
+				last_msg = recent_messages[-1]
+				if last_msg.role == "user" and last_msg.content.strip() == current_query.strip():
+					messages_to_format = recent_messages[:-1]
+			
+			if not messages_to_format:
+				return "No previous conversation."
+			
+			history_parts = []
+			for msg in messages_to_format:
+				role_label = "User" if msg.role == "user" else "Assistant"
+				# Limit message length to avoid token overflow
+				content = msg.content[:300] if len(msg.content) > 300 else msg.content
+				history_parts.append(f"{role_label}: {content}")
+			
+			if history_parts:
+				return "\n".join(history_parts)
+			else:
+				return "No previous conversation."
+		except Exception as e:
+			logger.error(f"Error formatting history: {e}")
+			return "No previous conversation."
+	
 	def _format_context(self, results: List[Dict[str, Any]]) -> str:
 		"""Format retrieved results into context for the LLM"""
 		if not results:
@@ -180,61 +214,18 @@ class ResponseGenerator:
 				yield fallback_response
 				return
 			
-			# Build chat history section from database if session_id is provided
-			chat_history_section = ""
-			if session_id and self.chat_history_manager:
-				recent_messages = self.chat_history_manager.get_recent_messages(session_id, n=6)
-				if recent_messages:
-					chat_history_section = "\n**Recent Conversation:**\n"
-					for msg in recent_messages[-3:]:  # Last 3 exchanges
-						role_label = "User" if msg.role == "user" else "Assistant"
-						chat_history_section += f"{role_label}: {msg.content[:200]}\n"
-					chat_history_section += "\n"
+			# Format history from database if session_id is provided
+			history = self._format_history(session_id, max_messages=6, current_query=query)
 			
-			if not results:
-				# For conversational responses, insert chat history if available
-				if chat_history_section:
-					# Insert chat history before the USER QUERY section
-					query_marker = "## USER QUERY"
-					if query_marker in system_prompt:
-						system_prompt_with_history = system_prompt.replace(
-							query_marker,
-							chat_history_section + "\n" + query_marker
-						)
-					else:
-						# Fallback: insert before {query} placeholder
-						system_prompt_with_history = system_prompt.replace(
-							"{query}",
-							chat_history_section + "\n\n{query}"
-						)
-				else:
-					system_prompt_with_history = system_prompt
-				
-				full_prompt = system_prompt_with_history.format(
-					query=query,
-					context="",
-					num_results=0
-				)
-			else:
-				# Format context from retrieved results for contextual responses
-				context = self._format_context(results)
-				if chat_history_section:
-					context_marker = "## CONTEXT INFORMATION"
-					if context_marker in system_prompt:
-						system_prompt_with_history = system_prompt.replace(
-							context_marker,
-							chat_history_section + "\n" + context_marker
-						)
-					else:
-						system_prompt_with_history = system_prompt.replace(
-							"{context}",
-							chat_history_section + "\n\n{context}"
-						)
-				else:
-					system_prompt_with_history = system_prompt
-				
-				system_prompt_with_context = system_prompt_with_history.replace("{context}", context)
-				full_prompt = system_prompt_with_context.format(query=query)
+			# Format context from retrieved results
+			context = self._format_context(results) if results else "No relevant information found."
+			
+			# Replace placeholders in the prompt
+			full_prompt = system_prompt.format(
+				history=history,
+				context=context,
+				query=query
+			)
 			
 			# Generate streaming response using Ollama with real-time streaming
 			response_chunks = self.llm_client.generate_stream(full_prompt)

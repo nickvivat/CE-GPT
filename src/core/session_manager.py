@@ -188,4 +188,51 @@ class SessionManager:
         except Exception as e:
             logger.error(f"Failed to get active sessions: {e}")
             return []
+    
+    def get_most_recent_active_session(
+        self,
+        user_id: Optional[str] = None,
+        max_age_minutes: int = 30
+    ) -> Optional[Session]:
+        """
+        Get the most recent active session that hasn't expired.
+        
+        Args:
+            user_id: Optional user ID to filter sessions. If None, returns most recent session regardless of user.
+            max_age_minutes: Maximum age in minutes for a session to be considered for reuse (default: 30).
+                            Sessions older than this will not be reused.
+        
+        Returns:
+            The most recent active session, or None if no valid session is found.
+        """
+        try:
+            with get_db_session() as db:
+                now = datetime.utcnow()
+                max_age_threshold = now - timedelta(minutes=max_age_minutes)
+                
+                query = db.query(Session).filter(
+                    Session.is_active == True,
+                    Session.expires_at > now,  # Not expired
+                    Session.updated_at >= max_age_threshold  # Recently used
+                )
+                
+                # Filter by user_id if provided
+                if user_id:
+                    query = query.filter(Session.user_id == user_id)
+                
+                session = query.order_by(Session.updated_at.desc()).first()
+                
+                if session:
+                    # Update last accessed time
+                    session.updated_at = datetime.utcnow()
+                    db.flush()
+                    # Expunge to detach from session before returning
+                    db.expunge(session)
+                    logger.info(f"Reusing existing session: {session.session_id}")
+                    return session
+                
+                return None
+        except Exception as e:
+            logger.error(f"Failed to get most recent active session: {e}")
+            return None
 

@@ -31,6 +31,12 @@ Your role is to provide accurate, polite, and student-friendly guidance using ON
 
 ---
 
+## CONVERSATION HISTORY
+
+{history}
+
+---
+
 ## CONTEXT INFORMATION
 
 {context}

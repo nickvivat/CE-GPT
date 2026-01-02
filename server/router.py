@@ -160,17 +160,54 @@ async def generate_response(
         rag_system = get_rag_system()
         
         # Handle session
+        # Use user_id from request if provided, otherwise create anonymous session
+        # Do NOT create shared test accounts to prevent cross-user session leakage
+        effective_user_id = request.user_id
+        
         session_id = request.session_id
         if session_id:
             # Validate session exists - if provided, it must be valid
             session = sm.get_session(session_id)
             if not session:
                 raise HTTPException(status_code=404, detail="Session not found")
+            # Security: Validate session ownership
+            # Case 1: Session has user_id (authenticated session)
+            if session.user_id:
+                if not effective_user_id:
+                    raise HTTPException(
+                        status_code=403, 
+                        detail="Cannot access authenticated session: user identity required"
+                    )
+                if session.user_id != effective_user_id:
+                    raise HTTPException(status_code=403, detail="Session does not belong to this user")
+            # Case 2: Session has no user_id (anonymous session) but request has user_id
+            elif effective_user_id:
+                raise HTTPException(
+                    status_code=403,
+                    detail="Cannot access anonymous session: authenticated users cannot access anonymous sessions"
+                )
         elif config.session.auto_create:
-            # Auto-create session only when no session_id is provided and auto_create is enabled
-            session = sm.create_session(metadata={"language": request.language})
-            session_id = session.session_id
-            logger.info(f"Auto-created session: {session_id}")
+            # Only attempt session reuse if we have a valid user_id from the request
+            # Anonymous sessions (user_id=None) are never reused to prevent cross-user leakage
+            existing_session = None
+            if effective_user_id:
+                existing_session = sm.get_most_recent_active_session(
+                    user_id=effective_user_id,
+                    max_age_minutes=30
+                )
+            
+            if existing_session:
+                session = existing_session
+                session_id = session.session_id
+                logger.info(f"Reusing existing session: {session_id} for user: {effective_user_id}")
+            else:
+                # Create new session (anonymous if no user_id, authenticated if user_id provided)
+                session = sm.create_session(
+                    user_id=effective_user_id,
+                    metadata={"language": request.language}
+                )
+                session_id = session.session_id
+                logger.info(f"Auto-created new session: {session_id} for user: {effective_user_id or 'anonymous'}")
         
         # Determine language (same logic as search endpoint)
         language = None
@@ -273,17 +310,54 @@ async def generate_response_stream(
         rag_system = get_rag_system()
         
         # Handle session
+        # Use user_id from request if provided, otherwise create anonymous session
+        # Do NOT create shared test accounts to prevent cross-user session leakage
+        effective_user_id = request.user_id
+        
         session_id = request.session_id
         if session_id:
             # Validate session exists - if provided, it must be valid
             session = sm.get_session(session_id)
             if not session:
                 raise HTTPException(status_code=404, detail="Session not found")
+            # Security: Validate session ownership
+            # Case 1: Session has user_id (authenticated session)
+            if session.user_id:
+                if not effective_user_id:
+                    raise HTTPException(
+                        status_code=403, 
+                        detail="Cannot access authenticated session: user identity required"
+                    )
+                if session.user_id != effective_user_id:
+                    raise HTTPException(status_code=403, detail="Session does not belong to this user")
+            # Case 2: Session has no user_id (anonymous session) but request has user_id
+            elif effective_user_id:
+                raise HTTPException(
+                    status_code=403,
+                    detail="Cannot access anonymous session: authenticated users cannot access anonymous sessions"
+                )
         elif config.session.auto_create:
-            # Auto-create session only when no session_id is provided and auto_create is enabled
-            session = sm.create_session(metadata={"language": request.language})
-            session_id = session.session_id
-            logger.info(f"Auto-created session: {session_id}")
+            # Only attempt session reuse if we have a valid user_id from the request
+            # Anonymous sessions (user_id=None) are never reused to prevent cross-user leakage
+            existing_session = None
+            if effective_user_id:
+                existing_session = sm.get_most_recent_active_session(
+                    user_id=effective_user_id,
+                    max_age_minutes=30
+                )
+            
+            if existing_session:
+                session = existing_session
+                session_id = session.session_id
+                logger.info(f"Reusing existing session: {session_id} for user: {effective_user_id}")
+            else:
+                # Create new session (anonymous if no user_id, authenticated if user_id provided)
+                session = sm.create_session(
+                    user_id=effective_user_id,
+                    metadata={"language": request.language}
+                )
+                session_id = session.session_id
+                logger.info(f"Auto-created new session: {session_id} for user: {effective_user_id or 'anonymous'}")
         
         # Determine language
         language = None

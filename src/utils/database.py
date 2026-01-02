@@ -85,6 +85,7 @@ def init_database():
         # Import models to register them with Base
         from ..core.session_manager import Session as SessionModel
         from ..core.chat_history import ChatMessage
+        from ..core.account import Account
         
         Base.metadata.create_all(bind=engine)
         logger.info("Database tables initialized")
