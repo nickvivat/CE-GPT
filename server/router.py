@@ -160,8 +160,8 @@ async def generate_response(
         rag_system = get_rag_system()
         
         # Handle session
-        # Use user_id from request if provided, otherwise create anonymous session
-        # Do NOT create shared test accounts to prevent cross-user session leakage
+        # Use request.user_id directly - do NOT create shared test accounts to prevent cross-user session leakage
+        # Anonymous sessions (user_id=None) are never reused to ensure each unauthenticated user gets isolated sessions
         effective_user_id = request.user_id
         
         session_id = request.session_id
@@ -170,18 +170,18 @@ async def generate_response(
             session = sm.get_session(session_id)
             if not session:
                 raise HTTPException(status_code=404, detail="Session not found")
-            # Security: Validate session ownership
+            # Security: Validate session ownership using request.user_id
             # Case 1: Session has user_id (authenticated session)
             if session.user_id:
-                if not effective_user_id:
+                if not request.user_id:
                     raise HTTPException(
                         status_code=403, 
                         detail="Cannot access authenticated session: user identity required"
                     )
-                if session.user_id != effective_user_id:
+                if session.user_id != request.user_id:
                     raise HTTPException(status_code=403, detail="Session does not belong to this user")
             # Case 2: Session has no user_id (anonymous session) but request has user_id
-            elif effective_user_id:
+            elif request.user_id:
                 raise HTTPException(
                     status_code=403,
                     detail="Cannot access anonymous session: authenticated users cannot access anonymous sessions"
@@ -310,8 +310,8 @@ async def generate_response_stream(
         rag_system = get_rag_system()
         
         # Handle session
-        # Use user_id from request if provided, otherwise create anonymous session
-        # Do NOT create shared test accounts to prevent cross-user session leakage
+        # Use request.user_id directly - do NOT create shared test accounts to prevent cross-user session leakage
+        # Anonymous sessions (user_id=None) are never reused to ensure each unauthenticated user gets isolated sessions
         effective_user_id = request.user_id
         
         session_id = request.session_id
@@ -320,18 +320,18 @@ async def generate_response_stream(
             session = sm.get_session(session_id)
             if not session:
                 raise HTTPException(status_code=404, detail="Session not found")
-            # Security: Validate session ownership
+            # Security: Validate session ownership using request.user_id
             # Case 1: Session has user_id (authenticated session)
             if session.user_id:
-                if not effective_user_id:
+                if not request.user_id:
                     raise HTTPException(
                         status_code=403, 
                         detail="Cannot access authenticated session: user identity required"
                     )
-                if session.user_id != effective_user_id:
+                if session.user_id != request.user_id:
                     raise HTTPException(status_code=403, detail="Session does not belong to this user")
             # Case 2: Session has no user_id (anonymous session) but request has user_id
-            elif effective_user_id:
+            elif request.user_id:
                 raise HTTPException(
                     status_code=403,
                     detail="Cannot access anonymous session: authenticated users cannot access anonymous sessions"
