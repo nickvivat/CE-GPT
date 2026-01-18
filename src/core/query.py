@@ -55,9 +55,10 @@ class Query:
     CLASSIFY_SCHEMA = {
         "type": "object",
         "properties": {
-            "class": {"type": "string", "enum": ["enhanced", "pass", "conversational", "external"]}
+            "class": {"type": "string", "enum": ["enhanced", "pass", "conversational", "external"]},
+            "is_follow_up": {"type": "boolean", "description": "True if the query is a follow-up question referencing previous conversation (e.g., 'that', 'those courses', 'explain more about it')"}
         },
-        "required": ["class"]
+        "required": ["class", "is_follow_up"]
     }
     
     # Schema for enhancement response
@@ -95,14 +96,19 @@ class Query:
     }
     
 
-    def classify_query(self, query: str) -> Optional[str]:
+    def classify_query(self, query: str, conversation_context: str = None) -> Tuple[Optional[str], bool]:
         """
-        Classify the query to determine if it needs enhancement.
-        Returns: 'enhanced', 'pass', 'external', or None if error
+        Classify the query to determine if it needs enhancement and if it's a follow-up question.
+        
+        Args:
+            query: The user's query
+            conversation_context: Optional conversation history to detect follow-up questions
+        
+        Returns: (classification, is_follow_up) where classification is 'enhanced', 'pass', 'conversational', 'external', or None
         """
         if not self.available:
             logger.info("Query classification not available, assuming enhanced")
-            return "enhanced"
+            return "enhanced", False
             
         try:
             prompt_file = os.path.join(
@@ -112,12 +118,16 @@ class Query:
             with open(prompt_file, "r", encoding="utf-8") as f:
                 prompt_template = f.read()
 
-            # Escape curly braces in the template to prevent format conflicts
             escaped_template = prompt_template.replace("{", "{{").replace("}", "}}")
-            # Now format with the query, but we need to unescape the {query} placeholder
             escaped_template = escaped_template.replace("{{query}}", "{query}")
+            escaped_template = escaped_template.replace("{{conversation}}", "{conversation}")
             
-            prompt = escaped_template.format(query=query)
+            conversation_section = ""
+            if conversation_context:
+                escaped_context = conversation_context.replace("{", "{{").replace("}", "}}")
+                conversation_section = f"\n\n**CONVERSATION CONTEXT:**\n{escaped_context}\n\nUse this context to detect if the query is a follow-up question referencing previous conversation (e.g., 'that', 'those courses', 'explain more about it')."
+            
+            prompt = escaped_template.format(query=query, conversation=conversation_section)
             
             logger.debug(f"Classification prompt length: {len(prompt)} characters")
             
@@ -125,25 +135,29 @@ class Query:
             
             if not response_text.strip():
                 logger.warning("Empty response from Ollama for classification. Assuming enhanced.")
-                return "enhanced"
+                return "enhanced", False
 
-            # Parse and validate JSON response
             response_json = self._parse_classify_response(response_text)
             
             if not response_json:
                 logger.warning("Failed to parse classification response, assuming enhanced")
-                return "enhanced"
+                return "enhanced", False
             
             classification = response_json.get("class")
-            logger.debug(f"Query classified as '{classification}'")
+            is_follow_up = response_json.get("is_follow_up", False)
             
-            return classification
+            if not conversation_context:
+                is_follow_up = False
+            
+            logger.debug(f"Query classified as '{classification}', is_follow_up: {is_follow_up}")
+            
+            return classification, is_follow_up
                 
         except Exception as e:
             logger.error(f"Error classifying query: {e}")
             logger.error(f"Query was: '{query}'")
             logger.error("Falling back to enhanced classification.")
-            return "enhanced"
+            return "enhanced", False
 
     def enhance_query_terms(self, query: str) -> Optional[List[str]]:
         """
@@ -302,26 +316,12 @@ class Query:
             logger.info("Query processing not available, returning original query with default metadata")
             return original_query, {"tags": ["general"], "query_intent": "general"}
         
-        reference_patterns = [
-            r'\b(those|these|the|that|this)\s+(course|class|subject)',
-            r'\b(course|class|subject).*(mentioned|discussed|talked about)',
-            r'\b(mentioned|discussed|talked about).*(course|class|subject)',
-            r'\b(explain|tell me|what about|more about).*(course|class|subject|them|those|these)',
-        ]
-        
-        query_lower = query.lower()
-        is_reference_query = any(re.search(pattern, query_lower) for pattern in reference_patterns)
-        
-        generic_phrases = ['how to', 'solve this', 'do this', 'help me', 'what is', 'how do i']
-        has_generic_phrase = any(phrase in query_lower for phrase in generic_phrases)
-        has_course_context = any(term in query_lower for term in ['course', 'class', 'subject', 'them', 'those', 'these'])
-        
         course_codes_appended = False
         
         try:
-            classification = self.classify_query(query)
+            classification, is_follow_up = self.classify_query(query, conversation_context)
             
-            if is_reference_query and course_codes and (has_course_context or not has_generic_phrase):
+            if is_follow_up and course_codes:
                 query_with_codes = f"{query} {' '.join(course_codes)}"
                 logger.info(f"Query references previous courses. Including codes: {course_codes}")
                 query = query_with_codes
@@ -477,7 +477,7 @@ class Query:
         logger.debug(f"Language detected as '{language}' for query: '{query}'")
         
         # Step 1: Classify the query
-        classification = self.classify_query(query)
+        classification, _ = self.classify_query(query)
         
         if not classification:
             logger.warning("Classification failed, returning original query")
@@ -567,6 +567,13 @@ class Query:
                 
             classification = response_json.get("class")
             if classification not in ["enhanced", "pass", "conversational", "external"]:
+                return False
+            
+            if "is_follow_up" not in response_json:
+                return False
+            
+            is_follow_up = response_json.get("is_follow_up")
+            if not isinstance(is_follow_up, bool):
                 return False
                     
             return True
