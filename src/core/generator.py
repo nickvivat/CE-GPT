@@ -251,14 +251,23 @@ class ResponseGenerator:
         # Extract suggestions and unfound course codes from metadata results
         suggestions_metadata = {}
         unfound_course_codes = []
-        for result in filtered_results:
-            if 'suggestions' in result:
-                suggestions_metadata.update(result.get('suggestions', {}))
-            if 'unfound_course_codes' in result:
-                unfound_codes = result.get('unfound_course_codes', [])
-                unfound_course_codes.extend(unfound_codes)
-        
-        unfound_course_codes = list(set(unfound_course_codes))
+        try:
+            for result in filtered_results:
+                if 'suggestions' in result:
+                    suggestions = result.get('suggestions', {})
+                    if isinstance(suggestions, dict):
+                        suggestions_metadata.update(suggestions)
+                if 'unfound_course_codes' in result:
+                    unfound_codes = result.get('unfound_course_codes', [])
+                    if isinstance(unfound_codes, list):
+                        unfound_course_codes.extend(unfound_codes)
+            
+            # Filter out None values and ensure all codes are strings
+            unfound_course_codes = [str(code) for code in unfound_course_codes if code is not None]
+            unfound_course_codes = list(set(unfound_course_codes))
+        except Exception as e:
+            logger.warning(f"Error extracting suggestions metadata: {e}", exc_info=True)
+            # Continue with empty suggestions if extraction fails
         
         courses = []
         professors = []
@@ -336,11 +345,19 @@ class ResponseGenerator:
         if unfound_course_codes:
             context_parts.append("\nNOTE: The following course codes were not found:")
             for code in unfound_course_codes:
-                similar_codes = suggestions_metadata.get(code, [])
-                if similar_codes:
-                    context_parts.append(f"- {code} (not found). Did you mean: {', '.join(similar_codes)}?")
-                else:
-                    context_parts.append(f"- {code} (not found)")
+                try:
+                    # Ensure code is a string for safe dictionary access
+                    code_str = str(code) if code else ""
+                    if not code_str:
+                        continue
+                    similar_codes = suggestions_metadata.get(code_str, [])
+                    if similar_codes:
+                        context_parts.append(f"- {code_str} (not found). Did you mean: {', '.join(map(str, similar_codes))}?")
+                    else:
+                        context_parts.append(f"- {code_str} (not found)")
+                except Exception as e:
+                    logger.warning(f"Error formatting course code suggestion for {code}: {e}")
+                    continue
         
         return "\n".join(context_parts)
     
@@ -378,11 +395,20 @@ class ResponseGenerator:
             context = self._format_context(results) if results else "No relevant information found."
             
             # Replace placeholders in the prompt
-            full_prompt = system_prompt.format(
-                history=history,
-                context=context,
-                query=query
-            )
+            try:
+                full_prompt = system_prompt.format(
+                    history=history,
+                    context=context,
+                    query=query
+                )
+            except KeyError as e:
+                logger.error(f"Missing placeholder in system prompt: {e}")
+                # Fallback: use simple string replacement for known placeholders
+                full_prompt = system_prompt.replace("{history}", history).replace("{context}", context).replace("{query}", query)
+            except Exception as e:
+                logger.error(f"Error formatting system prompt: {e}")
+                # Last resort: create a minimal prompt
+                full_prompt = f"Context:\n{context}\n\nUser Query: {query}\n\nPlease provide a helpful response based on the context above."
             
             # Generate streaming response using Ollama with real-time streaming
             response_chunks = self.llm_client.generate_stream(full_prompt)
@@ -400,15 +426,47 @@ class ResponseGenerator:
                 yield fallback_response
                 
         except Exception as e:
-            logger.error(f"Error generating streaming response: {e}")
-            fallback_response = self._format_fallback_response(query, results, user_language)
-            yield fallback_response
+            logger.error(f"Error generating streaming response: {e}", exc_info=True)
+            try:
+                fallback_response = self._format_fallback_response(query, results, user_language)
+                yield fallback_response
+            except Exception as fallback_error:
+                logger.error(f"Error in fallback response: {fallback_error}", exc_info=True)
+                # Last resort: return a simple error message
+                # Safely detect language with validation
+                if user_language:
+                    lang = user_language
+                elif query and isinstance(query, str):
+                    try:
+                        lang = self._detect_language(query)
+                    except Exception:
+                        lang = "en"  # Default to English if detection fails
+                else:
+                    lang = "en"  # Default to English if query is invalid
+                
+                if lang == "th":
+                    yield "ขออภัย เกิดข้อผิดพลาดในการสร้างคำตอบ กรุณาลองใหม่อีกครั้ง"
+                else:
+                    yield "Sorry, I encountered an error generating a response. Please try again."
     
     def _format_fallback_response(self, query: str, results: List[Dict[str, Any]], user_language: str = None) -> str:
         """Format a fallback response when LLM is unavailable"""
+        # Safely detect language with validation
+        if user_language:
+            lang = user_language
+        elif query and isinstance(query, str):
+            try:
+                lang = self._detect_language(query)
+            except Exception:
+                lang = "en"  # Default to English if detection fails
+        else:
+            lang = "en"  # Default to English if query is invalid
+        
         if not results:
-            lang = user_language or self._detect_language(query)
             return "ขออภัย ฉันยังไม่มีข้อมูลในเรื่องนี้" if lang == "th" else "Sorry, I don't have that information yet."
+        else:
+            # When results exist but LLM failed, provide a generic response
+            return "ขออภัย เกิดข้อผิดพลาดในการสร้างคำตอบ กรุณาลองใหม่อีกครั้ง" if lang == "th" else "Sorry, I encountered an error generating a response. Please try again."
 
     def _contains_thai(self, text: str) -> bool:
         """Check if text contains Thai characters"""
