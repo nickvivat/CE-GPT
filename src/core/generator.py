@@ -67,6 +67,11 @@ class ResponseGenerator:
         
         filtered_results = []
         for result in results:
+            # Always keep metadata results (suggestions) and exact matches regardless of score
+            if result.get('data_type') == 'metadata' or result.get('bypass_score_filter', False) or result.get('is_exact_match', False):
+                filtered_results.append(result)
+                continue
+            
             score = result.get('hybrid_score')
             if score is None:
                 score = result.get('rerank_score')
@@ -76,7 +81,6 @@ class ResponseGenerator:
             if score >= threshold:
                 filtered_results.append(result)
         
-        # Log filtering results
         original_count = len(results)
         filtered_count = len(filtered_results)
         logger.info(f"Score filtering: {original_count} -> {filtered_count} results "
@@ -85,11 +89,14 @@ class ResponseGenerator:
         # If no results pass the threshold, return the top 5 results anyway
         if not filtered_results and results:
             logger.warning("No results passed score threshold, returning top 5 results")
-            # Sort by hybrid score (or rerank score, or similarity_score as final fallback) and take top 5
-            # Use explicit None checks to handle 0.0 as a valid score value
-            # Fallback chain: hybrid_score -> rerank_score -> similarity_score
+            
+            # Separate metadata results and exact matches - they must always be preserved
+            preserved_results = [r for r in results if r.get('data_type') == 'metadata' or r.get('bypass_score_filter', False) or r.get('is_exact_match', False)]
+            non_metadata_results = [r for r in results if r.get('data_type') != 'metadata' and not r.get('bypass_score_filter', False) and not r.get('is_exact_match', False)]
+            
+            # Sort non-metadata results by score and take top 5
             sorted_results = sorted(
-                results, 
+                non_metadata_results, 
                 key=lambda x: (
                     x.get('hybrid_score') if x.get('hybrid_score') is not None 
                     else (x.get('rerank_score') if x.get('rerank_score') is not None 
@@ -97,7 +104,9 @@ class ResponseGenerator:
                 ), 
                 reverse=True
             )
-            return sorted_results[:5]
+            
+            # Combine: top 5 non-metadata results + all preserved results (exact matches and metadata)
+            return sorted_results[:5] + preserved_results
         
         return filtered_results
     
@@ -215,18 +224,10 @@ class ResponseGenerator:
                 history_parts.append(f"**Previously discussed courses:** {', '.join(codes_list)}")
                 history_parts.append("")
             
-            # Format selected messages (with more content since we have context room)
+            # Format selected messages
             for i, msg in enumerate(selected_messages, 1):
                 role_label = "User" if msg.role == "user" else "Assistant"
-                
-                # With 128k context, we can include more content per message
-                # Use 600 chars per message (good balance between detail and efficiency)
-                content = msg.content[:600] if len(msg.content) > 600 else msg.content
-                
-                if len(msg.content) > 600:
-                    content = content + "..."
-                
-                history_parts.append(f"{i}. **{role_label}:** {content}")
+                history_parts.append(f"{i}. **{role_label}:** {msg.content}")
             
             if history_parts:
                 formatted_history = "\n".join(history_parts)
@@ -247,11 +248,26 @@ class ResponseGenerator:
         
         context_parts = []
         
-        # Separate courses and professors
+        # Extract suggestions and unfound course codes from metadata results
+        suggestions_metadata = {}
+        unfound_course_codes = []
+        for result in filtered_results:
+            if 'suggestions' in result:
+                suggestions_metadata.update(result.get('suggestions', {}))
+            if 'unfound_course_codes' in result:
+                unfound_codes = result.get('unfound_course_codes', [])
+                unfound_course_codes.extend(unfound_codes)
+        
+        unfound_course_codes = list(set(unfound_course_codes))
+        
         courses = []
         professors = []
         
         for result in filtered_results:
+            # Skip metadata results (suggestions) - already processed above
+            if result.get('data_type') == 'metadata' or result.get('bypass_score_filter', False):
+                continue
+            
             data_type = result.get('data_type', result.get('metadata', {}).get('data_type', 'course'))
             if data_type == 'professor':
                 professors.append(result)
@@ -315,6 +331,16 @@ class ResponseGenerator:
                             context_part += f"\n   - {subject}"
                 
                 context_parts.append(context_part)
+        
+        # Show NOTE section for unfound course codes (with suggestions if available)
+        if unfound_course_codes:
+            context_parts.append("\nNOTE: The following course codes were not found:")
+            for code in unfound_course_codes:
+                similar_codes = suggestions_metadata.get(code, [])
+                if similar_codes:
+                    context_parts.append(f"- {code} (not found). Did you mean: {', '.join(similar_codes)}?")
+                else:
+                    context_parts.append(f"- {code} (not found)")
         
         return "\n".join(context_parts)
     

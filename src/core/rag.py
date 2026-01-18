@@ -561,23 +561,64 @@ class RAGSystem:
                     }
                     results.append(result)
             
-            # Boost results that contain course codes mentioned in the query FIRST
-            # This ensures course code matches are boosted before filtering, so they can pass the threshold
+            # Prioritize exact course code matches over semantic search
             course_codes_in_query = self._extract_course_codes_from_query(current_query)
-            if course_codes_in_query and results:
-                results = self._boost_results_with_course_codes(results, course_codes_in_query)
+            exact_matches = []
+            unfound_course_codes = []
+            suggestions_metadata = {}
             
-            # Pre-filter by similarity threshold AFTER boosting
-            # This allows course code boosting to raise scores above the threshold
+            if course_codes_in_query:
+                exact_matches = self._find_exact_course_code_matches(course_codes_in_query)
+                exact_codes_found = {r['metadata'].get('course_code') for r in exact_matches}
+                unfound_course_codes = [code for code in course_codes_in_query if code not in exact_codes_found]
+                
+                if exact_matches:
+                    logger.info(f"Found {len(exact_matches)} exact course code match(es) for: {course_codes_in_query}")
+                    # Remove semantic results that match the same course codes to avoid duplicates
+                    results = [r for r in results if r.get('metadata', {}).get('course_code') not in exact_codes_found]
+                    results = exact_matches + results
+                else:
+                    logger.info(f"No exact matches found for course codes: {course_codes_in_query}")
+                    # Boost semantic results that mention the course codes
+                    if results:
+                        results = self._boost_results_with_course_codes(results, course_codes_in_query)
+                
+                if unfound_course_codes:
+                    for code in unfound_course_codes:
+                        similar_codes = self._find_similar_course_codes(code, max_distance=2, max_results=5)
+                        if similar_codes:
+                            suggestions_metadata[code] = similar_codes
+                            logger.info(f"Found {len(similar_codes)} similar course codes for {code}: {similar_codes}")
+            
+            # Add suggestions metadata before filtering so it's preserved
+            if suggestions_metadata or unfound_course_codes:
+                suggestions_result = {
+                    'content': '',
+                    'metadata': {},
+                    'similarity_score': 1.0,  # Ensures it passes any threshold
+                    'chunk_id': 'suggestions_metadata',
+                    'original_index': -1,
+                    'data_type': 'metadata',
+                    'suggestions': suggestions_metadata,
+                    'unfound_course_codes': unfound_course_codes,
+                    'bypass_score_filter': True
+                }
+                results.append(suggestions_result)
+            
+            # Filter by similarity threshold, but always keep exact matches and metadata results
             similarity_threshold = config.search.similarity_threshold
             if results and similarity_threshold > 0:
                 original_count = len(results)
-                results = [r for r in results if r.get('similarity_score', 0.0) >= similarity_threshold]
+                exact_match_results = [r for r in results if r.get('is_exact_match', False)]
+                metadata_results = [r for r in results if r.get('data_type') == 'metadata' or r.get('bypass_score_filter', False)]
+                other_results = [r for r in results if not r.get('is_exact_match', False) and r.get('data_type') != 'metadata' and not r.get('bypass_score_filter', False)]
+                
+                filtered_other = [r for r in other_results if r.get('similarity_score', 0.0) >= similarity_threshold]
+                results = exact_match_results + filtered_other + metadata_results
                 filtered_count = len(results)
                 if original_count != filtered_count:
-                    logger.info(f"Pre-filtered by similarity: {original_count} -> {filtered_count} results (threshold: {similarity_threshold:.3f})")
+                    logger.info(f"Pre-filtered by similarity: {original_count} -> {filtered_count} results (threshold: {similarity_threshold:.3f}, kept {len(exact_match_results)} exact matches, {len(metadata_results)} metadata entries)")
             
-            # Remove duplicate or very similar results
             results = self._deduplicate_results(results)
             
             if use_reranking and self.use_reranker and self.reranker:
@@ -585,7 +626,14 @@ class RAGSystem:
                 try:
                     logger.info("Applying reranking...")
                     input_count = len(results)
-                    reranked_results = self.reranker.rerank_with_metadata(current_query, results)
+                    
+                    # Separate metadata results and exact matches - they should not be reranked
+                    metadata_results = [r for r in results if r.get('data_type') == 'metadata' or r.get('bypass_score_filter', False)]
+                    exact_match_results = [r for r in results if r.get('is_exact_match', False)]
+                    rerankable_results = [r for r in results if r.get('data_type') != 'metadata' and not r.get('bypass_score_filter', False) and not r.get('is_exact_match', False)]
+                    
+                    # Rerank only non-metadata results
+                    reranked_results = self.reranker.rerank_with_metadata(current_query, rerankable_results)
                     results = []
                     for _, score, result_dict in reranked_results:
                         result_dict['rerank_score'] = float(score)
@@ -599,6 +647,10 @@ class RAGSystem:
                     
                     # Sort by hybrid score for better accuracy
                     results.sort(key=lambda x: x.get('hybrid_score', 0.0), reverse=True)
+                    
+                    # Add exact matches and metadata results back (always preserve these)
+                    # Exact matches first (highest priority), then reranked results, then metadata
+                    results = exact_match_results + results + metadata_results
                     
                     reranking_duration = time.time() - reranking_start
                     csv_logger.log_reranking(
@@ -1010,3 +1062,110 @@ class RAGSystem:
         if any(ord(c) > 127 for c in text):
             return "th"
         return "en"
+    
+    def _find_exact_course_code_matches(self, course_codes: List[str]) -> List[Dict[str, Any]]:
+        """
+        Directly lookup courses by exact course code match.
+        This ensures exact matches are always found, even if semantic search fails.
+        
+        Args:
+            course_codes: List of course codes to search for
+            
+        Returns:
+            List of result dictionaries matching the course codes
+        """
+        if not course_codes or not self.chunks:
+            return []
+        
+        exact_matches = []
+        seen_codes = set()
+        
+        for chunk in self.chunks:
+            chunk_course_code = chunk.metadata.get('course_code', '')
+            if chunk_course_code in course_codes and chunk_course_code not in seen_codes:
+                # Found exact match - create result with high score
+                result = {
+                    'content': get_chunk_content(chunk),
+                    'metadata': chunk.metadata,
+                    'similarity_score': 1.0,  # Perfect match score
+                    'chunk_id': chunk.chunk_id,
+                    'original_index': chunk.original_index,
+                    'data_type': chunk.metadata.get('data_type', 'course'),
+                    'is_exact_match': True  # Flag to indicate this is an exact match
+                }
+                exact_matches.append(result)
+                seen_codes.add(chunk_course_code)
+                logger.info(f"Found exact match for course code: {chunk_course_code}")
+        
+        return exact_matches
+    
+    def _find_similar_course_codes(self, course_code: str, max_distance: int = 2, max_results: int = 5) -> List[str]:
+        """
+        Find similar course codes using Levenshtein distance (fuzzy matching).
+        Useful for suggesting corrections when a course code has a typo.
+        
+        Args:
+            course_code: The course code to find similar matches for
+            max_distance: Maximum edit distance allowed (default: 2)
+            max_results: Maximum number of similar codes to return
+            
+        Returns:
+            List of similar course codes sorted by similarity
+        """
+        if not self.chunks or len(course_code) != 8:
+            return []
+        
+        def levenshtein_distance(s1: str, s2: str) -> int:
+            """Calculate Levenshtein distance between two strings"""
+            if len(s1) < len(s2):
+                return levenshtein_distance(s2, s1)
+            if len(s2) == 0:
+                return len(s1)
+            
+            previous_row = range(len(s2) + 1)
+            for i, c1 in enumerate(s1):
+                current_row = [i + 1]
+                for j, c2 in enumerate(s2):
+                    insertions = previous_row[j + 1] + 1
+                    deletions = current_row[j] + 1
+                    substitutions = previous_row[j] + (c1 != c2)
+                    current_row.append(min(insertions, deletions, substitutions))
+                previous_row = current_row
+            return previous_row[-1]
+        
+        # Collect all unique course codes from chunks
+        all_course_codes = set()
+        for chunk in self.chunks:
+            code = chunk.metadata.get('course_code', '')
+            if code and len(code) == 8:
+                all_course_codes.add(code)
+        
+        # Calculate distances and filter
+        similar_codes = []
+        for code in all_course_codes:
+            distance = levenshtein_distance(course_code, code)
+            if 0 < distance <= max_distance:  # Exclude exact match (distance 0)
+                similar_codes.append((code, distance))
+        
+        # Sort by distance and return top results
+        similar_codes.sort(key=lambda x: x[1])
+        return [code for code, _ in similar_codes[:max_results]]
+    
+    def _get_all_course_codes(self) -> List[str]:
+        """
+        Get all unique course codes from loaded chunks.
+        Useful for suggestions and validation.
+        
+        Returns:
+            List of all unique course codes
+        """
+        if not self.chunks:
+            return []
+        
+        course_codes = set()
+        for chunk in self.chunks:
+            code = chunk.metadata.get('course_code', '')
+            if code and len(code) == 8:
+                course_codes.add(code)
+        
+        return sorted(list(course_codes))
