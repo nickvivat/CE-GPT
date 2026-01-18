@@ -7,6 +7,7 @@ from pydantic import BaseModel, Field, validator
 from typing import List, Dict, Any, Optional, Union
 from enum import Enum
 from datetime import datetime
+import re
 
 
 class LanguageEnum(str, Enum):
@@ -18,13 +19,81 @@ class LanguageEnum(str, Enum):
 
 class GenerateRequest(BaseModel):
     query: str = Field(..., min_length=1, max_length=1000, description="User query for response generation")
+    user_id: str = Field(..., min_length=1, description="Required user identifier for authentication")
     session_id: Optional[str] = Field(None, description="Optional session ID for conversation continuity")
-    user_id: Optional[str] = Field(None, description="Optional user identifier for session management")
     top_k: int = Field(default=5, ge=1, le=10, description="Number of sources to retrieve")
     language: str = Field(default="auto", description="Language preference (auto, en, th)")
     use_reranking: bool = Field(default=True, description="Whether to use reranking for better results")
     include_sources: bool = Field(default=True, description="Whether to include source information")
     stream: bool = Field(default=True, description="Whether to stream the response for better UX")
+    
+    @validator('query')
+    def validate_and_sanitize_query(cls, v):
+        """Validate and sanitize the query input."""
+        if not v or not v.strip():
+            raise ValueError('Query cannot be empty')
+        
+        v_stripped = v.strip()
+        
+        script_patterns = [
+            r'<script',
+            r'javascript:',
+            r'onerror=',
+            r'onload=',
+            r'<iframe',
+            r'<img',
+            r'<svg'
+        ]
+        for pattern in script_patterns:
+            if re.search(pattern, v_stripped, re.IGNORECASE):
+                raise ValueError('Query contains potentially dangerous patterns')
+        
+        sql_patterns = [
+            r'(union|select|insert|delete|drop|exec|execute)\s+(all\s+)?(distinct\s+)?\*',
+            r'(union|select|insert|delete|drop|exec|execute)\s+[a-zA-Z_][a-zA-Z0-9_]*\s+(from|into|where|set|values)',
+            r'(union|select|insert|delete|drop|exec|execute)\s+[a-zA-Z_][a-zA-Z0-9_]*\s*[,\(]',
+            r'(union|select|insert|delete|drop|exec|execute)\s+[^\s]{0,50}\s+(union|select|insert|delete|drop|exec|execute|from|where|having)\s+',
+            r'[;\'"]\s*(union|select|insert|delete|drop|exec|execute)\s+',
+            r';\s*(drop|delete|truncate)',
+            r'[;]\s*--',
+            r'(select|union|insert|delete|drop|exec|execute|from|where|having)\s+[^\s]{0,50}--',
+            r'/\*',
+            r'\*/'
+        ]
+        for pattern in sql_patterns:
+            if re.search(pattern, v_stripped, re.IGNORECASE):
+                raise ValueError('Query contains potentially dangerous patterns')
+        
+        return v_stripped
+    
+    @validator('session_id')
+    def validate_session_id(cls, v):
+        """Validate session ID format."""
+        if v is not None:
+            if not re.match(r'^[a-zA-Z0-9_-]{1,100}$', v):
+                raise ValueError('Invalid session ID format')
+        return v
+    
+    @validator('user_id')
+    def validate_user_id(cls, v):
+        """Validate user ID format."""
+        if not v or not v.strip():
+            raise ValueError('user_id is required and cannot be empty')
+        
+        v_stripped = v.strip()
+        
+        if not re.match(r'^[a-zA-Z0-9_-]{1,100}$', v_stripped):
+            raise ValueError('Invalid user ID format. Must be alphanumeric with hyphens/underscores, 1-100 characters')
+        
+        return v_stripped
+    
+    @validator('language')
+    def validate_language(cls, v):
+        """Validate language code."""
+        valid_languages = ['auto', 'en', 'th']
+        if v not in valid_languages:
+            raise ValueError(f'Language must be one of: {", ".join(valid_languages)}')
+        return v
 
 
 class GenerateResponse(BaseModel):

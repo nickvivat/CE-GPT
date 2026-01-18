@@ -7,7 +7,7 @@ import time
 import os
 import json
 from typing import List, Dict, Any
-from fastapi import APIRouter, HTTPException, Depends, BackgroundTasks
+from fastapi import APIRouter, HTTPException, Depends, BackgroundTasks, Request
 from fastapi.responses import FileResponse, StreamingResponse
 from fastapi.responses import Response
 import asyncio
@@ -25,6 +25,7 @@ from src.utils.config import config
 from src.utils.logger import get_logger
 from src.utils.performance_monitor import performance_monitor
 from src.utils.database import init_database, check_database_connection
+from typing import Tuple, Optional
 
 logger = get_logger(__name__)
 
@@ -102,6 +103,62 @@ def get_chat_history_manager() -> ChatHistoryManager:
     return chat_history_manager
 
 
+def handle_session_creation(
+    request: GenerateRequest,
+    sm: SessionManager
+) -> Tuple[Optional[str], Optional[object]]:
+    """Handle session creation and validation."""
+    effective_user_id = request.user_id
+    
+    if not effective_user_id:
+        raise HTTPException(
+            status_code=401,
+            detail="Authentication required: user_id must be provided"
+        )
+    
+    session_id = request.session_id
+    if session_id:
+        session = sm.get_session(session_id)
+        if not session:
+            raise HTTPException(status_code=404, detail="Session not found")
+        
+        if not session.user_id:
+            raise HTTPException(
+                status_code=403,
+                detail="Anonymous sessions are not allowed. Please use an authenticated session."
+            )
+        
+        normalized_session_user_id = session.user_id.strip() if session.user_id else None
+        normalized_request_user_id = request.user_id.strip() if request.user_id else None
+        
+        if normalized_session_user_id != normalized_request_user_id:
+            raise HTTPException(
+                status_code=403,
+                detail="Session does not belong to this user"
+            )
+        return session_id, session
+    elif config.session.auto_create:
+        existing_session = sm.get_most_recent_active_session(
+            user_id=effective_user_id,
+            max_age_minutes=30
+        )
+        
+        if existing_session:
+            session = existing_session
+            session_id = session.session_id
+            logger.info(f"Reusing existing session: {session_id} for user: {effective_user_id}")
+        else:
+            session = sm.create_session(
+                user_id=effective_user_id,
+                metadata={"language": request.language}
+            )
+            session_id = session.session_id
+            logger.info(f"Auto-created new session: {session_id} for user: {effective_user_id}")
+        return session_id, session
+    
+    return None, None
+
+
 @router.get("/health", response_model=HealthCheck, summary="Health Check")
 async def health_check():
     """Check system health and status."""
@@ -144,94 +201,82 @@ async def get_system_status(rag: RAGSystem = Depends(get_rag_system)):
         raise HTTPException(status_code=500, detail=f"Failed to get system status: {str(e)}")
 
 
+def check_rate_limit(request: Request):
+    """Check rate limit for a request at runtime."""
+    if hasattr(request.app.state, 'limiter'):
+        limiter = request.app.state.limiter
+        if limiter:
+            from slowapi.util import get_remote_address
+            from slowapi.errors import RateLimitExceeded
+            
+            try:
+                key = get_remote_address(request)
+                limit_str = "10/minute"
+                
+                from limits import parse
+                from limits.storage import MemoryStorage
+                
+                rate_limit_item = parse(limit_str)
+                
+                if not hasattr(check_rate_limit, '_storage'):
+                    check_rate_limit._storage = MemoryStorage()
+                
+                rate_limit_item.storage = check_rate_limit._storage
+                
+                if not rate_limit_item.test(key):
+                    raise RateLimitExceeded("Rate limit exceeded")
+                
+                rate_limit_item.hit(key)
+                            
+            except RateLimitExceeded:
+                raise HTTPException(
+                    status_code=429,
+                    detail="Rate limit exceeded: 10 requests per minute"
+                )
+            except Exception as e:
+                logger.error(
+                    f"Rate limiting check failed: {type(e).__name__}: {str(e)}. "
+                    "Allowing request to proceed.",
+                    exc_info=True
+                )
 
 
 @router.post("/generate", summary="Generate AI Response")
 async def generate_response(
-    request: GenerateRequest,
+    request: Request,
+    generate_request: GenerateRequest,
     sm: SessionManager = Depends(get_session_manager),
     chm: ChatHistoryManager = Depends(get_chat_history_manager)
 ):
     """Generate an AI response based on the query and retrieved sources."""
+    check_rate_limit(request)
+    
     try:
         start_time = time.time()
         
-        # Get RAG system
         rag_system = get_rag_system()
+        session_id, session = handle_session_creation(generate_request, sm)
         
-        # Handle session
-        # Use request.user_id directly - do NOT create shared test accounts to prevent cross-user session leakage
-        # Anonymous sessions (user_id=None) are never reused to ensure each unauthenticated user gets isolated sessions
-        effective_user_id = request.user_id
-        
-        session_id = request.session_id
-        if session_id:
-            # Validate session exists - if provided, it must be valid
-            session = sm.get_session(session_id)
-            if not session:
-                raise HTTPException(status_code=404, detail="Session not found")
-            # Security: Validate session ownership using request.user_id
-            # Case 1: Session has user_id (authenticated session)
-            if session.user_id:
-                if not request.user_id:
-                    raise HTTPException(
-                        status_code=403, 
-                        detail="Cannot access authenticated session: user identity required"
-                    )
-                if session.user_id != request.user_id:
-                    raise HTTPException(status_code=403, detail="Session does not belong to this user")
-            # Case 2: Session has no user_id (anonymous session) but request has user_id
-            elif request.user_id:
-                raise HTTPException(
-                    status_code=403,
-                    detail="Cannot access anonymous session: authenticated users cannot access anonymous sessions"
-                )
-        elif config.session.auto_create:
-            # Only attempt session reuse if we have a valid user_id from the request
-            # Anonymous sessions (user_id=None) are never reused to prevent cross-user leakage
-            existing_session = None
-            if effective_user_id:
-                existing_session = sm.get_most_recent_active_session(
-                    user_id=effective_user_id,
-                    max_age_minutes=30
-                )
-            
-            if existing_session:
-                session = existing_session
-                session_id = session.session_id
-                logger.info(f"Reusing existing session: {session_id} for user: {effective_user_id}")
-            else:
-                # Create new session (anonymous if no user_id, authenticated if user_id provided)
-                session = sm.create_session(
-                    user_id=effective_user_id,
-                    metadata={"language": request.language}
-                )
-                session_id = session.session_id
-                logger.info(f"Auto-created new session: {session_id} for user: {effective_user_id or 'anonymous'}")
-        
-        # Determine language (same logic as search endpoint)
         language = None
-        if request.language != "auto":
-            language = request.language
-        
-        # First, search for relevant courses to get sources
+        if generate_request.language != "auto":
+            language = generate_request.language
         search_results = await rag_system.search(
-            query=request.query,
-            top_k=request.top_k,
+            query=generate_request.query,
+            top_k=generate_request.top_k,
             language=language,
-            use_reranking=request.use_reranking,
+            use_reranking=generate_request.use_reranking,
             session_id=session_id
         )
         
-        logger.info(f"Found {len(search_results)} search results for query: {request.query}")
+        logger.info(f"Found {len(search_results)} search results for query: {generate_request.query}")
         
         # Generate response using the search results
         response = await rag_system.generate_response(
-            query=request.query,
-            top_k=request.top_k,
+            query=generate_request.query,
+            top_k=generate_request.top_k,
             language=language,
-            use_reranking=request.use_reranking,
-            stream=request.stream,
+            use_reranking=generate_request.use_reranking,
+            stream=generate_request.stream,
             search_results=search_results,
             session_id=session_id
         )
@@ -243,8 +288,8 @@ async def generate_response(
             user_msg = chm.add_message(
                 session_id=session_id,
                 role="user",
-                content=request.query,
-                metadata={"language": request.language}
+                content=generate_request.query,
+                metadata={"language": generate_request.language}
             )
             if not user_msg:
                 logger.error(f"Failed to store user message for session {session_id}")
@@ -252,23 +297,21 @@ async def generate_response(
             assistant_msg = chm.add_message(
                 session_id=session_id,
                 role="assistant",
-                content=response or "",  # Store empty string if response is None/empty
+                content=response or "",
                 metadata={
                     "sources": len(search_results),
-                    "language": rag_system._detect_language(request.query),
+                    "language": rag_system._detect_language(generate_request.query),
                     "generation_time_ms": generation_time
                 }
             )
             if not assistant_msg:
                 logger.error(f"Failed to store assistant message for session {session_id}")
             
-            # Update session timestamp
             if not sm.update_session(session_id, extend_ttl=True):
                 logger.error(f"Failed to update session {session_id} timestamp")
         
-        # Prepare sources for response
         sources = []
-        if request.include_sources and search_results:
+        if generate_request.include_sources and search_results:
             sources = [
                 {
                     "content": result.get("content", ""),
@@ -282,11 +325,11 @@ async def generate_response(
             ]
         
         return GenerateResponse(
-            query=request.query,
+            query=generate_request.query,
             response=response,
             session_id=session_id,
             sources=sources,
-            language_detected=rag_system._detect_language(request.query),
+            language_detected=rag_system._detect_language(generate_request.query),
             generation_time_ms=generation_time,
             total_sources=len(search_results)
         )
@@ -300,89 +343,38 @@ async def generate_response(
 
 @router.post("/generate/stream", summary="Generate AI Response with Real-time Streaming")
 async def generate_response_stream(
-    request: GenerateRequest,
+    request: Request,
+    generate_request: GenerateRequest,
     sm: SessionManager = Depends(get_session_manager),
     chm: ChatHistoryManager = Depends(get_chat_history_manager)
 ):
     """Generate an AI response with real-time streaming using Server-Sent Events."""
+    check_rate_limit(request)
+    
     try:
-        # Get RAG system
         rag_system = get_rag_system()
+        session_id, session = handle_session_creation(generate_request, sm)
         
-        # Handle session
-        # Use request.user_id directly - do NOT create shared test accounts to prevent cross-user session leakage
-        # Anonymous sessions (user_id=None) are never reused to ensure each unauthenticated user gets isolated sessions
-        effective_user_id = request.user_id
-        
-        session_id = request.session_id
-        if session_id:
-            # Validate session exists - if provided, it must be valid
-            session = sm.get_session(session_id)
-            if not session:
-                raise HTTPException(status_code=404, detail="Session not found")
-            # Security: Validate session ownership using request.user_id
-            # Case 1: Session has user_id (authenticated session)
-            if session.user_id:
-                if not request.user_id:
-                    raise HTTPException(
-                        status_code=403, 
-                        detail="Cannot access authenticated session: user identity required"
-                    )
-                if session.user_id != request.user_id:
-                    raise HTTPException(status_code=403, detail="Session does not belong to this user")
-            # Case 2: Session has no user_id (anonymous session) but request has user_id
-            elif request.user_id:
-                raise HTTPException(
-                    status_code=403,
-                    detail="Cannot access anonymous session: authenticated users cannot access anonymous sessions"
-                )
-        elif config.session.auto_create:
-            # Only attempt session reuse if we have a valid user_id from the request
-            # Anonymous sessions (user_id=None) are never reused to prevent cross-user leakage
-            existing_session = None
-            if effective_user_id:
-                existing_session = sm.get_most_recent_active_session(
-                    user_id=effective_user_id,
-                    max_age_minutes=30
-                )
-            
-            if existing_session:
-                session = existing_session
-                session_id = session.session_id
-                logger.info(f"Reusing existing session: {session_id} for user: {effective_user_id}")
-            else:
-                # Create new session (anonymous if no user_id, authenticated if user_id provided)
-                session = sm.create_session(
-                    user_id=effective_user_id,
-                    metadata={"language": request.language}
-                )
-                session_id = session.session_id
-                logger.info(f"Auto-created new session: {session_id} for user: {effective_user_id or 'anonymous'}")
-        
-        # Determine language
         language = None
-        if request.language != "auto":
-            language = request.language
-        
-        # Search for relevant courses to get sources
+        if generate_request.language != "auto":
+            language = generate_request.language
         search_results = await rag_system.search(
-            query=request.query,
-            top_k=request.top_k,
+            query=generate_request.query,
+            top_k=generate_request.top_k,
             language=language,
-            use_reranking=request.use_reranking,
+            use_reranking=generate_request.use_reranking,
             session_id=session_id
         )
         
-        logger.info(f"Found {len(search_results)} search results for streaming query: {request.query}")
+        logger.info(f"Found {len(search_results)} search results for streaming query: {generate_request.query}")
         
-        # Store user message immediately before streaming starts to ensure it's saved
         user_message_saved = False
         if session_id:
             user_msg = chm.add_message(
                 session_id=session_id,
                 role="user",
-                content=request.query,
-                metadata={"language": request.language}
+                content=generate_request.query,
+                metadata={"language": generate_request.language}
             )
             if user_msg:
                 user_message_saved = True
@@ -394,13 +386,10 @@ async def generate_response_stream(
             response_text = ""
             assistant_message_saved = False
             try:
-                # Send initial status
                 yield f"data: {json.dumps({'type': 'status', 'message': 'Starting generation...'})}\n\n"
-                
-                # Send search results info
                 yield f"data: {json.dumps({'type': 'search_results', 'count': len(search_results)})}\n\n"
                 
-                if request.include_sources and search_results:
+                if generate_request.include_sources and search_results:
                     sources = [
                         {
                             "content": result.get("content", ""),
@@ -414,24 +403,23 @@ async def generate_response_stream(
                     ]
                     yield f"data: {json.dumps({'type': 'sources', 'sources': sources})}\n\n"
                 
-                # Get streaming response from RAG system and iterate over it
                 async for chunk in rag_system.generate_response_stream(
-                    query=request.query,
-                    top_k=request.top_k,
+                    query=generate_request.query,
+                    top_k=generate_request.top_k,
                     language=language,
-                    use_reranking=request.use_reranking,
+                    use_reranking=generate_request.use_reranking,
                     search_results=search_results,
                     session_id=session_id
                 ):
                     if chunk:
                         response_text += chunk
                         yield f"data: {json.dumps({'type': 'chunk', 'content': chunk})}\n\n"
-                        await asyncio.sleep(0.01)  # Small delay for smooth streaming
+                        await asyncio.sleep(0.01)
                 
                 completion_data = {
                     'type': 'complete', 
                     'message': 'Generation complete',
-                    'language_detected': rag_system._detect_language(request.query),
+                    'language_detected': rag_system._detect_language(generate_request.query),
                     'total_sources': len(search_results),
                     'session_id': session_id
                 }
@@ -441,16 +429,14 @@ async def generate_response_stream(
                 logger.error(f"Error in streaming generation: {e}")
                 yield f"data: {json.dumps({'type': 'error', 'message': str(e)})}\n\n"
             finally:
-                # Store assistant message in finally block to ensure it's saved even if stream is interrupted
-                # Always store, even if response_text is empty
                 if session_id and not assistant_message_saved:
                     assistant_msg = chm.add_message(
                         session_id=session_id,
                         role="assistant",
-                        content=response_text or "",  # Store empty string if response_text is empty
+                        content=response_text or "",
                         metadata={
                             "sources": len(search_results),
-                            "language": rag_system._detect_language(request.query)
+                            "language": rag_system._detect_language(generate_request.query)
                         }
                     )
                     if assistant_msg:
