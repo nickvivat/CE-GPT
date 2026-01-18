@@ -2,6 +2,8 @@ You are a query enhancement assistant for a Computer Engineering course database
 
 **PRIMARY FOCUS:** {query}
 
+{conversation}
+
 **ENHANCEMENT STRATEGIES**
 
 **Course-Specific Enhancement:**

@@ -334,7 +334,7 @@ class RAGSystem:
     async def search(
         self,
         query: str,
-        top_k: int = 5,
+        top_k: int = 10,
         language: str = None,
         use_reranking: bool = True,
         session_id: str = None
@@ -354,22 +354,77 @@ class RAGSystem:
             classification = None
             detected_language = None
             
+            # Load chat history BEFORE query enhancement so it can be used for context
+            # With 128k context window, we can include more context for better query enhancement
+            conversation_context = None
+            if session_id and self.chat_history_manager:
+                recent_messages = self.chat_history_manager.get_recent_messages(session_id, n=10)
+                if recent_messages:
+                    # Remove current query if it's the last message
+                    messages_to_use = recent_messages
+                    if query and recent_messages:
+                        last_msg = recent_messages[-1]
+                        if last_msg.role == "user" and last_msg.content.strip() == query.strip():
+                            messages_to_use = recent_messages[:-1]
+                    
+                    if messages_to_use:
+                        # Extract course codes from all messages
+                        all_codes = set()
+                        for msg in messages_to_use:
+                            codes = self._extract_course_codes_from_query(msg.content)
+                            all_codes.update(codes)
+                        
+                        # Build context: course codes + last 3-4 messages (recent exchange)
+                        context_parts = []
+                        if all_codes:
+                            context_parts.append(f"Course codes mentioned: {', '.join(sorted(all_codes))}")
+                            context_parts.append("")
+                        
+                        # Include last 3-4 messages for better context (recent exchange)
+                        recent_exchange = messages_to_use[-4:] if len(messages_to_use) >= 4 else messages_to_use
+                        for msg in recent_exchange:
+                            role_label = "User" if msg.role == "user" else "Assistant"
+                            # Include more content (500 chars) since we have context room
+                            content = msg.content[:500] if len(msg.content) > 500 else msg.content
+                            if len(msg.content) > 500:
+                                content = content + "..."
+                            context_parts.append(f"{role_label}: {content}")
+                        
+                        if context_parts:
+                            conversation_context = "\n".join(context_parts)
+                            logger.debug(f"Loaded conversation context from session {session_id} for query enhancement ({len(recent_exchange)} messages)")
+            
             query_enhancement_start = time.time()
             try:
                 if is_professor_query:
                     logger.info("Professor query detected, skipping query enhancement")
                     classification = "professor_skip_enhancement"
                 elif self.use_query_enhancement and self.query and hasattr(self.query, 'available') and self.query.available:
-                    enhanced_query, metadata = await self.query.enhance_query_async(current_query)
+                    enhanced_query, metadata = await self.query.enhance_query_async(current_query, conversation_context)
                     
-                    if enhanced_query == current_query and metadata and metadata.get("query_intent") in ["conversational", "external"]:
-                        logger.info(f"Query classified as {metadata.get('query_intent')}, returning empty results")
-                        classification = metadata.get("query_intent", "pass")
-                        return []
-                    
-                    if metadata and metadata.get("query_intent") == "course_search" and metadata.get("tags") == ["clear_query"]:
+                    if metadata and metadata.get("query_intent") in ["conversational", "external"]:
+                        if enhanced_query == current_query:
+                            logger.info(f"Query classified as {metadata.get('query_intent')}, returning empty results")
+                            classification = metadata.get("query_intent", "pass")
+                            return []
+                        else:
+                            codes_in_original = set(self._extract_course_codes_from_query(current_query))
+                            codes_in_enhanced = set(self._extract_course_codes_from_query(enhanced_query))
+                            codes_added = codes_in_enhanced - codes_in_original
+                            
+                            if not codes_added:
+                                logger.info(f"Query classified as {metadata.get('query_intent')} with non-course modification, returning empty results")
+                                classification = metadata.get("query_intent", "pass")
+                                return []
+                            logger.info(f"Query classified as {metadata.get('query_intent')} but has course codes appended, proceeding to search")
+                            classification = metadata.get("query_intent", "pass")
+                            current_query = enhanced_query
+                    elif metadata and metadata.get("query_intent") == "course_search" and metadata.get("tags") == ["clear_query"]:
                         logger.info("Query classified as pass (clear query) - searching database without enhancement")
                         classification = "pass"
+                        if enhanced_query != current_query:
+                            logger.info(f"Updating current_query with course codes for search: {enhanced_query}")
+                            current_query = enhanced_query
                     else:
                         current_query = enhanced_query
                         classification = "enhanced"
@@ -413,22 +468,10 @@ class RAGSystem:
             try:
                 self.last_query = current_query
                 
-                # Load chat history if session_id is provided
-                chat_history_loaded = False
-                if session_id and self.chat_history_manager:
-                    recent_messages = self.chat_history_manager.get_recent_messages(session_id, n=5)
-                    if recent_messages:
-                        # Build conversation context from recent messages
-                        context_parts = []
-                        for msg in recent_messages[-3:]:  # Last 3 messages for context
-                            context_parts.append(f"{msg.role}: {msg.content[:200]}")  # Limit length
-                        self.conversation_context = " | ".join(context_parts)
-                        chat_history_loaded = True
-                        logger.debug(f"Loaded conversation context from session {session_id}")
-                
-                # Only set generic conversation context if chat history wasn't loaded
-                # Chat history from database is more valuable than the generic context
-                if not chat_history_loaded and self.conversation_context:
+                # Store conversation context for response generation (already loaded above for query enhancement)
+                if conversation_context:
+                    self.conversation_context = conversation_context
+                else:
                     self.conversation_context = f"Last query: {self.last_query}. Previous results: {len(self.last_results)} courses found."
                 
                 query_embedding = self.embedder.get_single_embedding(current_query)
@@ -518,6 +561,25 @@ class RAGSystem:
                     }
                     results.append(result)
             
+            # Boost results that contain course codes mentioned in the query FIRST
+            # This ensures course code matches are boosted before filtering, so they can pass the threshold
+            course_codes_in_query = self._extract_course_codes_from_query(current_query)
+            if course_codes_in_query and results:
+                results = self._boost_results_with_course_codes(results, course_codes_in_query)
+            
+            # Pre-filter by similarity threshold AFTER boosting
+            # This allows course code boosting to raise scores above the threshold
+            similarity_threshold = config.search.similarity_threshold
+            if results and similarity_threshold > 0:
+                original_count = len(results)
+                results = [r for r in results if r.get('similarity_score', 0.0) >= similarity_threshold]
+                filtered_count = len(results)
+                if original_count != filtered_count:
+                    logger.info(f"Pre-filtered by similarity: {original_count} -> {filtered_count} results (threshold: {similarity_threshold:.3f})")
+            
+            # Remove duplicate or very similar results
+            results = self._deduplicate_results(results)
+            
             if use_reranking and self.use_reranker and self.reranker:
                 reranking_start = time.time()
                 try:
@@ -527,7 +589,16 @@ class RAGSystem:
                     results = []
                     for _, score, result_dict in reranked_results:
                         result_dict['rerank_score'] = float(score)
+                        # Calculate hybrid score combining similarity and rerank scores
+                        similarity = result_dict.get('similarity_score', 0.0)
+                        rerank = result_dict.get('rerank_score', 0.0)
+                        # Weighted combination: 30% similarity, 70% rerank (rerank is more accurate)
+                        hybrid_score = (0.3 * similarity) + (0.7 * rerank)
+                        result_dict['hybrid_score'] = float(hybrid_score)
                         results.append(result_dict)
+                    
+                    # Sort by hybrid score for better accuracy
+                    results.sort(key=lambda x: x.get('hybrid_score', 0.0), reverse=True)
                     
                     reranking_duration = time.time() - reranking_start
                     csv_logger.log_reranking(
@@ -567,6 +638,7 @@ class RAGSystem:
             )
             
             logger.info(f"Search completed: {len(results)} results in {total_duration:.2f}s")
+            self.last_results = results
             return results
         except Exception as e:
             total_duration = time.time() - start_time
@@ -584,7 +656,7 @@ class RAGSystem:
     async def generate_response(
         self,
         query: str,
-        top_k: int = 5,
+        top_k: int = 10,
         language: str = None,
         use_reranking: bool = True,
         stream: bool = False,
@@ -701,7 +773,7 @@ class RAGSystem:
     async def generate_response_stream(
         self,
         query: str,
-        top_k: int = 5,
+        top_k: int = 10,
         language: str = None,
         use_reranking: bool = True,
         search_results: List[Dict[str, Any]] = None,
@@ -833,6 +905,106 @@ class RAGSystem:
             logger.error(f"Error clearing embedding cache: {e}")
             return False
 
+    def _extract_course_codes_from_query(self, query: str) -> List[str]:
+        """
+        Extract course codes (8-digit numbers) from query.
+        Returns: List of course codes found
+        """
+        import re
+        course_code_pattern = r'\b\d{8}\b'
+        course_codes = re.findall(course_code_pattern, query)
+        # Remove duplicates while preserving order
+        seen = set()
+        unique_codes = []
+        for code in course_codes:
+            if code not in seen:
+                seen.add(code)
+                unique_codes.append(code)
+        return unique_codes
+    
+    def _boost_results_with_course_codes(self, results: List[Dict[str, Any]], course_codes: List[str]) -> List[Dict[str, Any]]:
+        """
+        Boost similarity scores for results that contain the mentioned course codes.
+        This helps prioritize exact matches when users mention specific course codes.
+        """
+        if not course_codes or not results:
+            return results
+        
+        for result in results:
+            metadata = result.get('metadata', {})
+            content = result.get('content', '')
+            
+            # Check if result contains any of the mentioned course codes
+            result_course_code = metadata.get('course_code', '')
+            content_lower = content.lower()
+            
+            for code in course_codes:
+                if code == result_course_code:
+                    # Strong boost for exact course code match in metadata
+                    original_score = result.get('similarity_score', 0.0)
+                    result['similarity_score'] = min(1.0, original_score + 0.3)
+                    logger.debug(f"Boosted result with course code {code}: {original_score:.3f} -> {result['similarity_score']:.3f}")
+                    break
+                elif code in content_lower:
+                    # Moderate boost if course code appears in content
+                    original_score = result.get('similarity_score', 0.0)
+                    result['similarity_score'] = min(1.0, original_score + 0.15)
+                    logger.debug(f"Boosted result mentioning course code {code}: {original_score:.3f} -> {result['similarity_score']:.3f}")
+                    break
+        
+        # Re-sort by boosted similarity score
+        results.sort(key=lambda x: x.get('similarity_score', 0.0), reverse=True)
+        return results
+    
+    def _deduplicate_results(self, results: List[Dict[str, Any]], similarity_threshold: float = 0.95) -> List[Dict[str, Any]]:
+        """
+        Remove duplicate or very similar results based on content similarity and course codes.
+        This prevents redundant information from appearing multiple times.
+        """
+        if not results or len(results) <= 1:
+            return results
+        
+        deduplicated = []
+        seen_chunks = set()
+        seen_course_codes = set()
+        
+        for result in results:
+            chunk_id = result.get('chunk_id', '')
+            course_code = result.get('metadata', {}).get('course_code', '')
+            content = result.get('content', '')[:100]  # Use first 100 chars for comparison
+            
+            # Create a unique identifier
+            content_hash = hash(content)
+            
+            # Skip if we've seen this exact chunk
+            if chunk_id in seen_chunks:
+                continue
+            
+            # Skip if same course code and very similar content (likely duplicate chunk)
+            if course_code and course_code in seen_course_codes:
+                # Check if content is very similar to any existing result
+                is_duplicate = False
+                for existing in deduplicated:
+                    existing_content = existing.get('content', '')[:100]
+                    if course_code == existing.get('metadata', {}).get('course_code', ''):
+                        if content == existing_content:
+                            is_duplicate = True
+                            break
+                
+                if is_duplicate:
+                    continue
+            
+            # Add to deduplicated list
+            deduplicated.append(result)
+            seen_chunks.add(chunk_id)
+            if course_code:
+                seen_course_codes.add(course_code)
+        
+        if len(deduplicated) < len(results):
+            logger.info(f"Deduplicated results: {len(results)} -> {len(deduplicated)}")
+        
+        return deduplicated
+    
     def _detect_language(self, text: str) -> str:
         """Detect if text is Thai or English using ASCII check"""
         if any(ord(c) > 127 for c in text):

@@ -257,36 +257,86 @@ class Query:
             logger.error("Using default metadata.")
             return {"tags": ["general"], "query_intent": "general"}
 
-    async def enhance_query_async(self, query: str) -> Tuple[str, Optional[Dict[str, Any]]]:
+    def _extract_course_codes(self, conversation_context: str = None) -> List[str]:
+        """
+        Extract course codes (8-digit numbers) from conversation context.
+        Returns: List of course codes found
+        """
+        if not conversation_context:
+            return []
+        
+        # Pattern to match 8-digit course codes (e.g., 01076043, 01076634)
+        course_code_pattern = r'\b\d{8}\b'
+        course_codes = re.findall(course_code_pattern, conversation_context)
+        
+        # Remove duplicates while preserving order
+        seen = set()
+        unique_codes = []
+        for code in course_codes:
+            if code not in seen:
+                seen.add(code)
+                unique_codes.append(code)
+        
+        if unique_codes:
+            logger.info(f"Extracted course codes from conversation: {unique_codes}")
+        
+        return unique_codes
+
+    async def enhance_query_async(self, query: str, conversation_context: str = None) -> Tuple[str, Optional[Dict[str, Any]]]:
         """
         Async version of enhance_query that runs classification, enhancement, and metadata generation in parallel.
+        
+        Args:
+            query: The user's query
+            conversation_context: Optional conversation history to provide context
+        
         Returns: (enhanced_query, metadata)
         """
-        # Detect language using ASCII analysis
         language = detect_language_ascii(query)
         logger.debug(f"Language detected as '{language}' for query: '{query}'")
         
-        # Check if Ollama is available
+        original_query = query
+        course_codes = self._extract_course_codes(conversation_context) if conversation_context else []
+        
         if not self.available:
             logger.info("Query processing not available, returning original query with default metadata")
-            return query, {"tags": ["general"], "query_intent": "general"}
+            return original_query, {"tags": ["general"], "query_intent": "general"}
+        
+        reference_patterns = [
+            r'\b(those|these|the|that|this)\s+(course|class|subject)',
+            r'\b(course|class|subject).*(mentioned|discussed|talked about)',
+            r'\b(mentioned|discussed|talked about).*(course|class|subject)',
+            r'\b(explain|tell me|what about|more about).*(course|class|subject|them|those|these)',
+        ]
+        
+        query_lower = query.lower()
+        is_reference_query = any(re.search(pattern, query_lower) for pattern in reference_patterns)
+        
+        generic_phrases = ['how to', 'solve this', 'do this', 'help me', 'what is', 'how do i']
+        has_generic_phrase = any(phrase in query_lower for phrase in generic_phrases)
+        has_course_context = any(term in query_lower for term in ['course', 'class', 'subject', 'them', 'those', 'these'])
+        
+        course_codes_appended = False
         
         try:
-            # Step 1: Classify the query (sync)
             classification = self.classify_query(query)
+            
+            if is_reference_query and course_codes and (has_course_context or not has_generic_phrase):
+                query_with_codes = f"{query} {' '.join(course_codes)}"
+                logger.info(f"Query references previous courses. Including codes: {course_codes}")
+                query = query_with_codes
+                course_codes_appended = True
             
             if not classification:
                 logger.warning("Classification failed, returning original query with default metadata")
-                return query, {"tags": ["general"], "query_intent": "general"}
+                return original_query, {"tags": ["general"], "query_intent": "general"}
             
             logger.debug(f"Query classified as '{classification}'")
             
-            # Step 2: Handle based on classification
             if classification == "enhanced":
-                # Run enhancement and metadata generation in parallel
                 async with aiohttp.ClientSession() as session:
                     # Create tasks for parallel execution
-                    enhancement_task = asyncio.create_task(self._enhance_query_terms_async(session, query))
+                    enhancement_task = asyncio.create_task(self._enhance_query_terms_async(session, query, conversation_context))
                     metadata_task = asyncio.create_task(self.generate_metadata(query))
                     
                     # Wait for both to complete
@@ -296,48 +346,74 @@ class Query:
                         return_exceptions=True
                     )
                     
-                    # Handle results
                     if isinstance(enhanced_terms, Exception):
                         logger.error(f"Enhancement failed: {enhanced_terms}")
-                        enhanced_terms = [query]
+                        enhanced_terms = None
                     
                     if isinstance(metadata, Exception):
                         logger.error(f"Metadata generation failed: {metadata}")
                         metadata = {"tags": ["general"], "query_intent": "general"}
                     
                     if enhanced_terms and len(enhanced_terms) > 0:
-                        enhanced_query = " ".join(enhanced_terms)
-                        logger.info(f"Query enhanced: '{query}' -> '{enhanced_query}' with metadata: {metadata}")
+                        enhanced_query = f"{original_query} {' '.join(enhanced_terms)}"
+                        if course_codes_appended:
+                            enhanced_query_lower = enhanced_query.lower()
+                            missing_codes = [code for code in course_codes if code not in enhanced_query_lower]
+                            if missing_codes:
+                                enhanced_query = f"{enhanced_query} {' '.join(missing_codes)}"
+                                logger.info(f"Preserved missing course codes in enhanced query: {missing_codes}")
+                        logger.info(f"Query enhanced: '{original_query}' -> '{enhanced_query}' with metadata: {metadata}")
                         return enhanced_query, metadata
                     else:
-                        logger.warning("Enhancement failed, keeping original query")
-                        return query, metadata
+                        logger.warning("Enhancement failed, keeping query")
+                        if course_codes_appended:
+                            logger.info(f"Returning modified query with course codes despite enhancement failure: {course_codes}")
+                            return query, metadata
+                        else:
+                            return original_query, metadata
                         
             elif classification == "pass":
                 logger.info("Query classified as pass (clear query - search without enhancement)")
-                return query, {"tags": ["clear_query"], "query_intent": "course_search"}
+                if course_codes_appended:
+                    logger.info(f"Returning modified query with course codes for search: {course_codes}")
+                    return query, {"tags": ["clear_query"], "query_intent": "course_search"}
+                else:
+                    return original_query, {"tags": ["clear_query"], "query_intent": "course_search"}
                 
             elif classification == "conversational":
                 logger.info("Query classified as conversational, keeping original")
-                return query, {"tags": ["conversational"], "query_intent": "conversational"}
+                if course_codes_appended:
+                    logger.info(f"Returning modified query with course codes for conversational query to enable search: {course_codes}")
+                    return query, {"tags": ["conversational"], "query_intent": "conversational"}
+                else:
+                    return original_query, {"tags": ["conversational"], "query_intent": "conversational"}
                 
             elif classification == "external":
                 logger.info("Query classified as external, keeping original")
-                return query, {"tags": ["external"], "query_intent": "external"}
+                if course_codes_appended:
+                    logger.info(f"Returning modified query with course codes for external query to enable search: {course_codes}")
+                    return query, {"tags": ["external"], "query_intent": "external"}
+                else:
+                    return original_query, {"tags": ["external"], "query_intent": "external"}
                 
             else:
                 logger.warning(f"Unknown classification '{classification}', keeping original query")
-                return query, {"tags": ["general"], "query_intent": "general"}
+                return original_query, {"tags": ["general"], "query_intent": "general"}
                 
         except Exception as e:
             logger.error(f"Error in async query processing: {e}")
             logger.error(f"Query was: '{query}'")
             logger.error("Falling back to original query with default metadata.")
-            return query, {"tags": ["general"], "query_intent": "general"}
+            return original_query, {"tags": ["general"], "query_intent": "general"}
 
-    async def _enhance_query_terms_async(self, session: aiohttp.ClientSession, query: str) -> Optional[List[str]]:
+    async def _enhance_query_terms_async(self, session: aiohttp.ClientSession, query: str, conversation_context: str = None) -> Optional[List[str]]:
         """
         Async version of enhance_query_terms using the provided session.
+        
+        Args:
+            session: aiohttp session for async requests
+            query: The user's query
+            conversation_context: Optional conversation history for context-aware enhancement
         """
         try:
             prompt_file = os.path.join(
@@ -349,10 +425,16 @@ class Query:
 
             # Escape curly braces in the template to prevent format conflicts
             escaped_template = prompt_template.replace("{", "{{").replace("}", "}}")
-            # Now format with the query, but we need to unescape the {query} placeholder
+            # Now format with the query and conversation context
             escaped_template = escaped_template.replace("{{query}}", "{query}")
+            escaped_template = escaped_template.replace("{{conversation}}", "{conversation}")
             
-            prompt = escaped_template.format(query=query)
+            conversation_section = ""
+            if conversation_context:
+                escaped_context = conversation_context.replace("{", "{{").replace("}", "}}")
+                conversation_section = f"\n\n**CONVERSATION CONTEXT:**\n{escaped_context}\n\nUse this context to understand references."
+            
+            prompt = escaped_template.format(query=query, conversation=conversation_section)
             
             logger.debug(f"Async enhancement prompt length: {len(prompt)} characters")
             

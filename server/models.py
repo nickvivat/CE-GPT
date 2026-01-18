@@ -21,7 +21,7 @@ class GenerateRequest(BaseModel):
     query: str = Field(..., min_length=1, max_length=1000, description="User query for response generation")
     user_id: str = Field(..., min_length=1, description="Required user identifier for authentication")
     session_id: Optional[str] = Field(None, description="Optional session ID for conversation continuity")
-    top_k: int = Field(default=5, ge=1, le=10, description="Number of sources to retrieve")
+    top_k: int = Field(default=10, ge=1, le=10, description="Number of sources to retrieve")
     language: str = Field(default="auto", description="Language preference (auto, en, th)")
     use_reranking: bool = Field(default=True, description="Whether to use reranking for better results")
     include_sources: bool = Field(default=True, description="Whether to include source information")

@@ -51,64 +51,187 @@ class ResponseGenerator:
     
     def _filter_by_rerank_score(self, results: List[Dict[str, Any]], 
                                threshold: float = None) -> List[Dict[str, Any]]:
-        """Filter results based on rerank score threshold"""
+        """Filter results based on rerank score or hybrid score threshold"""
         if not results:
             return results
         
-        # Use config threshold if not provided
+        # Determine which threshold to use based on available scores
         if threshold is None:
-            threshold = config.search.rerank_threshold
+            # Check first result to determine score type
+            first_result = results[0]
+            if first_result.get('hybrid_score') is not None or first_result.get('rerank_score') is not None:
+                threshold = config.search.rerank_threshold
+            else:
+                # Reranking disabled - use similarity_threshold for similarity_score
+                threshold = config.search.similarity_threshold
         
-        # Filter results that have rerank scores above threshold
         filtered_results = []
         for result in results:
-            rerank_score = result.get('rerank_score', 0.0)
-            if rerank_score >= threshold:
+            score = result.get('hybrid_score')
+            if score is None:
+                score = result.get('rerank_score')
+                if score is None:
+                    score = result.get('similarity_score', 0.0)
+            
+            if score >= threshold:
                 filtered_results.append(result)
         
         # Log filtering results
         original_count = len(results)
         filtered_count = len(filtered_results)
-        logger.info(f"Rerank score filtering: {original_count} -> {filtered_count} results "
+        logger.info(f"Score filtering: {original_count} -> {filtered_count} results "
                    f"(threshold: {threshold:.3f})")
         
         # If no results pass the threshold, return the top 5 results anyway
         if not filtered_results and results:
-            logger.warning("No results passed rerank threshold, returning top 5 results")
-            # Sort by rerank score and take top 5
-            sorted_results = sorted(results, key=lambda x: x.get('rerank_score', 0.0), reverse=True)
+            logger.warning("No results passed score threshold, returning top 5 results")
+            # Sort by hybrid score (or rerank score, or similarity_score as final fallback) and take top 5
+            # Use explicit None checks to handle 0.0 as a valid score value
+            # Fallback chain: hybrid_score -> rerank_score -> similarity_score
+            sorted_results = sorted(
+                results, 
+                key=lambda x: (
+                    x.get('hybrid_score') if x.get('hybrid_score') is not None 
+                    else (x.get('rerank_score') if x.get('rerank_score') is not None 
+                          else x.get('similarity_score', 0.0))
+                ), 
+                reverse=True
+            )
             return sorted_results[:5]
         
         return filtered_results
     
-    def _format_history(self, session_id: str, max_messages: int = 6, current_query: str = None) -> str:
-        """Format chat history from database for the prompt"""
+    def _extract_course_codes_from_text(self, text: str) -> List[str]:
+        """Extract course codes (8-digit numbers) from text"""
+        import re
+        course_code_pattern = r'\b\d{8}\b'
+        course_codes = re.findall(course_code_pattern, text)
+        # Remove duplicates while preserving order
+        seen = set()
+        unique_codes = []
+        for code in course_codes:
+            if code not in seen:
+                seen.add(code)
+                unique_codes.append(code)
+        return unique_codes
+    
+    def _format_history(self, session_id: str, max_messages: int = 10, current_query: str = None) -> str:
+        """
+        Format chat history with smart selection optimized for large context windows (128k tokens).
+        
+        Strategy:
+        1. Always include: Last 2-3 assistant responses (recent context)
+        2. Always include: Last 2-3 user queries (conversation flow)
+        3. Extract and prioritize: Course codes from entire conversation
+        4. Include: Messages containing course codes (even if older)
+        5. Limit: Up to 8-10 messages total, but prioritize quality over quantity
+        
+        With 128k context window, we can include more history while still being efficient.
+        """
         if not session_id or not self.chat_history_manager:
             return "No previous conversation."
         
         try:
-            recent_messages = self.chat_history_manager.get_recent_messages(session_id, n=max_messages)
-            if not recent_messages:
+            # Get more messages since we have large context window
+            all_recent_messages = self.chat_history_manager.get_recent_messages(session_id, n=max_messages * 2)
+            if not all_recent_messages:
                 return "No previous conversation."
             
-            messages_to_format = recent_messages
-            if current_query and recent_messages:
-                last_msg = recent_messages[-1]
+            # Remove current query if it's the last message
+            messages_to_consider = all_recent_messages
+            if current_query and all_recent_messages:
+                last_msg = all_recent_messages[-1]
                 if last_msg.role == "user" and last_msg.content.strip() == current_query.strip():
-                    messages_to_format = recent_messages[:-1]
+                    messages_to_consider = all_recent_messages[:-1]
             
-            if not messages_to_format:
+            if not messages_to_consider:
                 return "No previous conversation."
+            
+            # Extract ALL course codes from entire conversation (for summary)
+            all_course_codes = set()
+            for msg in messages_to_consider:
+                codes = self._extract_course_codes_from_text(msg.content)
+                all_course_codes.update(codes)
+            
+            # Smart message selection with larger context window
+            selected_messages = []
+            seen_indices = set()
+            
+            # Create index mapping for O(1) lookups (avoid O(n) index() calls)
+            message_to_index = {id(m): i for i, m in enumerate(messages_to_consider)}
+            
+            # Strategy 1: Always include the last 2-3 assistant responses (most recent context)
+            assistant_count = 0
+            for msg in reversed(messages_to_consider):
+                if msg.role == "assistant" and assistant_count < 3:
+                    idx = message_to_index.get(id(msg), -1)
+                    if idx >= 0 and idx not in seen_indices:
+                        selected_messages.insert(0, msg)
+                        seen_indices.add(idx)
+                        assistant_count += 1
+            
+            # Strategy 2: Include the last 2-3 user queries (conversation flow)
+            user_count = 0
+            for msg in reversed(messages_to_consider):
+                if msg.role == "user" and user_count < 3:
+                    idx = message_to_index.get(id(msg), -1)
+                    if idx >= 0 and idx not in seen_indices:
+                        selected_messages.insert(0, msg)
+                        seen_indices.add(idx)
+                        user_count += 1
+            
+            # Strategy 3: Include messages containing course codes (even if older)
+            # This ensures we capture context about specific courses mentioned
+            if all_course_codes:
+                for msg in reversed(messages_to_consider):
+                    if len(selected_messages) >= 10:  # Limit to 10 messages max
+                        break
+                    idx = message_to_index.get(id(msg), -1)
+                    if idx < 0 or idx in seen_indices:
+                        continue
+                    msg_codes = set(self._extract_course_codes_from_text(msg.content))
+                    if msg_codes & all_course_codes:  # Has overlapping course codes
+                        selected_messages.insert(0, msg)
+                        seen_indices.add(idx)
+            
+            # Sort by original order and limit to reasonable number
+            # Create index mapping for O(1) lookup instead of O(n) index() calls
+            message_to_index = {id(m): i for i, m in enumerate(messages_to_consider)}
+            selected_messages = sorted(
+                selected_messages, 
+                key=lambda m: message_to_index.get(id(m), len(messages_to_consider))
+            )
+            selected_messages = selected_messages[-10:]  # Max 10 messages
+            
+            if not selected_messages:
+                # Fallback: at least include the last message
+                selected_messages = [messages_to_consider[-1]]
             
             history_parts = []
-            for msg in messages_to_format:
+            
+            # Add course code summary (most important for context)
+            if all_course_codes:
+                codes_list = sorted(list(all_course_codes))
+                history_parts.append(f"**Previously discussed courses:** {', '.join(codes_list)}")
+                history_parts.append("")
+            
+            # Format selected messages (with more content since we have context room)
+            for i, msg in enumerate(selected_messages, 1):
                 role_label = "User" if msg.role == "user" else "Assistant"
-                # Limit message length to avoid token overflow
-                content = msg.content[:300] if len(msg.content) > 300 else msg.content
-                history_parts.append(f"{role_label}: {content}")
+                
+                # With 128k context, we can include more content per message
+                # Use 600 chars per message (good balance between detail and efficiency)
+                content = msg.content[:600] if len(msg.content) > 600 else msg.content
+                
+                if len(msg.content) > 600:
+                    content = content + "..."
+                
+                history_parts.append(f"{i}. **{role_label}:** {content}")
             
             if history_parts:
-                return "\n".join(history_parts)
+                formatted_history = "\n".join(history_parts)
+                formatted_history += "\n\n**Note:** Use the conversation history above to understand context, especially when the user refers to 'those courses', 'the courses you mentioned', or asks follow-up questions. Pay attention to course codes mentioned in the history."
+                return formatted_history
             else:
                 return "No previous conversation."
         except Exception as e:
@@ -149,6 +272,14 @@ class ResponseGenerator:
                 course_code = metadata.get('course_code', 'N/A')
                 
                 context_part = f"{i}. **{course_name} ({course_code})**"
+                
+                # Add relevance score information (for LLM to understand quality)
+                hybrid_score = result.get('hybrid_score')
+                rerank_score = result.get('rerank_score')
+                if hybrid_score is not None:
+                    context_part += f" [Relevance: {hybrid_score:.2f}]"
+                elif rerank_score is not None:
+                    context_part += f" [Relevance: {rerank_score:.2f}]"
                 
                 if content:
                     cleaned_content = self._clean_content(content)
