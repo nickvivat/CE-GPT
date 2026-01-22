@@ -213,7 +213,7 @@ def check_rate_limit(request: Request):
                 key = get_remote_address(request)
                 limit_str = "10/minute"
                 
-                from limits import parse
+                from limits import parse, Limiter
                 from limits.storage import MemoryStorage
                 
                 rate_limit_item = parse(limit_str)
@@ -221,12 +221,15 @@ def check_rate_limit(request: Request):
                 if not hasattr(check_rate_limit, '_storage'):
                     check_rate_limit._storage = MemoryStorage()
                 
-                rate_limit_item.storage = check_rate_limit._storage
+                if not hasattr(check_rate_limit, '_limits_limiter'):
+                    check_rate_limit._limits_limiter = Limiter(check_rate_limit._storage)
                 
-                if not rate_limit_item.test(key):
+                limits_limiter = check_rate_limit._limits_limiter
+                
+                if not limits_limiter.test(rate_limit_item, key):
                     raise RateLimitExceeded("Rate limit exceeded")
                 
-                rate_limit_item.hit(key)
+                limits_limiter.hit(rate_limit_item, key)
                             
             except RateLimitExceeded:
                 raise HTTPException(
@@ -284,28 +287,21 @@ async def generate_response(
         generation_time = (time.time() - start_time) * 1000
         
         # Store messages in chat history if session exists (always store, even if response is empty)
+        # Use batch insert for atomic transaction and better performance
         if session_id:
-            user_msg = chm.add_message(
+            user_msg, assistant_msg = chm.add_message_pair(
                 session_id=session_id,
-                role="user",
-                content=generate_request.query,
-                metadata={"language": generate_request.language}
-            )
-            if not user_msg:
-                logger.error(f"Failed to store user message for session {session_id}")
-            
-            assistant_msg = chm.add_message(
-                session_id=session_id,
-                role="assistant",
-                content=response or "",
-                metadata={
+                user_content=generate_request.query,
+                assistant_content=response or "",
+                user_metadata={"language": generate_request.language},
+                assistant_metadata={
                     "sources": len(search_results),
                     "language": rag_system._detect_language(generate_request.query),
                     "generation_time_ms": generation_time
                 }
             )
-            if not assistant_msg:
-                logger.error(f"Failed to store assistant message for session {session_id}")
+            if not user_msg or not assistant_msg:
+                logger.error(f"Failed to store messages for session {session_id}")
             
             if not sm.update_session(session_id, extend_ttl=True):
                 logger.error(f"Failed to update session {session_id} timestamp")
