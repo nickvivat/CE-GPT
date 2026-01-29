@@ -213,8 +213,9 @@ def check_rate_limit(request: Request):
                 key = get_remote_address(request)
                 limit_str = "10/minute"
                 
-                from limits import parse, Limiter
+                from limits import parse
                 from limits.storage import MemoryStorage
+                from limits.strategies import FixedWindowRateLimiter
                 
                 rate_limit_item = parse(limit_str)
                 
@@ -222,7 +223,7 @@ def check_rate_limit(request: Request):
                     check_rate_limit._storage = MemoryStorage()
                 
                 if not hasattr(check_rate_limit, '_limits_limiter'):
-                    check_rate_limit._limits_limiter = Limiter(check_rate_limit._storage)
+                    check_rate_limit._limits_limiter = FixedWindowRateLimiter(check_rate_limit._storage)
                 
                 limits_limiter = check_rate_limit._limits_limiter
                 

@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
 """
 Migration script for chat history improvements.
-Adds deleted_at column and composite indexes to existing chat_messages table.
-Run this script if you have an existing database that needs to be migrated.
+Ensures composite indexes exist on chat_messages:
+  - (session_id, sequence_number)
+  - (session_id, timestamp)
+Run this script if you have an existing database that needs these indexes.
 """
 
 import sys
@@ -18,22 +20,15 @@ from src.utils.logger import get_logger
 logger = get_logger(__name__)
 
 
-def column_exists(engine, table_name: str, column_name: str) -> bool:
-    """Check if a column exists in a table."""
-    inspector = inspect(engine)
-    columns = [col['name'] for col in inspector.get_columns(table_name)]
-    return column_name in columns
-
-
 def index_exists(engine, index_name: str) -> bool:
-    """Check if an index exists."""
+    """Check if an index exists on chat_messages."""
     inspector = inspect(engine)
     indexes = [idx['name'] for idx in inspector.get_indexes('chat_messages')]
     return index_name in indexes
 
 
 def migrate_database():
-    """Migrate existing database to add new features."""
+    """Ensure chat_messages has the required composite indexes."""
     try:
         logger.info("Checking database connection...")
         if not check_database_connection():
@@ -43,26 +38,12 @@ def migrate_database():
         engine = get_engine()
         
         with engine.connect() as conn:
-            # Start transaction
             trans = conn.begin()
             
             try:
-                # Check if deleted_at column exists
-                if not column_exists(engine, 'chat_messages', 'deleted_at'):
-                    logger.info("Adding deleted_at column to chat_messages table...")
-                    conn.execute(text("""
-                        ALTER TABLE chat_messages 
-                        ADD COLUMN deleted_at TIMESTAMP NULL
-                    """))
-                    logger.info("✓ Added deleted_at column")
-                else:
-                    logger.info("✓ deleted_at column already exists")
-                
-                # Create indexes if they don't exist
                 indexes_to_create = [
                     ('idx_session_sequence', 'CREATE INDEX idx_session_sequence ON chat_messages (session_id, sequence_number)'),
                     ('idx_session_timestamp', 'CREATE INDEX idx_session_timestamp ON chat_messages (session_id, timestamp)'),
-                    ('idx_session_deleted', 'CREATE INDEX idx_session_deleted ON chat_messages (session_id, deleted_at)'),
                 ]
                 
                 for index_name, create_sql in indexes_to_create:
@@ -73,7 +54,6 @@ def migrate_database():
                     else:
                         logger.info(f"✓ Index {index_name} already exists")
                 
-                # Commit transaction
                 trans.commit()
                 logger.info("Database migration completed successfully!")
                 

@@ -21,7 +21,7 @@ logger = get_logger(__name__)
 
 
 class ChatMessage(Base):
-    """Database model for chat messages with soft delete support."""
+    """Database model for chat messages."""
     __tablename__ = "chat_messages"
     
     message_id = Column(String, primary_key=True)
@@ -31,21 +31,14 @@ class ChatMessage(Base):
     timestamp = Column(DateTime, default=datetime.utcnow, nullable=False, index=True)
     message_metadata = Column(JSONB, default=dict)
     sequence_number = Column(Integer, nullable=False, index=True)
-    deleted_at = Column(DateTime, nullable=True, index=True)
     
     __table_args__ = (
         UniqueConstraint('session_id', 'sequence_number', name='uq_session_sequence'),
         Index('idx_session_sequence', 'session_id', 'sequence_number'),
         Index('idx_session_timestamp', 'session_id', 'timestamp'),
-        Index('idx_session_deleted', 'session_id', 'deleted_at'),
     )
     
     session = relationship("Session", back_populates="messages")
-    
-    @property
-    def is_deleted(self) -> bool:
-        """Check if message is soft-deleted."""
-        return self.deleted_at is not None
 
 
 class ChatHistoryManager:
@@ -201,19 +194,14 @@ class ChatHistoryManager:
         self,
         session_id: str,
         limit: Optional[int] = None,
-        offset: int = 0,
-        include_deleted: bool = False
+        offset: int = 0
     ) -> List[ChatMessage]:
-        """Get messages for a session, excluding soft-deleted messages by default."""
+        """Get messages for a session."""
         try:
             with get_db_session() as db:
                 query = db.query(ChatMessage).filter(
                     ChatMessage.session_id == session_id
                 )
-                
-                if not include_deleted:
-                    query = query.filter(ChatMessage.deleted_at.is_(None))
-                
                 query = query.order_by(ChatMessage.sequence_number.asc())
                 
                 if offset > 0:
@@ -233,11 +221,10 @@ class ChatHistoryManager:
     def get_recent_messages(
         self,
         session_id: str,
-        n: int = 10,
-        include_deleted: bool = False
+        n: int = 10
     ) -> List[ChatMessage]:
         """Get the most recent N messages for a session with caching."""
-        cache_key = f"{session_id}:{n}:{include_deleted}"
+        cache_key = f"{session_id}:{n}"
         with self._cache_lock:
             if cache_key in self._recent_messages_cache:
                 logger.debug(f"Cache hit for recent messages: {cache_key}")
@@ -248,9 +235,6 @@ class ChatHistoryManager:
                 query = db.query(ChatMessage).filter(
                     ChatMessage.session_id == session_id
                 )
-                
-                if not include_deleted:
-                    query = query.filter(ChatMessage.deleted_at.is_(None))
                 
                 messages = query.order_by(
                     ChatMessage.sequence_number.desc()
@@ -269,30 +253,19 @@ class ChatHistoryManager:
             logger.error(f"Failed to get recent messages for session {session_id}: {e}", exc_info=True)
             return []
     
-    def clear_history(self, session_id: str, soft_delete: bool = True) -> bool:
+    def clear_history(self, session_id: str) -> bool:
         """
         Clear all messages for a session.
         
         Args:
             session_id: Session identifier
-            soft_delete: If True, soft-delete messages (preserve for audit). If False, hard-delete.
         """
         try:
             with get_db_session() as db:
-                if soft_delete:
-                    updated = db.query(ChatMessage).filter(
-                        ChatMessage.session_id == session_id,
-                        ChatMessage.deleted_at.is_(None)
-                    ).update(
-                        {ChatMessage.deleted_at: datetime.utcnow()},
-                        synchronize_session=False
-                    )
-                    logger.info(f"Soft-deleted {updated} messages for session {session_id}")
-                else:
-                    deleted = db.query(ChatMessage).filter(
-                        ChatMessage.session_id == session_id
-                    ).delete(synchronize_session=False)
-                    logger.info(f"Hard-deleted {deleted} messages for session {session_id}")
+                deleted = db.query(ChatMessage).filter(
+                    ChatMessage.session_id == session_id
+                ).delete(synchronize_session=False)
+                logger.info(f"Deleted {deleted} messages for session {session_id}")
                 
                 self._invalidate_cache(session_id)
                 return True
@@ -300,17 +273,13 @@ class ChatHistoryManager:
             logger.error(f"Failed to clear history for session {session_id}: {e}", exc_info=True)
             return False
     
-    def get_message_count(self, session_id: str, include_deleted: bool = False) -> int:
+    def get_message_count(self, session_id: str) -> int:
         """Get the number of messages in a session."""
         try:
             with get_db_session() as db:
                 query = db.query(ChatMessage).filter(
                     ChatMessage.session_id == session_id
                 )
-                
-                if not include_deleted:
-                    query = query.filter(ChatMessage.deleted_at.is_(None))
-                
                 return query.count()
         except Exception as e:
             logger.error(f"Failed to get message count for session {session_id}: {e}", exc_info=True)
@@ -324,8 +293,6 @@ class ChatHistoryManager:
     def _get_next_sequence_number_in_session(self, db, session_id: str) -> int:
         """
         Get the next sequence number for a session with row-level locking.
-        
-        Note: Does NOT filter by deleted_at because the unique constraint applies to all rows.
         Must be called within a transaction that holds an advisory lock.
         """
         try:
@@ -348,8 +315,7 @@ class ChatHistoryManager:
         """Remove old messages if exceeding threshold (90% of max_messages)."""
         try:
             count = db.query(ChatMessage).filter(
-                ChatMessage.session_id == session_id,
-                ChatMessage.deleted_at.is_(None)
+                ChatMessage.session_id == session_id
             ).count()
             
             if count > self._cleanup_threshold:
@@ -362,8 +328,7 @@ class ChatHistoryManager:
                 
                 if messages_to_delete > 0:
                     messages_to_keep = db.query(ChatMessage.sequence_number).filter(
-                        ChatMessage.session_id == session_id,
-                        ChatMessage.deleted_at.is_(None)
+                        ChatMessage.session_id == session_id
                     ).order_by(
                         ChatMessage.sequence_number.desc()
                     ).limit(target_count).all()
@@ -373,7 +338,6 @@ class ChatHistoryManager:
                         
                         deleted = db.query(ChatMessage).filter(
                             ChatMessage.session_id == session_id,
-                            ChatMessage.deleted_at.is_(None),
                             ChatMessage.sequence_number < min_seq_to_keep
                         ).delete(synchronize_session=False)
                         
