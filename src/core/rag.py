@@ -5,10 +5,11 @@ Main system that orchestrates all components
 """
 
 import os
+import re
 import time
 import hashlib
 import numpy as np
-from typing import List, Dict, Any, Optional
+from typing import List, Dict, Any, Optional, Tuple
 
 from ..preprocess.data_processor import DataProcessor
 from .embedder import Embedder
@@ -52,6 +53,14 @@ def get_chunk_content(chunk) -> str:
         return " | ".join(content_parts)
     else:
         return ""
+
+def _bm25_tokenize(text: str) -> List[str]:
+    """Tokenize text for BM25: keep 8-digit course codes as single tokens, split rest."""
+    if not text or not text.strip():
+        return []
+
+    tokens = re.findall(r"\d{8}|[a-zA-Z0-9\u0E00-\u0E7F]+", text)
+    return [t.lower() for t in tokens if t]
 
 class RAGSystem:
     """Main RAG system for multilingual course search and generation"""
@@ -115,6 +124,8 @@ class RAGSystem:
         
         self.chunks = None
         self.embeddings = None
+        self._bm25_index = None  # BM25Okapi instance for hybrid search
+        self._bm25_corpus_tokenized = None  # tokenized docs for BM25
         self.conversation_context = ""
         self.last_query = ""
         self.last_results = []
@@ -145,6 +156,70 @@ class RAGSystem:
         except Exception as e:
             logger.error(f"Error during data loading: {e}")
             logger.warning("System will continue without auto-loaded data")
+    
+    def _build_bm25_index(self) -> None:
+        """Build BM25 index from current chunks for hybrid search."""
+        if not self.chunks:
+            self._bm25_index = None
+            self._bm25_corpus_tokenized = None
+            return
+        try:
+            from rank_bm25 import BM25Okapi
+            corpus = [get_chunk_content(chunk) for chunk in self.chunks]
+            self._bm25_corpus_tokenized = [_bm25_tokenize(doc) for doc in corpus]
+            self._bm25_index = BM25Okapi(self._bm25_corpus_tokenized)
+            logger.info(f"Built BM25 index for {len(self.chunks)} chunks (hybrid search)")
+        except Exception as e:
+            logger.warning(f"Failed to build BM25 index: {e}. Hybrid search disabled.")
+            self._bm25_index = None
+            self._bm25_corpus_tokenized = None
+    
+    def _chunk_passes_filter(self, chunk_index: int, filter_metadata: Optional[Dict[str, Any]]) -> bool:
+        """Check if chunk at index passes the given metadata filter (same logic as Qdrant)."""
+        if not filter_metadata or chunk_index < 0 or not self.chunks or chunk_index >= len(self.chunks):
+            return not filter_metadata
+        meta = self.chunks[chunk_index].metadata
+        if "$and" in filter_metadata:
+            for condition in filter_metadata["$and"]:
+                for key, value in condition.items():
+                    if meta.get(key) != value:
+                        return False
+            return True
+        for key, value in filter_metadata.items():
+            if meta.get(key) != value:
+                return False
+        return True
+    
+    def _hybrid_merge_rrf(
+        self,
+        vector_indices: List[int],
+        vector_similarities: np.ndarray,
+        bm25_indices: List[int],
+        filter_metadata: Optional[Dict[str, Any]],
+        top_k: int,
+        rrf_k: int = 60,
+    ) -> Tuple[List[int], Dict[int, float]]:
+        """Merge vector and BM25 results using Reciprocal Rank Fusion. Returns (ordered_indices, index_to_similarity)."""
+        rank_v = {idx: (r + 1) for r, idx in enumerate(vector_indices)}
+        rank_b = {idx: (r + 1) for r, idx in enumerate(bm25_indices)}
+        combined_indices = set(vector_indices) | set(bm25_indices)
+        sim_map = {}
+        for r, idx in enumerate(vector_indices):
+            if r < (vector_similarities.size if hasattr(vector_similarities, 'size') else len(vector_similarities)):
+                sim_map[idx] = float(vector_similarities[r])
+        rrf_scores = []
+        for idx in combined_indices:
+            if not self._chunk_passes_filter(idx, filter_metadata):
+                continue
+            rv = rank_v.get(idx)
+            rb = rank_b.get(idx)
+            rrf = (1.0 / (rrf_k + rv) if rv else 0.0) + (1.0 / (rrf_k + rb) if rb else 0.0)
+            rrf_scores.append((idx, rrf, sim_map.get(idx, rrf)))
+        rrf_scores.sort(key=lambda x: x[1], reverse=True)
+        ordered = [x[0] for x in rrf_scores[:top_k]]
+        # Preserve original vector similarity when available for downstream
+        index_to_similarity = {x[0]: x[2] for x in rrf_scores[:top_k]}
+        return ordered, index_to_similarity
         
     @monitor_operation("data_loading")
     @handle_errors(ErrorType.DATA_PROCESSING, fallback_value=False)
@@ -275,6 +350,8 @@ class RAGSystem:
             if not data_changed:
                 if self.vector_store.get_count() > 0:
                     logger.debug("Vector store already contains embeddings and data unchanged, skipping rebuild")
+                    if config.search.use_hybrid_search:
+                        self._build_bm25_index()
                     return True
                 
                 if os.path.exists(embeddings_cache_file) and os.path.getsize(embeddings_cache_file) > 0:
@@ -323,6 +400,9 @@ class RAGSystem:
                 logger.info(f"Vector index built: {len(self.embeddings)} embeddings indexed")
             else:
                 logger.debug("Vector store already contains embeddings, skipping addition")
+            # Build BM25 index for hybrid search when chunks are ready
+            if config.search.use_hybrid_search:
+                self._build_bm25_index()
             return True
             
         except Exception as e:
@@ -515,13 +595,40 @@ class RAGSystem:
                 
                 similarities, indices = self.vector_store.search(query_embedding, top_k=top_k, filter_metadata=filter_metadata if filter_metadata else None)
                 
+                # Hybrid search: merge vector + BM25 with Reciprocal Rank Fusion
+                result_indices = list(indices)
+                result_similarities = similarities.tolist() if hasattr(similarities, 'tolist') else list(similarities)
+                if config.search.use_hybrid_search and self.chunks and current_query:
+                    if self._bm25_index is None:
+                        self._build_bm25_index()
+                    if self._bm25_index:
+                        try:
+                            query_tokens = _bm25_tokenize(current_query)
+                            if query_tokens:
+                                bm25_scores = self._bm25_index.get_scores(query_tokens)
+                                bm25_top_n = min(top_k * 2, len(self.chunks), 50)
+                                bm25_ranked = np.argsort(bm25_scores)[::-1][:bm25_top_n]
+                                bm25_indices = [int(i) for i in bm25_ranked if bm25_scores[i] > 0]
+                                ordered_indices, index_to_similarity = self._hybrid_merge_rrf(
+                                    list(indices),
+                                    similarities,
+                                    bm25_indices,
+                                    filter_metadata if filter_metadata else None,
+                                    top_k,
+                                )
+                                result_indices = ordered_indices
+                                result_similarities = [index_to_similarity.get(i, 0.0) for i in ordered_indices]
+                                logger.debug(f"Hybrid search merged vector + BM25: {len(ordered_indices)} results")
+                        except Exception as e:
+                            logger.warning(f"Hybrid merge failed, using vector-only results: {e}")
+                
                 embedding_search_duration = time.time() - embedding_search_start
                 csv_logger.log_embedding_search(
                     query=query,
                     duration=embedding_search_duration,
                     success=True,
                     top_k=top_k,
-                    results_count=len(similarities) if similarities.size > 0 else 0,
+                    results_count=len(result_indices),
                     language_filter=detected_language,
                     embedding_model=getattr(self.embedder, 'model_name', 'google/embeddinggemma-300m'),
                     vector_store_type=self.vector_store.__class__.__name__
@@ -543,12 +650,12 @@ class RAGSystem:
                 logger.error(f"Embedding search failed: {e}")
                 return []
             
-            if not similarities.size:
+            if not result_indices:
                 logger.warning("No results found in vector store")
                 return []
             
             results = []
-            for i, (similarity, idx) in enumerate(zip(similarities, indices)):
+            for idx, similarity in zip(result_indices, result_similarities):
                 if idx < len(self.chunks):
                     chunk = self.chunks[idx]
                     result = {

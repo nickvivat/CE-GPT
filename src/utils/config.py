@@ -48,6 +48,7 @@ class SearchConfig:
     top_k_rerank: int = 20
     similarity_threshold: float = 0.1
     rerank_threshold: float = 0.5
+    use_hybrid_search: bool = True  # BM25 + vector (reciprocal rank fusion)
     
     def __post_init__(self):
         """Validate search configurations."""
@@ -63,11 +64,13 @@ class SearchConfig:
     @classmethod
     def from_env(cls) -> 'SearchConfig':
         """Create configuration from environment variables."""
+        use_hybrid = os.getenv("USE_HYBRID_SEARCH", "true").lower() in ("true", "1", "yes")
         return cls(
             top_k=int(os.getenv("TOP_K", "50")),
             top_k_rerank=int(os.getenv("TOP_K_RERANK", "20")),
             similarity_threshold=float(os.getenv("SIMILARITY_THRESHOLD", "0.1")),
-            rerank_threshold=float(os.getenv("RERANK_THRESHOLD", "0.5"))
+            rerank_threshold=float(os.getenv("RERANK_THRESHOLD", "0.5")),
+            use_hybrid_search=use_hybrid,
         )
 
 
