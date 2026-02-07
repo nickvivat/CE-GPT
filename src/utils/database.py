@@ -84,7 +84,7 @@ def init_database():
         engine = get_engine()
         # Import models to register them with Base
         from ..core.session_manager import Session as SessionModel
-        from ..core.chat_history import ChatMessage
+        from ..core.chat_history import ChatMessage, SessionCompressionSummary
         from ..core.account import Account
         
         Base.metadata.create_all(bind=engine)

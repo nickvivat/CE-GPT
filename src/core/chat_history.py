@@ -19,6 +19,11 @@ from ..utils.logger import get_logger
 
 logger = get_logger(__name__)
 
+# Import deferred to avoid circular import (history_compressor does not depend on chat_history)
+def _compress_messages(messages, recent_count, summary_max_tokens, llm_client):
+    from .history_compressor import compress
+    return compress(messages, recent_count, summary_max_tokens, llm_client)
+
 
 class ChatMessage(Base):
     """Database model for chat messages."""
@@ -41,6 +46,20 @@ class ChatMessage(Base):
     session = relationship("Session", back_populates="messages")
 
 
+class SessionCompressionSummary(Base):
+    """Stored compressed summary for a session (hybrid cache: DB persistence).
+    Key is (session_id, message_count, messages_length) so we don't reuse a summary
+    computed from a different message set (e.g. filtered vs unfiltered list).
+    """
+    __tablename__ = "session_compression_summaries"
+
+    session_id = Column(String, ForeignKey("sessions.session_id", ondelete="CASCADE"), primary_key=True)
+    message_count = Column(Integer, primary_key=True)
+    messages_length = Column(Integer, primary_key=True)  # len(messages) actually compressed; distinguishes filtered vs unfiltered
+    summary_text = Column(Text, nullable=False)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
+
+
 class ChatHistoryManager:
     """Manages chat message history with optimized performance and concurrency handling."""
     
@@ -48,6 +67,7 @@ class ChatHistoryManager:
         """Initialize the chat history manager."""
         self.max_messages = config.session.max_messages_per_session
         self._recent_messages_cache: TTLCache = TTLCache(maxsize=1000, ttl=300)
+        self._compression_summary_cache: TTLCache = TTLCache(maxsize=500, ttl=600)
         self._cache_lock = threading.Lock()
         self._cleanup_threshold = int(self.max_messages * 0.9)
         self._cleanup_target = int(self.max_messages * 0.8)
@@ -253,6 +273,124 @@ class ChatHistoryManager:
             logger.error(f"Failed to get recent messages for session {session_id}: {e}", exc_info=True)
             return []
     
+    def get_messages_for_compression(
+        self,
+        session_id: str,
+        max_messages: int
+    ) -> List[ChatMessage]:
+        """Get the last max_messages for a session in chronological order (for history compression)."""
+        return self.get_recent_messages(session_id, n=max_messages)
+    
+    def _compression_cache_key(
+        self, session_id: str, message_count: int, messages_length: int
+    ) -> str:
+        """Cache key for compression summary; includes messages_length so filtered vs unfiltered lists don't share entries."""
+        return f"compression:{session_id}:{message_count}:{messages_length}"
+    
+    def get_compressed_summary_cached(
+        self, session_id: str, message_count: int, messages_length: int
+    ) -> Optional[str]:
+        """Return cached or DB-stored summary for (session_id, message_count, messages_length), or None."""
+        cache_key = self._compression_cache_key(session_id, message_count, messages_length)
+        with self._cache_lock:
+            if cache_key in self._compression_summary_cache:
+                return self._compression_summary_cache[cache_key]
+        try:
+            with get_db_session() as db:
+                row = db.query(SessionCompressionSummary).filter(
+                    SessionCompressionSummary.session_id == session_id,
+                    SessionCompressionSummary.message_count == message_count,
+                    SessionCompressionSummary.messages_length == messages_length,
+                ).first()
+                if row:
+                    summary = row.summary_text
+                    with self._cache_lock:
+                        self._compression_summary_cache[cache_key] = summary
+                    return summary
+                # Backward compat: old rows may have messages_length=0; use when messages_length == message_count
+                if messages_length == message_count:
+                    row_legacy = db.query(SessionCompressionSummary).filter(
+                        SessionCompressionSummary.session_id == session_id,
+                        SessionCompressionSummary.message_count == message_count,
+                        SessionCompressionSummary.messages_length == 0,
+                    ).first()
+                    if row_legacy:
+                        summary = row_legacy.summary_text
+                        with self._cache_lock:
+                            self._compression_summary_cache[cache_key] = summary
+                        return summary
+        except Exception as e:
+            logger.debug("Failed to load compression summary from DB: %s", e)
+        return None
+    
+    def store_compressed_summary(
+        self,
+        session_id: str,
+        message_count: int,
+        messages_length: int,
+        summary: str,
+    ) -> None:
+        """Persist summary to DB and in-memory cache (hybrid storage)."""
+        cache_key = self._compression_cache_key(session_id, message_count, messages_length)
+        try:
+            with get_db_session() as db:
+                row = db.query(SessionCompressionSummary).filter(
+                    SessionCompressionSummary.session_id == session_id,
+                    SessionCompressionSummary.message_count == message_count,
+                    SessionCompressionSummary.messages_length == messages_length,
+                ).first()
+                if row:
+                    row.summary_text = summary
+                else:
+                    db.add(SessionCompressionSummary(
+                        session_id=session_id,
+                        message_count=message_count,
+                        messages_length=messages_length,
+                        summary_text=summary,
+                    ))
+            with self._cache_lock:
+                self._compression_summary_cache[cache_key] = summary
+        except Exception as e:
+            logger.warning("Failed to store compression summary: %s", e)
+    
+    def get_or_compute_compressed_history(
+        self,
+        session_id: str,
+        messages: List[ChatMessage],
+        recent_count: int,
+        summary_max_tokens: int,
+        llm_client: Any,
+        message_count_for_cache: Optional[int] = None,
+    ):
+        """Return compressed history from cache/DB or compute and store (hybrid).
+
+        Cache key is (session_id, message_count_for_cache, len(messages)) so we never
+        reuse a summary computed from a different message set (e.g. filtered vs
+        unfiltered list). message_count_for_cache is the DB count; len(messages) is
+        the actual list length being compressed.
+        """
+        from .history_compressor import CompressedHistory
+        messages_length = len(messages)
+        cache_key_count = message_count_for_cache if message_count_for_cache is not None else messages_length
+        if messages_length <= recent_count:
+            return _compress_messages(
+                messages, recent_count, summary_max_tokens, llm_client
+            )
+        cached_summary = self.get_compressed_summary_cached(
+            session_id, cache_key_count, messages_length
+        )
+        if cached_summary is not None:
+            recent = messages[-recent_count:]
+            return CompressedHistory(summary=cached_summary, recent_messages=recent)
+        result = _compress_messages(
+            messages, recent_count, summary_max_tokens, llm_client
+        )
+        if result.summary:
+            self.store_compressed_summary(
+                session_id, cache_key_count, messages_length, result.summary
+            )
+        return result
+    
     def clear_history(self, session_id: str) -> bool:
         """
         Clear all messages for a session.
@@ -265,9 +403,13 @@ class ChatHistoryManager:
                 deleted = db.query(ChatMessage).filter(
                     ChatMessage.session_id == session_id
                 ).delete(synchronize_session=False)
-                logger.info(f"Deleted {deleted} messages for session {session_id}")
+                deleted_summaries = db.query(SessionCompressionSummary).filter(
+                    SessionCompressionSummary.session_id == session_id
+                ).delete(synchronize_session=False)
+                logger.info(f"Deleted {deleted} messages and {deleted_summaries} compression summaries for session {session_id}")
                 
                 self._invalidate_cache(session_id)
+                self._invalidate_compression_cache(session_id)
                 return True
         except Exception as e:
             logger.error(f"Failed to clear history for session {session_id}: {e}", exc_info=True)
@@ -358,9 +500,22 @@ class ChatHistoryManager:
             ]
             for key in keys_to_remove:
                 self._recent_messages_cache.pop(key, None)
+        self._invalidate_compression_cache(session_id)
+    
+    def _invalidate_compression_cache(self, session_id: str):
+        """Invalidate in-memory compression summaries for a session."""
+        with self._cache_lock:
+            prefix = f"compression:{session_id}:"
+            keys_to_remove = [
+                key for key in self._compression_summary_cache.keys()
+                if isinstance(key, str) and key.startswith(prefix)
+            ]
+            for key in keys_to_remove:
+                self._compression_summary_cache.pop(key, None)
     
     def clear_cache(self):
-        """Clear all cached messages."""
+        """Clear all cached messages and compression summaries."""
         with self._cache_lock:
             self._recent_messages_cache.clear()
-            logger.debug("Cleared chat history cache")
+            self._compression_summary_cache.clear()
+            logger.debug("Cleared chat history and compression caches")

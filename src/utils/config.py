@@ -237,6 +237,11 @@ class SessionConfig:
     cleanup_interval_minutes: int = 60
     max_messages_per_session: int = 1000
     context_window_tokens: int = 4000
+    chat_history_compression_enabled: bool = True
+    compression_recent_messages_full: int = 6
+    compression_summary_max_tokens: int = 300
+    compression_trigger_after_messages: int = 10
+    compression_max_messages_to_consider: int = 100
     
     def __post_init__(self):
         """Validate session configurations."""
@@ -248,6 +253,14 @@ class SessionConfig:
             raise ValueError("max_messages_per_session must be positive")
         if self.context_window_tokens <= 0:
             raise ValueError("context_window_tokens must be positive")
+        if self.compression_recent_messages_full <= 0:
+            raise ValueError("compression_recent_messages_full must be positive")
+        if self.compression_summary_max_tokens <= 0:
+            raise ValueError("compression_summary_max_tokens must be positive")
+        if self.compression_trigger_after_messages <= 0:
+            raise ValueError("compression_trigger_after_messages must be positive")
+        if self.compression_max_messages_to_consider <= 0:
+            raise ValueError("compression_max_messages_to_consider must be positive")
     
     @classmethod
     def from_env(cls) -> 'SessionConfig':
@@ -257,7 +270,12 @@ class SessionConfig:
             auto_create=os.getenv("SESSION_AUTO_CREATE", "true").lower() == "true",
             cleanup_interval_minutes=int(os.getenv("SESSION_CLEANUP_INTERVAL_MINUTES", "60")),
             max_messages_per_session=int(os.getenv("SESSION_MAX_MESSAGES", "1000")),
-            context_window_tokens=int(os.getenv("CONTEXT_WINDOW_TOKENS", "4000"))
+            context_window_tokens=int(os.getenv("CONTEXT_WINDOW_TOKENS", "4000")),
+            chat_history_compression_enabled=os.getenv("CHAT_HISTORY_COMPRESSION_ENABLED", "true").lower() in ("true", "1", "yes"),
+            compression_recent_messages_full=int(os.getenv("COMPRESSION_RECENT_MESSAGES_FULL", "6")),
+            compression_summary_max_tokens=int(os.getenv("COMPRESSION_SUMMARY_MAX_TOKENS", "300")),
+            compression_trigger_after_messages=int(os.getenv("COMPRESSION_TRIGGER_AFTER_MESSAGES", "10")),
+            compression_max_messages_to_consider=int(os.getenv("COMPRESSION_MAX_MESSAGES_TO_CONSIDER", "100")),
         )
 
 

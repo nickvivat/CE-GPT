@@ -127,21 +127,59 @@ class ResponseGenerator:
     def _format_history(self, session_id: str, max_messages: int = 10, current_query: str = None) -> str:
         """
         Format chat history with smart selection optimized for large context windows (128k tokens).
+        When compression is enabled and message count exceeds trigger, older messages are summarized
+        and only the last N messages are kept in full.
         
         Strategy:
-        1. Always include: Last 2-3 assistant responses (recent context)
-        2. Always include: Last 2-3 user queries (conversation flow)
-        3. Extract and prioritize: Course codes from entire conversation
-        4. Include: Messages containing course codes (even if older)
-        5. Limit: Up to 8-10 messages total, but prioritize quality over quantity
-        
-        With 128k context window, we can include more history while still being efficient.
+        1. If compression enabled and count > trigger: summarize old, keep recent full
+        2. Otherwise: Last 2-3 assistant/user responses, messages with course codes, up to 10 messages
         """
         if not session_id or not self.chat_history_manager:
             return "No previous conversation."
         
         try:
-            # Get more messages since we have large context window
+            # Compression path: when enabled and history exceeds trigger, summarize old and keep recent full
+            sess = config.session
+            if sess.chat_history_compression_enabled:
+                count = self.chat_history_manager.get_message_count(session_id)
+                if count > sess.compression_trigger_after_messages:
+                    n_consider = min(count, sess.compression_max_messages_to_consider)
+                    messages = self.chat_history_manager.get_messages_for_compression(session_id, n_consider)
+                    if messages:
+                        # Remove current query if it's the last message
+                        if current_query and messages[-1].role == "user" and messages[-1].content.strip() == current_query.strip():
+                            messages = messages[:-1]
+                        if messages:
+                            compressed = self.chat_history_manager.get_or_compute_compressed_history(
+                                session_id,
+                                messages,
+                                sess.compression_recent_messages_full,
+                                sess.compression_summary_max_tokens,
+                                self.llm_client,
+                                message_count_for_cache=count,
+                            )
+                            history_parts = []
+                            if compressed.summary:
+                                history_parts.append(f"**Summary of earlier conversation:** {compressed.summary}")
+                                history_parts.append("")
+                            all_course_codes = set()
+                            for msg in compressed.recent_messages:
+                                all_course_codes.update(self._extract_course_codes_from_text(msg.content))
+                            if compressed.summary:
+                                all_course_codes.update(self._extract_course_codes_from_text(compressed.summary))
+                            if all_course_codes:
+                                history_parts.append(f"**Previously discussed courses:** {', '.join(sorted(all_course_codes))}")
+                                history_parts.append("")
+                            for i, msg in enumerate(compressed.recent_messages, 1):
+                                role_label = "User" if msg.role == "user" else "Assistant"
+                                history_parts.append(f"{i}. **{role_label}:** {msg.content}")
+                            if history_parts:
+                                formatted = "\n".join(history_parts)
+                                formatted += "\n\n**Note:** Use the conversation history above to understand context, especially when the user refers to 'those courses', 'the courses you mentioned', or asks follow-up questions. Pay attention to course codes mentioned in the history."
+                                return formatted
+                            return "No previous conversation."
+            
+            # Default path: smart selection (no compression or below trigger)
             all_recent_messages = self.chat_history_manager.get_recent_messages(session_id, n=max_messages * 2)
             if not all_recent_messages:
                 return "No previous conversation."
