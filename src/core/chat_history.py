@@ -353,6 +353,15 @@ class ChatHistoryManager:
         except Exception as e:
             logger.warning("Failed to store compression summary: %s", e)
     
+    def _compression_point(self, message_count: int, trigger: int, interval: int) -> int:
+        """Return the message count at which we (re)use a summary when compression_interval is set."""
+        if interval <= 0:
+            return message_count
+        first = trigger + 1
+        if message_count < first:
+            return message_count
+        return first + interval * ((message_count - first) // interval)
+
     def get_or_compute_compressed_history(
         self,
         session_id: str,
@@ -364,10 +373,8 @@ class ChatHistoryManager:
     ):
         """Return compressed history from cache/DB or compute and store (hybrid).
 
-        Cache key is (session_id, message_count_for_cache, len(messages)) so we never
-        reuse a summary computed from a different message set (e.g. filtered vs
-        unfiltered list). message_count_for_cache is the DB count; len(messages) is
-        the actual list length being compressed.
+        When compression_interval > 0, we only compute at trigger+1, trigger+1+interval, etc.,
+        and reuse that summary for the next (interval - 1) message counts (fewer LLM calls).
         """
         from .history_compressor import CompressedHistory
         messages_length = len(messages)
@@ -376,6 +383,35 @@ class ChatHistoryManager:
             return _compress_messages(
                 messages, recent_count, summary_max_tokens, llm_client
             )
+        trigger = config.session.compression_trigger_after_messages
+        interval = config.session.compression_interval
+        use_point = self._compression_point(cache_key_count, trigger, interval)
+        # Only reuse when the list matches the session size (full or full minus one), so indices
+        # align with the stored summary. Reject filtered/differently-sized lists to avoid wrong context.
+        list_is_full_or_minus_one = messages_length >= cache_key_count - 1 and messages_length <= cache_key_count
+        if interval > 0 and use_point < cache_key_count and messages_length >= use_point and list_is_full_or_minus_one:
+            cached_summary = None
+            stored_ml: Optional[int] = None
+            for ml in range(cache_key_count, 0, -1):
+                cached_summary = self.get_compressed_summary_cached(
+                    session_id, use_point, ml
+                )
+                if cached_summary is not None:
+                    stored_ml = ml
+                    break
+            if cached_summary is not None and stored_ml is not None:
+                # Use the list length from the stored run so the boundary matches what the summary covers.
+                split_at = stored_ml - recent_count
+                if split_at >= messages_length or split_at < 0:
+                    recent = messages[-recent_count:]
+                else:
+                    recent = messages[split_at:]
+                # Ensure at least recent_count when the list is long enough (avoids fewer than configured).
+                if len(recent) < recent_count and messages_length >= recent_count:
+                    recent = messages[-recent_count:]
+                elif len(recent) > recent_count:
+                    recent = recent[-recent_count:]
+                return CompressedHistory(summary=cached_summary, recent_messages=recent)
         cached_summary = self.get_compressed_summary_cached(
             session_id, cache_key_count, messages_length
         )

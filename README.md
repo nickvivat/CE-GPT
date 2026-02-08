@@ -1,45 +1,48 @@
 # Computer Engineering RAG System
 
-A **Multilingual Retrieval-Augmented Generation (RAG)** system designed specifically for Computer Engineering courses at KMITL. This system provides intelligent course search, query enhancement, and contextual responses in both Thai and English.
+A **multilingual Retrieval-Augmented Generation (RAG)** system for Computer Engineering courses at King Mongkut's Institute of Technology Ladkrabang (KMITL). It provides course and professor search, query enhancement, and contextual answers using retrieved data, in Thai and English.
 
 ## Features
 
 ### Core Capabilities
-- **Multilingual Processing**: Native support for Thai and English language processing
-- **Semantic Retrieval**: Advanced vector-based retrieval with intelligent reranking using Qdrant vector database
-- **LLM Integration**: Ollama-based query enhancement and response generation
-- **Conversation Context**: Maintains chat history for improved query understanding
-- **Performance Monitoring**: Real-time system metrics and comprehensive logging
-- **Data Support**: Handles both course and professor information
+- **Multilingual**: Thai and English for queries and responses
+- **Semantic retrieval**: Vector search with Qdrant and optional reranking
+- **LLM integration**: Ollama for query enhancement and response generation
+- **Session-based chat**: Per-user sessions with chat history stored in a database; responses use history when a session is provided
+- **Chat history compression**: Optional summarization of older messages with a configurable interval to keep context within token limits
+- **Data**: Course and professor information from project data files
 
-### Technical Features
-- **RESTful API**: FastAPI-based API with automatic OpenAPI documentation
-- **Error Handling**: Robust error handling with circuit breaker patterns
-- **Caching**: Intelligent caching for embeddings and chunks
-- **Streaming**: Real-time streaming responses using Server-Sent Events
-- **Docker Support**: Containerized deployment with Docker and docker-compose
-- **Scalability**: Designed for production deployment with monitoring
+### Technical
+- **REST API**: FastAPI with OpenAPI docs at `/docs` and `/redoc`
+- **Caching**: Embedding and chunk caching
+- **Streaming**: Server-Sent Events for streaming responses
+- **Docker**: Dockerfile and docker-compose for deployment
+- **Monitoring**: Health, status, and performance endpoints; structured logging
 
 ## Architecture
 
 ```
 CE-GPT/
 ├── src/                    # Core RAG system
-│   ├── core/              # Main RAG components
+│   ├── core/              # RAG and session components
 │   │   ├── rag.py         # System orchestration
 │   │   ├── embedder.py    # Text embedding generation
 │   │   ├── reranker.py    # Result reranking
 │   │   ├── query.py       # Query enhancement
 │   │   ├── generator.py   # Response generation
 │   │   ├── llm_client.py  # LLM client interface
-│   │   └── vector_store.py # Qdrant vector database management
+│   │   ├── vector_store.py # Qdrant vector store
+│   │   ├── session_manager.py   # Session lifecycle
+│   │   ├── chat_history.py     # Per-session chat history
+│   │   └── history_compressor.py # Chat history summarization
 │   ├── preprocess/        # Data processing
 │   │   ├── data_processor.py
 │   │   ├── course_processor.py
 │   │   └── professor_processor.py
 │   └── utils/             # Utilities
-│       ├── config.py      # Configuration management
-│       ├── logger.py      # Logging system
+│       ├── config.py      # Configuration
+│       ├── logger.py      # Logging
+│       ├── database.py    # DB connection and schema
 │       ├── error_handler.py
 │       ├── performance_monitor.py
 │       └── performance_logger.py
@@ -47,14 +50,13 @@ CE-GPT/
 │   ├── app.py            # FastAPI application
 │   ├── router.py         # API endpoints
 │   └── models.py         # Pydantic models
-├── data/                 # Data storage
-│   ├── raw/              # Raw course and professor data
-│   └── processed/        # Processed data
-├── cache/                # Caching directory
-│   ├── embeddings/       # Cached embeddings
-│   └── chunks/           # Cached chunks
-├── logs/                 # Performance logs
-├── prompt/               # Prompt templates
+├── data/                  # Data storage
+│   ├── raw/               # Raw course and professor data
+│   └── processed/         # Processed data
+├── cache/                 # Caching (embeddings, chunks)
+├── logs/                  # Performance logs
+├── prompt/                # Prompt templates
+├── init_database.py       # DB initialization
 └── docker-compose.yml    # Docker Compose configuration
 ```
 
@@ -62,10 +64,10 @@ CE-GPT/
 
 ### Prerequisites
 - Python 3.11 or higher
-- Ollama with Gemma3 model
-- Qdrant vector database
-- 8GB+ RAM recommended
-- 2GB+ disk space for models
+- Ollama (e.g. Gemma model) for query enhancement and generation
+- Qdrant (local or cloud) for vector search
+- A database (SQLite or PostgreSQL); connection string via `DATABASE_URL` for sessions and chat history
+- 8GB+ RAM and sufficient disk space for models
 
 ### Quick Setup
 
@@ -93,21 +95,7 @@ CE-GPT/
 
 4. **Configure environment variables**
    
-   Create a `.env` file or set environment variables:
-   ```bash
-   # Qdrant Configuration
-   QDRANT_URL=http://localhost:6333
-   QDRANT_COLLECTION_NAME=CE-GPT
-   QDRANT_API_KEY=  # Optional, for Qdrant Cloud
-   
-   # Ollama Configuration
-   OLLAMA_URL=http://localhost:11434
-   OLLAMA_MODEL=gemma3:4b-it-qat
-   
-   # Model Configuration
-   EMBEDDING_MODEL=google/embeddinggemma-300m
-   RERANKER_MODEL=BAAI/bge-reranker-v2-m3
-   ```
+   Copy `.env.example` to `.env`, then set values for your environment (especially `DATABASE_URL`, `QDRANT_*`, and `OLLAMA_*`).
 
 5. **Start Ollama service and download model**
    
@@ -127,6 +115,7 @@ CE-GPT/
    ```bash
    uvicorn server.app:app --host 0.0.0.0 --port 8000 --reload
    ```
+   The server creates database tables on first run. To create or verify them manually: `python init_database.py`.
 
 ### Docker Setup
 
@@ -151,8 +140,10 @@ http://localhost:8000
 ```
 
 ### Interactive Documentation
-- **Swagger UI**: http://localhost:8000/docs
+- **Swagger UI**: http://localhost:8000/docs — request/response schemas, example payloads, and try-it-out
 - **ReDoc**: http://localhost:8000/redoc
+
+All generate endpoints require `user_id` in the request body; the API root is `GET /api/v1/`.
 
 ### Core Endpoints
 
@@ -170,12 +161,16 @@ GET /api/v1/status
 Detailed system status including performance metrics, chunk counts, and component status.
 
 #### Response Generation
+`POST /api/v1/generate` — Requires `user_id`. Optionally pass `session_id` to use and update chat history for that session. When sessions are enabled, a session is auto-created per user if none is provided.
+
 ```http
 POST /api/v1/generate
 Content-Type: application/json
 
 {
   "query": "What are the prerequisites for calculus?",
+  "user_id": "user-123",
+  "session_id": "optional-session-uuid",
   "language": "en",
   "top_k": 5,
   "use_reranking": true,
@@ -185,17 +180,29 @@ Content-Type: application/json
 ```
 
 #### Streaming Response
+`POST /api/v1/generate/stream` — Same request shape; returns Server-Sent Events (SSE) with response chunks.
+
 ```http
 POST /api/v1/generate/stream
 Content-Type: application/json
 
 {
   "query": "Explain machine learning concepts",
+  "user_id": "user-123",
   "language": "en",
   "use_reranking": true
 }
 ```
-Returns Server-Sent Events (SSE) stream with real-time response chunks.
+
+#### Sessions and Chat History
+```http
+POST   /api/v1/sessions              # Create session (user_id, optional metadata)
+GET    /api/v1/sessions/{session_id}  # Get session
+PUT    /api/v1/sessions/{session_id}  # Update session / extend TTL
+DELETE /api/v1/sessions/{session_id}  # Delete session
+GET    /api/v1/sessions/{session_id}/history   # Get chat history (limit, offset)
+DELETE /api/v1/sessions/{session_id}/history   # Clear chat history for session
+```
 
 #### Performance Metrics
 ```http
@@ -209,165 +216,20 @@ POST /api/v1/performance/export
 ```
 Export performance data to JSON file.
 
-#### Cache Management
+#### Cache and Context
 ```http
-POST /api/v1/cache/clear
-POST /api/v1/conversation/clear
-```
-Clear system cache and conversation context.
-
-## Usage Examples
-
-### Python Client
-```python
-import requests
-
-# Generate AI response
-response = requests.post("http://localhost:8000/api/v1/generate", json={
-    "query": "What are the career prospects in computer engineering?",
-    "language": "en",
-    "top_k": 5,
-    "use_reranking": True,
-    "include_sources": True
-})
-
-result = response.json()
-print(result['response'])
-print(f"Sources: {result['total_sources']}")
-```
-
-### Streaming Response
-```python
-import requests
-import json
-
-response = requests.post(
-    "http://localhost:8000/api/v1/generate/stream",
-    json={"query": "Explain algorithms", "language": "en"},
-    stream=True
-)
-
-for line in response.iter_lines():
-    if line:
-        data = line.decode('utf-8')
-        if data.startswith('data: '):
-            event = json.loads(data[6:])
-            if event.get('type') == 'chunk':
-                print(event.get('content', ''), end='', flush=True)
-```
-
-### cURL Examples
-```bash
-# Health check
-curl http://localhost:8000/health
-
-# System status
-curl http://localhost:8000/api/v1/status
-
-# Generate response
-curl -X POST "http://localhost:8000/api/v1/generate" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "query": "Explain algorithms",
-    "language": "en",
-    "top_k": 5,
-    "use_reranking": true
-  }'
-```
+POST /api/v1/cache/clear         # Clear embedding/chunk cache
+POST /api/v1/conversation/clear   # Clear in-memory conversation context
 
 ## Configuration
 
-### Environment Variables
-
-```bash
-# API Configuration
-API_HOST=0.0.0.0
-API_PORT=8000
-API_RELOAD=false
-API_WORKERS=1
-DEBUG=false
-LOG_LEVEL=INFO
-
-# Qdrant Configuration
-QDRANT_URL=http://localhost:6333
-QDRANT_COLLECTION_NAME=CE-GPT
-QDRANT_API_KEY=  # Optional, for Qdrant Cloud
-
-# Model Configuration
-OLLAMA_URL=http://localhost:11434
-OLLAMA_MODEL=gemma3:4b-it-qat
-EMBEDDING_MODEL=google/embeddinggemma-300m
-RERANKER_MODEL=BAAI/bge-reranker-v2-m3
-
-# Processing Configuration
-BATCH_SIZE=32
-MAX_WORKERS=4
-TOP_K=50
-TOP_K_RERANK=20
-SIMILARITY_THRESHOLD=0.1
-RERANK_THRESHOLD=0.5
-
-# Cache Configuration
-CACHE_EMBEDDINGS_DIR=cache/embeddings
-CACHE_CHUNKS_DIR=cache/chunks
-CACHE_MAX_SIZE=1024
-CACHE_TTL=3600
-```
-
-### Configuration File
-The system uses `src/utils/config.py` for centralized configuration management with environment variable overrides. All configuration classes support loading from environment variables.
-
-## Development
-
-### Code Quality
-- **Formatting**: Black code formatter
-- **Linting**: Flake8 for code quality
-- **Type Hints**: Comprehensive type annotations
-- **Documentation**: Detailed docstrings and comments
-
-### Development Commands
-```bash
-# Format code
-black src/ server/
-
-# Lint code
-flake8 src/ server/
-
-# Run tests
-pytest
-
-# Start development server
-uvicorn server.app:app --reload --log-level debug
-```
-
-### Project Structure
-- **Modular Design**: Clean separation of concerns with core, preprocessing, and utility modules
-- **Error Handling**: Comprehensive error handling with retry logic and circuit breakers
-- **Logging**: Structured logging with performance monitoring and CSV export
-- **Vector Store**: Qdrant-based vector database with support for course and professor data
-- **Testing**: Unit tests and integration tests (tests directory)
+Copy `.env.example` to `.env` and adjust values. All options and defaults are defined in `src/utils/config.py` (environment variables override them).
 
 ## Performance
 
-### Monitoring
-- Real-time performance metrics via `/api/v1/performance` endpoint
-- System resource monitoring (CPU, memory, disk)
-- API response time tracking
-- Error rate monitoring
-- CSV logging for embedding search, reranking, query enhancement, and response generation
-
-### Optimization
-- Intelligent caching strategies for embeddings and chunks
-- Batch processing for embeddings
-- Circuit breaker patterns for fault tolerance
-- Memory-efficient data processing
-- Async processing capabilities
-
-### Scalability
-- Horizontal scaling support with Qdrant
-- Database connection pooling
-- Async processing capabilities
-- Resource usage optimization
+- **Monitoring**: `/api/v1/performance` and `/api/v1/status` for metrics and status; CSV logs in `logs/` for embedding search, reranking, query enhancement, and generation
+- **Caching**: Embedding and chunk cache to reduce repeated work
+- **Chat history**: Compression (summarize older messages at an interval) keeps context within the configured token window
 
 ## Troubleshooting
 
@@ -400,27 +262,17 @@ uvicorn server.app:app --reload --log-level debug
    ollama pull gemma3:4b-it-qat
    ```
 
-4. **API Connection Issues**
-   ```bash
-   # Check API server status
-   curl http://localhost:8000/health
-   
-   # Verify port availability (Linux/Mac)
-   netstat -tulpn | grep :8000
-   
-   # Verify port availability (Windows)
-   netstat -ano | findstr :8000
-   ```
+4. **API connection issues**
+   - `curl http://localhost:8000/health`. On Windows: `netstat -ano | findstr :8000`; on Linux/Mac: `netstat -tulpn | grep :8000`
 
-5. **Vector Store Empty**
-   - Ensure data files exist in `data/processed/`
-   - Check that RAG system auto-loads data on initialization
-   - Verify Qdrant collection exists and contains data
+5. **Database / sessions**
+   - Set `DATABASE_URL`. Run `init_database.py` to create tables. Sessions and chat history require a working DB connection.
 
-6. **CORS Issues**
-   - Ensure frontend is configured to connect to the API server
-   - Check CORS settings in `server/app.py`
-   - Configure `allow_origins` appropriately for production
+6. **Vector store empty**
+   - Ensure data exists in `data/processed/`. RAG loads data on startup; verify the Qdrant collection has data.
+
+7. **CORS**
+   - Configure CORS in `server/app.py` (`allow_origins`) if a frontend needs to call the API.
 
 ### Debug Mode
 ```bash
@@ -450,6 +302,5 @@ Performance metrics are logged to CSV files in the `logs/` directory:
 ---
 
 **Version**: 1.0.0  
-**Last Updated**: December 2024  
-**Maintainer**: CE RAG System Team  
+**Last Updated**: February 2025  
 **Contact**: nickvivat@hotmail.com
