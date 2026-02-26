@@ -630,7 +630,7 @@ class RAGSystem:
                     top_k=top_k,
                     results_count=len(result_indices),
                     language_filter=detected_language,
-                    embedding_model=getattr(self.embedder, 'model_name', 'google/embeddinggemma-300m'),
+                    embedding_model=getattr(self.embedder, 'model_name', 'embeddinggemma:latest'),
                     vector_store_type=self.vector_store.__class__.__name__
                 )
                 
@@ -644,7 +644,7 @@ class RAGSystem:
                     top_k=top_k,
                     results_count=0,
                     language_filter=detected_language,
-                    embedding_model=getattr(self.embedder, 'model_name', 'google/embeddinggemma-300m'),
+                    embedding_model=getattr(self.embedder, 'model_name', 'embeddinggemma:latest'),
                     vector_store_type=self.vector_store.__class__.__name__
                 )
                 logger.error(f"Embedding search failed: {e}")
