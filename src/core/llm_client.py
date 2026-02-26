@@ -56,16 +56,23 @@ class BaseLLMClient(ABC):
 class OllamaClient(BaseLLMClient):
     """Ollama-specific implementation of LLM client"""
     
-    def __init__(self, ollama_url: str = None, model_name: str = None):
+    def __init__(
+        self,
+        ollama_url: str = None,
+        model_name: str = None,
+        num_predict: int = None,
+    ):
         """
         Initialize the Ollama client
-        
+
         Args:
             ollama_url: URL of the Ollama server
             model_name: Name of the model to use
+            num_predict: Max tokens to predict (default from config)
         """
         self.ollama_url = ollama_url or os.getenv("OLLAMA_URL", "http://localhost:11434")
         self.model_name = model_name or os.getenv("OLLAMA_MODEL", "gemma3:4b-it-qat")
+        self.num_predict = num_predict if num_predict is not None else config.models.num_predict
         self.available = False
         self.cache = {}  # Simple in-memory cache
         self.cache_max_size = 100
@@ -135,35 +142,37 @@ class OllamaClient(BaseLLMClient):
             return False
     
     def generate(
-        self, 
-        prompt: str, 
-        temperature: float = 0.7, 
+        self,
+        prompt: str,
+        temperature: float = 0.7,
         format: str = None,
         stream: bool = False,
         num_predict: int = 2048,
-        use_cache: bool = True
+        use_cache: bool = True,
     ) -> Optional[str]:
         """
         Generate response from Ollama API
-        
+
         Args:
             prompt: The input prompt
             temperature: Sampling temperature
             format: Response format (e.g., 'json')
             stream: Whether to stream the response
-            num_predict: Maximum number of tokens to predict
+            num_predict: Maximum number of tokens to predict (default from config)
             use_cache: Whether to use caching for non-streaming requests
-            
+
         Returns:
             Generated response text or None if failed
         """
         if not self.available:
             logger.warning("Ollama client not available")
             return None
-        
+
+        n = num_predict if num_predict is not None else self.num_predict
+
         # Check cache first for non-streaming requests
         if use_cache and not stream:
-            cache_key = self._get_cache_key(prompt, temperature, format=format, stream=stream, num_predict=num_predict)
+            cache_key = self._get_cache_key(prompt, temperature, format=format, stream=stream, num_predict=n)
             if cache_key in self.cache:
                 logger.debug("Using cached Ollama response")
                 return self.cache[cache_key]
@@ -185,13 +194,13 @@ class OllamaClient(BaseLLMClient):
                     "stream": stream,
                     "options": {
                         "temperature": temperature,
-                        "num_predict": num_predict
-                    }
+                        "num_predict": n,
+                    },
                 }
-                
+
                 if format:
                     payload["format"] = format
-                
+
                 # Make request
                 response = requests.post(
                     f"{self.ollama_url}/api/generate",
@@ -227,7 +236,7 @@ class OllamaClient(BaseLLMClient):
                         
                         # Cache the result
                         if use_cache:
-                            cache_key = self._get_cache_key(prompt, temperature, format=format, stream=stream, num_predict=num_predict)
+                            cache_key = self._get_cache_key(prompt, temperature, format=format, stream=stream, num_predict=n)
                             self._manage_cache(cache_key, response_text)
                         
                         return response_text
@@ -247,36 +256,43 @@ class OllamaClient(BaseLLMClient):
         
         return None
     
-    def generate_stream(self, prompt: str, temperature: float = 0.3, num_predict: int = 500) -> Generator[str, None, None]:
+    def generate_stream(
+        self,
+        prompt: str,
+        temperature: float = 0.3,
+        num_predict: int = 2048,
+    ) -> Generator[str, None, None]:
         """
         Generate streaming response from Ollama API
-        
+
         Args:
             prompt: The input prompt
             temperature: Sampling temperature
-            num_predict: Maximum number of tokens to predict
-            
+            num_predict: Maximum number of tokens to predict (default from config)
+
         Yields:
             Response chunks as they arrive
         """
         if not self.available:
             logger.warning("Ollama client not available for streaming")
             return
-        
+
+        n = num_predict if num_predict is not None else self.num_predict
+
         try:
             # Check health before making request
             if not self._check_health():
                 logger.error("Ollama service not responding for streaming")
                 return
-            
+
             payload = {
                 "model": self.model_name,
                 "prompt": prompt,
                 "stream": True,
                 "options": {
                     "temperature": temperature,
-                    "num_predict": num_predict
-                }
+                    "num_predict": n,
+                },
             }
             
             # Make streaming request
@@ -351,13 +367,13 @@ class OllamaClient(BaseLLMClient):
                     "stream": False,
                     "options": {
                         "temperature": temperature,
-                        "num_predict": num_predict
-                    }
+                        "num_predict": n,
+                    },
                 }
-                
+
                 if format:
                     payload["format"] = format
-                
+
                 # Make async request
                 async with session.post(
                     f"{self.ollama_url}/api/generate",
@@ -370,9 +386,9 @@ class OllamaClient(BaseLLMClient):
                         
                         # Cache the result
                         if use_cache:
-                            cache_key = self._get_cache_key(prompt, temperature, format=format, num_predict=num_predict)
+                            cache_key = self._get_cache_key(prompt, temperature, format=format, num_predict=n)
                             self._manage_cache(cache_key, response_text)
-                        
+
                         return response_text
                     else:
                         logger.warning(f"Ollama API error (attempt {attempt + 1}): {response.status}")

@@ -17,6 +17,8 @@ class ModelConfig:
     reranker_model: str = "BAAI/bge-reranker-v2-m3"
     ollama_url: str = "http://localhost:11434"
     ollama_model: str = "gemma3:27b"
+    num_predict: int = 4096
+    num_predict_short: int = 256
     
     def __post_init__(self):
         """Validate model configurations."""
@@ -28,6 +30,10 @@ class ModelConfig:
             raise ValueError("Ollama URL must be specified")
         if not self.ollama_model:
             raise ValueError("Ollama model must be specified")
+        if self.num_predict <= 0:
+            raise ValueError("num_predict must be positive")
+        if self.num_predict_short <= 0:
+            raise ValueError("num_predict_short must be positive")
     
     @classmethod
     def from_env(cls) -> 'ModelConfig':
@@ -36,7 +42,9 @@ class ModelConfig:
             embedding_model=os.getenv("EMBEDDING_MODEL", "embeddinggemma:latest"),
             reranker_model=os.getenv("RERANKER_MODEL", "BAAI/bge-reranker-v2-m3"),
             ollama_url=os.getenv("OLLAMA_URL", "http://localhost:11434"),
-            ollama_model=os.getenv("OLLAMA_MODEL", "gemma3:27b")
+            ollama_model=os.getenv("OLLAMA_MODEL", "gemma3:27b"),
+            num_predict=int(os.getenv("NUM_PREDICT", "4096")),
+            num_predict_short=int(os.getenv("NUM_PREDICT_SHORT", "256")),
         )
 
 
