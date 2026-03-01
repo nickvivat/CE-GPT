@@ -7,7 +7,7 @@ import os
 import logging
 import hashlib
 from abc import ABC, abstractmethod
-from typing import List, Dict, Any, Optional, Tuple
+from typing import List, Dict, Any, Optional, Tuple, Union
 
 import numpy as np
 
@@ -28,8 +28,10 @@ class VectorStore(ABC):
         query_embedding: np.ndarray,
         top_k: int,
         filter_metadata: Optional[Dict[str, Any]] = None,
-    ) -> Tuple[np.ndarray, List[int]]:
-        """Search for similar vectors"""
+    ) -> Tuple[np.ndarray, List[int], List[Optional[Dict[str, Any]]]]:
+        """Search for similar vectors. Returns (similarities, indices, payloads).
+        indices may be -1 for points that have no chunk index (e.g. OCR documents);
+        in that case the corresponding payload is set and should be used for content."""
         pass
 
     @abstractmethod
@@ -282,8 +284,10 @@ class QdrantVectorStore(VectorStore):
         query_embedding: np.ndarray,
         top_k: int,
         filter_metadata: Optional[Dict[str, Any]] = None,
-    ) -> Tuple[np.ndarray, List[int]]:
-        """Search Qdrant collection"""
+    ) -> Tuple[np.ndarray, List[int], List[Optional[Dict[str, Any]]]]:
+        """Search Qdrant collection. Returns (similarities, indices, payloads).
+        For points with OCR-style _original_id (e.g. ocr_document_uuid_1_1), index is -1
+        and payload is the full point payload so the caller can use payload['text'] as content."""
         try:
             from qdrant_client.models import Filter
 
@@ -294,11 +298,11 @@ class QdrantVectorStore(VectorStore):
             collection_info = self.client.get_collection(self.collection_name)
             if collection_info.points_count == 0:
                 logger.error("Qdrant collection is empty!")
-                return np.array([]), []
+                return np.array([]), [], [], []
 
             if len(query_vector) == 0:
                 logger.error("Query embedding is empty!")
-                return np.array([]), []
+                return np.array([]), [], []
 
             query_filter: Optional[Filter] = None
             if filter_metadata:
@@ -318,13 +322,26 @@ class QdrantVectorStore(VectorStore):
             if results and hasattr(results, "points") and results.points:
                 similarities = np.array([point.score for point in results.points])
                 indices: List[int] = []
+                payloads: List[Optional[Dict[str, Any]]] = []
 
                 for point in results.points:
                     point_id = point.id
+                    payload = dict(point.payload) if point.payload else {}
+                    original_id = payload.get("_original_id")
+
+                    if original_id and (
+                        str(original_id).startswith("ocr_document_") or not self._is_chunk_index_id(original_id)
+                    ):
+                        indices.append(-1)
+                        payloads.append(payload)
+                        continue
+
                     try:
-                        original_id = point.payload.get("_original_id") if point.payload else None
                         if original_id:
-                            if original_id.startswith("course_") or original_id.startswith("professor_"):
+                            parts = str(original_id).rsplit("_", 1)
+                            if len(parts) == 2 and parts[1].isdigit():
+                                idx = int(parts[1])
+                            elif original_id.startswith("course_") or original_id.startswith("professor_"):
                                 idx = int(original_id.split("_")[1])
                             else:
                                 idx = int(original_id)
@@ -341,17 +358,28 @@ class QdrantVectorStore(VectorStore):
                                 )
                                 continue
                         indices.append(idx)
+                        payloads.append(None)
                     except (ValueError, IndexError, TypeError) as e:
                         logger.warning("Could not parse point ID: %s, error: %s", point_id, e)
                         continue
 
-                return similarities, indices
+                return similarities, indices, payloads
 
-            return np.array([]), []
+            return np.array([]), [], []
 
         except Exception as e:
             logger.error("Error in Qdrant vector store search: %s", e)
-            return np.array([]), []
+            return np.array([]), [], []
+
+    def _is_chunk_index_id(self, original_id: str) -> bool:
+        """True if _original_id is our chunk index format (e.g. course_0, studyplan_5)."""
+        if not original_id or "_" not in str(original_id):
+            return False
+        parts = str(original_id).rsplit("_", 1)
+        if len(parts) != 2:
+            return False
+        known = ("course", "professor", "curriculum", "studyplan", "research")
+        return parts[0].lower() in known and parts[1].isdigit()
 
     def _build_qdrant_filter(self, filter_metadata: Dict[str, Any]):
         """Convert filter metadata to Qdrant Filter"""

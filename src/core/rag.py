@@ -138,11 +138,13 @@ class RAGSystem:
             self.response_generator.chat_history_manager = self.chat_history_manager
     
     def _auto_load_data(self):
-        """Auto-load both course and professor data"""
+        """Auto-load course, professor, curriculum, and study plan data"""
         try:
             data_sources = [
                 {'file_path': 'data/raw/course_detail.json', 'data_type': 'course'},
-                {'file_path': 'data/raw/professor_detail.json', 'data_type': 'professor'}
+                {'file_path': 'data/raw/professor_detail.json', 'data_type': 'professor'},
+                {'file_path': 'data/raw/curriculum.json', 'data_type': 'curriculum'},
+                {'file_path': 'data/raw/studyplan.json', 'data_type': 'studyplan'},
             ]
             
             success = self.load_multiple_data_sources(data_sources)
@@ -176,6 +178,9 @@ class RAGSystem:
     
     def _chunk_passes_filter(self, chunk_index: int, filter_metadata: Optional[Dict[str, Any]]) -> bool:
         """Check if chunk at index passes the given metadata filter (same logic as Qdrant)."""
+        # Index -1 denotes OCR/document points (no chunk); include them in hybrid merge
+        if chunk_index == -1:
+            return True
         if not filter_metadata or chunk_index < 0 or not self.chunks or chunk_index >= len(self.chunks):
             return not filter_metadata
         meta = self.chunks[chunk_index].metadata
@@ -561,6 +566,18 @@ class RAGSystem:
                     filter_metadata["language"] = detected_language
                     logger.info(f"Applying language filter: {detected_language} (based on original query)")
                 
+                # Curriculum/studyplan intent: use primary context (curriculum or studyplan) + course as helper
+                primary_type = None
+                if metadata and metadata.get("query_intent") in ("curriculum_search", "studyplan_search"):
+                    primary_type = metadata.get("query_intent").replace("_search", "")
+                    logger.info(f"Primary context from metadata: {primary_type}")
+                elif self._is_curriculum_query(query):
+                    primary_type = "curriculum"
+                    logger.info("Primary context from keyword detection: curriculum (graduation/requirements)")
+                elif self._is_studyplan_query(query):
+                    primary_type = "studyplan"
+                    logger.info("Primary context from keyword detection: studyplan (per-semester plan)")
+                
                 if metadata and metadata.get("tags"):
                     tags = metadata.get("tags", [])
                     query_intent = metadata.get("query_intent", "course_search")
@@ -569,7 +586,9 @@ class RAGSystem:
                         query_intent = "professor_search"
                         logger.info(f"Overriding query_intent to 'professor_search' based on early detection")
                     
-                    if query_intent == "professor_search":
+                    if primary_type:
+                        logger.info(f"Using {primary_type} as primary context with course as helper")
+                    elif query_intent == "professor_search":
                         filter_metadata["data_type"] = "professor"
                         logger.info("Applying professor filter")
                     else:
@@ -580,6 +599,9 @@ class RAGSystem:
                 elif is_professor_query:
                     filter_metadata["data_type"] = "professor"
                     logger.info("Applying professor filter based on early detection (no metadata)")
+                elif not primary_type:
+                    filter_metadata["data_type"] = "course"
+                    logger.info("Applying course filter (default)")
                 
                 if len(filter_metadata) > 1:
                     and_conditions = []
@@ -593,34 +615,59 @@ class RAGSystem:
                 else:
                     logger.info(f"Final filter metadata: {filter_metadata}")
                 
-                similarities, indices = self.vector_store.search(query_embedding, top_k=top_k, filter_metadata=filter_metadata if filter_metadata else None)
-                
-                # Hybrid search: merge vector + BM25 with Reciprocal Rank Fusion
-                result_indices = list(indices)
-                result_similarities = similarities.tolist() if hasattr(similarities, 'tolist') else list(similarities)
-                if config.search.use_hybrid_search and self.chunks and current_query:
-                    if self._bm25_index is None:
-                        self._build_bm25_index()
-                    if self._bm25_index:
-                        try:
-                            query_tokens = _bm25_tokenize(current_query)
-                            if query_tokens:
-                                bm25_scores = self._bm25_index.get_scores(query_tokens)
-                                bm25_top_n = min(top_k * 2, len(self.chunks), 50)
-                                bm25_ranked = np.argsort(bm25_scores)[::-1][:bm25_top_n]
-                                bm25_indices = [int(i) for i in bm25_ranked if bm25_scores[i] > 0]
-                                ordered_indices, index_to_similarity = self._hybrid_merge_rrf(
-                                    list(indices),
-                                    similarities,
-                                    bm25_indices,
-                                    filter_metadata if filter_metadata else None,
-                                    top_k,
-                                )
-                                result_indices = ordered_indices
-                                result_similarities = [index_to_similarity.get(i, 0.0) for i in ordered_indices]
-                                logger.debug(f"Hybrid search merged vector + BM25: {len(ordered_indices)} results")
-                        except Exception as e:
-                            logger.warning(f"Hybrid merge failed, using vector-only results: {e}")
+                # Primary + helper search for curriculum or studyplan intent
+                if primary_type:
+                    and_conditions_primary = [{"language": detected_language}, {"data_type": primary_type}] if detected_language else [{"data_type": primary_type}]
+                    filter_primary = {"$and": and_conditions_primary} if len(and_conditions_primary) > 1 else and_conditions_primary[0]
+                    and_conditions_helper = [{"language": detected_language}, {"data_type": "course"}] if detected_language else [{"data_type": "course"}]
+                    filter_helper = {"$and": and_conditions_helper} if len(and_conditions_helper) > 1 else and_conditions_helper[0]
+                    top_k_primary = min(6, top_k)
+                    top_k_helper = min(max(0, top_k - top_k_primary), 4)
+                    sim_primary, idx_primary, pay_primary = self.vector_store.search(query_embedding, top_k=top_k_primary, filter_metadata=filter_primary)
+                    sim_helper, idx_helper, pay_helper = self.vector_store.search(query_embedding, top_k=top_k_helper, filter_metadata=filter_helper)
+                    result_indices = list(idx_primary) + list(idx_helper)
+                    result_similarities = (sim_primary.tolist() if hasattr(sim_primary, 'tolist') else list(sim_primary)) + (sim_helper.tolist() if hasattr(sim_helper, 'tolist') else list(sim_helper))
+                    result_payloads = list(pay_primary) + list(pay_helper)
+                    logger.info(f"Primary+helper search: {len(idx_primary)} {primary_type}, {len(idx_helper)} course (helper)")
+                else:
+                    similarities, indices, payloads = self.vector_store.search(query_embedding, top_k=top_k, filter_metadata=filter_metadata if filter_metadata else None)
+                    
+                    # Hybrid search: merge vector + BM25 with Reciprocal Rank Fusion
+                    result_indices = list(indices)
+                    result_similarities = similarities.tolist() if hasattr(similarities, 'tolist') else list(similarities)
+                    result_payloads = list(payloads) if payloads else [None] * len(result_indices)
+                    if config.search.use_hybrid_search and self.chunks and current_query:
+                        if self._bm25_index is None:
+                            self._build_bm25_index()
+                        if self._bm25_index:
+                            try:
+                                query_tokens = _bm25_tokenize(current_query)
+                                if query_tokens:
+                                    bm25_scores = self._bm25_index.get_scores(query_tokens)
+                                    bm25_top_n = min(top_k * 2, len(self.chunks), 50)
+                                    bm25_ranked = np.argsort(bm25_scores)[::-1][:bm25_top_n]
+                                    bm25_indices = [int(i) for i in bm25_ranked if bm25_scores[i] > 0]
+                                    ordered_indices, index_to_similarity = self._hybrid_merge_rrf(
+                                        list(indices),
+                                        similarities,
+                                        bm25_indices,
+                                        filter_metadata if filter_metadata else None,
+                                        top_k,
+                                    )
+                                    result_indices = ordered_indices
+                                    result_similarities = [index_to_similarity.get(i, 0.0) for i in ordered_indices]
+                                    # Align payloads with ordered_indices (same order as vector search; multiple -1 map to different payloads)
+                                    result_payloads = []
+                                    for idx in ordered_indices:
+                                        for j, orig_idx in enumerate(indices):
+                                            if orig_idx == idx:
+                                                result_payloads.append(payloads[j] if j < len(payloads) else None)
+                                                break
+                                        else:
+                                            result_payloads.append(None)
+                                    logger.debug(f"Hybrid search merged vector + BM25: {len(ordered_indices)} results")
+                            except Exception as e:
+                                logger.warning(f"Hybrid merge failed, using vector-only results: {e}")
                 
                 embedding_search_duration = time.time() - embedding_search_start
                 csv_logger.log_embedding_search(
@@ -655,8 +702,22 @@ class RAGSystem:
                 return []
             
             results = []
-            for idx, similarity in zip(result_indices, result_similarities):
-                if idx < len(self.chunks):
+            for i, (idx, similarity) in enumerate(zip(result_indices, result_similarities)):
+                payload = result_payloads[i] if i < len(result_payloads) else None
+                # Use payload from Qdrant when present (e.g. OCR studyplan points with "text" and data_type)
+                if payload is not None and (payload.get("text") is not None or payload.get("content") is not None):
+                    content = payload.get("text") or payload.get("content", "")
+                    metadata = {k: v for k, v in payload.items() if k != "_original_id"}
+                    result = {
+                        'content': content,
+                        'metadata': metadata,
+                        'similarity_score': float(similarity),
+                        'chunk_id': payload.get("_original_id", ""),
+                        'original_index': -1,
+                        'data_type': metadata.get('data_type', 'unknown')
+                    }
+                    results.append(result)
+                elif idx >= 0 and idx < len(self.chunks):
                     chunk = self.chunks[idx]
                     result = {
                         'content': get_chunk_content(chunk),
@@ -1169,6 +1230,26 @@ class RAGSystem:
         if any(ord(c) > 127 for c in text):
             return "th"
         return "en"
+
+    def _is_curriculum_query(self, query: str) -> bool:
+        """Detect if the query is about graduation/curriculum requirements (use curriculum as primary context)."""
+        q = query.lower().strip()
+        keywords = [
+            "graduate", "graduation", "complete the program", "finish the course", "degree requirements",
+            "จบหลักสูตร", "เรียนจบ", "ต้องทำอย่างไรบ้าง", "จบการศึกษา", "หลักสูตรต้องเรียนอะไร",
+            "requirements to graduate", "how to graduate", "what do i need to graduate",
+        ]
+        return any(k in q for k in keywords)
+
+    def _is_studyplan_query(self, query: str) -> bool:
+        """Detect if the query is about study plan per semester (use studyplan as primary context)."""
+        q = query.lower().strip()
+        keywords = [
+            "study plan", "studyplan", "each semester", "per semester", "every semester",
+            "แผนการเรียน", "แต่ละเทอม", "เทอม", "ภาคเรียน", "semester plan",
+            "ปี 1", "ปี 2", "year 1", "year 2", "first year", "second year",
+        ]
+        return any(k in q for k in keywords)
     
     def _find_exact_course_code_matches(self, course_codes: List[str]) -> List[Dict[str, Any]]:
         """
