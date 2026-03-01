@@ -147,7 +147,7 @@ class OllamaClient(BaseLLMClient):
         temperature: float = 0.7,
         format: str = None,
         stream: bool = False,
-        num_predict: int = 2048,
+        num_predict: int = 8192,
         use_cache: bool = True,
     ) -> Optional[str]:
         """
@@ -260,7 +260,7 @@ class OllamaClient(BaseLLMClient):
         self,
         prompt: str,
         temperature: float = 0.3,
-        num_predict: int = 2048,
+        num_predict: int = 8192,
     ) -> Generator[str, None, None]:
         """
         Generate streaming response from Ollama API
@@ -330,7 +330,7 @@ class OllamaClient(BaseLLMClient):
         prompt: str, 
         temperature: float = 0.7, 
         format: str = None,
-        num_predict: int = 128,
+        num_predict: int = 8192,
         use_cache: bool = True
     ) -> Optional[str]:
         """

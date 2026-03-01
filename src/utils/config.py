@@ -247,7 +247,7 @@ class SessionConfig:
     context_window_tokens: int = 8192
     chat_history_compression_enabled: bool = True
     compression_recent_messages_full: int = 5
-    compression_summary_max_tokens: int = 2048
+    compression_summary_max_tokens: int = 8192
     compression_trigger_after_messages: int = 10
     compression_max_messages_to_consider: int = 100
     compression_interval: int = 5
@@ -284,7 +284,7 @@ class SessionConfig:
             context_window_tokens=int(os.getenv("CONTEXT_WINDOW_TOKENS", "8192")),
             chat_history_compression_enabled=os.getenv("CHAT_HISTORY_COMPRESSION_ENABLED", "true").lower() in ("true", "1", "yes"),
             compression_recent_messages_full=int(os.getenv("COMPRESSION_RECENT_MESSAGES_FULL", "5")),
-            compression_summary_max_tokens=int(os.getenv("COMPRESSION_SUMMARY_MAX_TOKENS", "2048")),
+            compression_summary_max_tokens=int(os.getenv("COMPRESSION_SUMMARY_MAX_TOKENS", "8192")),
             compression_trigger_after_messages=int(os.getenv("COMPRESSION_TRIGGER_AFTER_MESSAGES", "10")),
             compression_max_messages_to_consider=int(os.getenv("COMPRESSION_MAX_MESSAGES_TO_CONSIDER", "100")),
             compression_interval=int(os.getenv("COMPRESSION_INTERVAL", "5")),
