@@ -615,20 +615,15 @@ class RAGSystem:
                 else:
                     logger.info(f"Final filter metadata: {filter_metadata}")
                 
-                # Primary + helper search for curriculum or studyplan intent
                 if primary_type:
                     and_conditions_primary = [{"data_type": primary_type}]
                     filter_primary = and_conditions_primary[0]
-                    and_conditions_helper = [{"language": detected_language}, {"data_type": "course"}] if detected_language else [{"data_type": "course"}]
-                    filter_helper = {"$and": and_conditions_helper} if len(and_conditions_helper) > 1 else and_conditions_helper[0]
-                    top_k_primary = min(6, top_k)
-                    top_k_helper = min(max(0, top_k - top_k_primary), 4)
+                    top_k_primary = top_k  # Use full top_k to get all relevant curriculum/studyplan chunks
                     sim_primary, idx_primary, pay_primary = self.vector_store.search(query_embedding, top_k=top_k_primary, filter_metadata=filter_primary)
-                    sim_helper, idx_helper, pay_helper = self.vector_store.search(query_embedding, top_k=top_k_helper, filter_metadata=filter_helper)
-                    result_indices = list(idx_primary) + list(idx_helper)
-                    result_similarities = (sim_primary.tolist() if hasattr(sim_primary, 'tolist') else list(sim_primary)) + (sim_helper.tolist() if hasattr(sim_helper, 'tolist') else list(sim_helper))
-                    result_payloads = list(pay_primary) + list(pay_helper)
-                    logger.info(f"Primary+helper search: {len(idx_primary)} {primary_type}, {len(idx_helper)} course (helper)")
+                    result_indices = list(idx_primary)
+                    result_similarities = (sim_primary.tolist() if hasattr(sim_primary, 'tolist') else list(sim_primary))
+                    result_payloads = list(pay_primary)
+                    logger.info(f"Primary-only search ({primary_type}): {len(idx_primary)} chunks (no course/professor helper)")
                 else:
                     similarities, indices, payloads = self.vector_store.search(query_embedding, top_k=top_k, filter_metadata=filter_metadata if filter_metadata else None)
                     
