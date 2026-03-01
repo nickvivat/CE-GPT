@@ -617,8 +617,8 @@ class RAGSystem:
                 
                 # Primary + helper search for curriculum or studyplan intent
                 if primary_type:
-                    and_conditions_primary = [{"language": detected_language}, {"data_type": primary_type}] if detected_language else [{"data_type": primary_type}]
-                    filter_primary = {"$and": and_conditions_primary} if len(and_conditions_primary) > 1 else and_conditions_primary[0]
+                    and_conditions_primary = [{"data_type": primary_type}]
+                    filter_primary = and_conditions_primary[0]
                     and_conditions_helper = [{"language": detected_language}, {"data_type": "course"}] if detected_language else [{"data_type": "course"}]
                     filter_helper = {"$and": and_conditions_helper} if len(and_conditions_helper) > 1 else and_conditions_helper[0]
                     top_k_primary = min(6, top_k)

@@ -309,6 +309,8 @@ class ResponseGenerator:
         
         courses = []
         professors = []
+        curriculum = []
+        studyplan = []
         
         for result in filtered_results:
             # Skip metadata results (suggestions) - already processed above
@@ -318,8 +320,40 @@ class ResponseGenerator:
             data_type = result.get('data_type', result.get('metadata', {}).get('data_type', 'course'))
             if data_type == 'professor':
                 professors.append(result)
+            elif data_type == 'curriculum':
+                curriculum.append(result)
+            elif data_type == 'studyplan':
+                studyplan.append(result)
             else:
                 courses.append(result)
+        
+        if curriculum:
+            context_parts.append("CURRICULUM / GRADUATION REQUIREMENTS:")
+            context_parts.append("-" * 30)
+            for i, result in enumerate(curriculum, 1):
+                content = result.get('content', '')
+                metadata = result.get('metadata', {})
+                source = metadata.get('source', metadata.get('filename', ''))
+                if content:
+                    cleaned = self._clean_content(content)
+                    context_parts.append(f"{i}. {cleaned}")
+                    if source:
+                        context_parts.append(f"   (Source: {source})")
+            context_parts.append("")
+        
+        if studyplan:
+            context_parts.append("STUDY PLAN (by semester):")
+            context_parts.append("-" * 30)
+            for i, result in enumerate(studyplan, 1):
+                content = result.get('content', '')
+                metadata = result.get('metadata', {})
+                source = metadata.get('source', metadata.get('filename', ''))
+                if content:
+                    cleaned = self._clean_content(content)
+                    context_parts.append(f"{i}. {cleaned}")
+                    if source:
+                        context_parts.append(f"   (Source: {source})")
+            context_parts.append("")
         
         # Format course information
         if courses:
