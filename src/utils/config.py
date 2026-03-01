@@ -17,8 +17,8 @@ class ModelConfig:
     reranker_model: str = "BAAI/bge-reranker-v2-m3"
     ollama_url: str = "http://localhost:11434"
     ollama_model: str = "gemma3:27b"
-    num_predict: int = 4096
-    num_predict_short: int = 256
+    num_predict: int = 8192
+    num_predict_short: int = 512
     
     def __post_init__(self):
         """Validate model configurations."""
@@ -43,8 +43,8 @@ class ModelConfig:
             reranker_model=os.getenv("RERANKER_MODEL", "BAAI/bge-reranker-v2-m3"),
             ollama_url=os.getenv("OLLAMA_URL", "http://localhost:11434"),
             ollama_model=os.getenv("OLLAMA_MODEL", "gemma3:27b"),
-            num_predict=int(os.getenv("NUM_PREDICT", "4096")),
-            num_predict_short=int(os.getenv("NUM_PREDICT_SHORT", "256")),
+            num_predict=int(os.getenv("NUM_PREDICT", "8192")),
+            num_predict_short=int(os.getenv("NUM_PREDICT_SHORT", "512")),
         )
 
 

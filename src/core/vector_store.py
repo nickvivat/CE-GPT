@@ -249,7 +249,7 @@ class QdrantVectorStore(VectorStore):
                 data_type = meta.get("data_type", "course")
                 string_id = f"{data_type}_{i}"
 
-                hash_obj = hashlib.sha256(string_id.encode("utf-8"))
+                hash_obj = hashlib.sha512(string_id.encode("utf-8"))
                 point_id = int.from_bytes(hash_obj.digest()[:8], byteorder="big") % (2**64)
 
                 payload = dict(meta)
