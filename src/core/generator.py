@@ -5,6 +5,7 @@ Generates contextual responses using retrieved data and system prompts
 """
 
 import os
+import re
 import time
 import requests
 import json
@@ -48,7 +49,17 @@ class ResponseGenerator:
         cleaned = cleaned.strip()
         
         return cleaned
-    
+
+    def _clean_html_text(self, content: str) -> str:
+        """Strip HTML from curriculum/studyplan text and convert to plain text with line breaks."""
+        if not content:
+            return ""
+        text = content.replace("<br>", "\n").replace("<br/>", "\n").replace("<br />", "\n")
+        text = text.replace("</tr>", "\n").replace("</td>", " ").replace("</p>", "\n")
+        text = re.sub(r"<[^>]+>", "", text)
+        lines = [line.strip() for line in text.splitlines() if line.strip()]
+        return "\n".join(lines)
+
     def _filter_by_rerank_score(self, results: List[Dict[str, Any]], 
                                threshold: float = None) -> List[Dict[str, Any]]:
         """Filter results based on rerank score or hybrid score threshold"""
@@ -335,7 +346,9 @@ class ResponseGenerator:
                 metadata = result.get('metadata', {})
                 source = metadata.get('source', metadata.get('filename', ''))
                 if content:
-                    cleaned = self._clean_content(content)
+                    cleaned = self._clean_html_text(content)
+                    if not cleaned:
+                        cleaned = self._clean_content(content)
                     context_parts.append(f"{i}. {cleaned}")
                     if source:
                         context_parts.append(f"   (Source: {source})")
@@ -349,7 +362,9 @@ class ResponseGenerator:
                 metadata = result.get('metadata', {})
                 source = metadata.get('source', metadata.get('filename', ''))
                 if content:
-                    cleaned = self._clean_content(content)
+                    cleaned = self._clean_html_text(content)
+                    if not cleaned:
+                        cleaned = self._clean_content(content)
                     context_parts.append(f"{i}. {cleaned}")
                     if source:
                         context_parts.append(f"   (Source: {source})")

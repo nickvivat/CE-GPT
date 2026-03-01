@@ -618,7 +618,7 @@ class RAGSystem:
                 if primary_type:
                     and_conditions_primary = [{"data_type": primary_type}]
                     filter_primary = and_conditions_primary[0]
-                    top_k_primary = top_k  # Use full top_k to get all relevant curriculum/studyplan chunks
+                    top_k_primary = top_k
                     sim_primary, idx_primary, pay_primary = self.vector_store.search(query_embedding, top_k=top_k_primary, filter_metadata=filter_primary)
                     result_indices = list(idx_primary)
                     result_similarities = (sim_primary.tolist() if hasattr(sim_primary, 'tolist') else list(sim_primary))
