@@ -339,7 +339,7 @@ class ResponseGenerator:
                 courses.append(result)
         
         if curriculum:
-            context_parts.append("CURRICULUM / GRADUATION REQUIREMENTS:")
+            context_parts.append("Curriculum / Graduation Requirements:")
             context_parts.append("-" * 30)
             for i, result in enumerate(curriculum, 1):
                 content = result.get('content', '')
@@ -355,7 +355,7 @@ class ResponseGenerator:
             context_parts.append("")
         
         if studyplan:
-            context_parts.append("STUDY PLAN (by semester):")
+            context_parts.append("Study Plan (by semester):")
             context_parts.append("-" * 30)
             for i, result in enumerate(studyplan, 1):
                 content = result.get('content', '')
@@ -372,7 +372,7 @@ class ResponseGenerator:
         
         # Format course information
         if courses:
-            context_parts.append("COURSES:")
+            context_parts.append("Courses:")
             context_parts.append("-" * 30)
             
             for i, result in enumerate(courses, 1):
@@ -401,7 +401,7 @@ class ResponseGenerator:
         
         # Format professor information
         if professors:
-            context_parts.append("\nPROFESSORS:")
+            context_parts.append("\nProfessors:")
             context_parts.append("-" * 30)
             
             for i, result in enumerate(professors, 1):
