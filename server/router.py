@@ -264,13 +264,40 @@ async def generate_response(
         language = None
         if generate_request.language != "auto":
             language = generate_request.language
-        search_results = await rag_system.search(
-            query=generate_request.query,
-            top_k=generate_request.top_k,
-            language=language,
-            use_reranking=generate_request.use_reranking,
-            session_id=session_id
-        )
+        try:
+            search_results = await rag_system.search(
+                query=generate_request.query,
+                top_k=generate_request.top_k,
+                language=language,
+                use_reranking=generate_request.use_reranking,
+                session_id=session_id
+            )
+        except ValueError as ve:
+            if str(ve) == "ABUSIVE_QUERY":
+                logger.warning(f"Abusive query rejected: {generate_request.query}")
+                warning_msg = "Your query has been rejected due to violation of usage policies (prompt injection or abusive content)."
+                
+                # Store rejection in history if session exists
+                if session_id:
+                    chm.add_message_pair(
+                        session_id=session_id,
+                        user_content=generate_request.query,
+                        assistant_content=warning_msg,
+                        user_metadata={"language": generate_request.language},
+                        assistant_metadata={"rejected": True, "reason": "abusive_query"}
+                    )
+                    sm.update_session(session_id, extend_ttl=True)
+                
+                return GenerateResponse(
+                    query=generate_request.query,
+                    response=warning_msg,
+                    session_id=session_id,
+                    sources=[],
+                    language_detected="en",
+                    generation_time_ms=(time.time() - start_time) * 1000,
+                    total_sources=0
+                )
+            raise ve
         
         logger.info(f"Found {len(search_results)} search results for query: {generate_request.query}")
         
@@ -355,13 +382,40 @@ async def generate_response_stream(
         language = None
         if generate_request.language != "auto":
             language = generate_request.language
-        search_results = await rag_system.search(
-            query=generate_request.query,
-            top_k=generate_request.top_k,
-            language=language,
-            use_reranking=generate_request.use_reranking,
-            session_id=session_id
-        )
+        try:
+            search_results = await rag_system.search(
+                query=generate_request.query,
+                top_k=generate_request.top_k,
+                language=language,
+                use_reranking=generate_request.use_reranking,
+                session_id=session_id
+            )
+        except ValueError as ve:
+            if str(ve) == "ABUSIVE_QUERY":
+                logger.warning(f"Abusive query rejected in stream: {generate_request.query}")
+                warning_msg = "Your query has been rejected due to violation of usage policies (prompt injection or abusive content)."
+                
+                if session_id:
+                    chm.add_message_pair(
+                        session_id=session_id,
+                        user_content=generate_request.query,
+                        assistant_content=warning_msg,
+                        user_metadata={"language": generate_request.language},
+                        assistant_metadata={"rejected": True, "reason": "abusive_query"}
+                    )
+                    sm.update_session(session_id, extend_ttl=True)
+                
+                async def reject_stream():
+                    yield f"data: {json.dumps({'type': 'status', 'message': 'Request Rejected'})}\n\n"
+                    yield f"data: {json.dumps({'type': 'chunk', 'content': warning_msg})}\n\n"
+                    yield f"data: {json.dumps({'type': 'complete', 'message': 'Generation complete', 'language_detected': 'en', 'total_sources': 0, 'session_id': session_id})}\n\n"
+                
+                return StreamingResponse(
+                    reject_stream(),
+                    media_type="text/plain",
+                    headers={"Cache-Control": "no-cache", "Connection": "keep-alive", "Content-Type": "text/event-stream"}
+                )
+            raise ve
         
         logger.info(f"Found {len(search_results)} search results for streaming query: {generate_request.query}")
         

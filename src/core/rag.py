@@ -487,6 +487,10 @@ class RAGSystem:
                 elif self.use_query_enhancement and self.query and hasattr(self.query, 'available') and self.query.available:
                     enhanced_query, metadata = await self.query.enhance_query_async(current_query, conversation_context)
                     
+                    if metadata and metadata.get("query_intent") == "abusing":
+                        logger.warning("Abusive query detected. Rejecting.")
+                        raise ValueError("ABUSIVE_QUERY")
+                        
                     if metadata and metadata.get("query_intent") in ["conversational", "external"]:
                         if enhanced_query == current_query:
                             logger.info(f"Query classified as {metadata.get('query_intent')}, returning empty results")

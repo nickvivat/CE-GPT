@@ -55,7 +55,7 @@ class Query:
     CLASSIFY_SCHEMA = {
         "type": "object",
         "properties": {
-            "class": {"type": "string", "enum": ["enhanced", "pass", "conversational", "external"]},
+            "class": {"type": "string", "enum": ["enhanced", "pass", "conversational", "external", "abusing"]},
             "is_follow_up": {"type": "boolean", "description": "True if the query is a follow-up question referencing previous conversation (e.g., 'that', 'those courses', 'explain more about it')"}
         },
         "required": ["class", "is_follow_up"]
@@ -396,6 +396,10 @@ class Query:
                 else:
                     return original_query, {"tags": ["external"], "query_intent": "external"}
                 
+            elif classification == "abusing":
+                logger.warning("Query classified as abusing. Potential prompt injection or abuse.")
+                return original_query, {"tags": ["abusing"], "query_intent": "abusing"}
+                
             else:
                 logger.warning(f"Unknown classification '{classification}', keeping original query")
                 return original_query, {"tags": ["general"], "query_intent": "general"}
@@ -505,6 +509,10 @@ class Query:
             logger.info("Query classified as external, keeping original")
             return query
             
+        elif classification == "abusing":
+            logger.warning("Query classified as abusing, keeping original")
+            return query
+            
         else:
             logger.warning(f"Unknown classification '{classification}', keeping original query")
             return query
@@ -566,7 +574,7 @@ class Query:
                 return False
                 
             classification = response_json.get("class")
-            if classification not in ["enhanced", "pass", "conversational", "external"]:
+            if classification not in ["enhanced", "pass", "conversational", "external", "abusing"]:
                 return False
             
             if "is_follow_up" not in response_json:
