@@ -114,6 +114,10 @@ def handle_errors(error_type: ErrorType, fallback_value: Any = None,
             try:
                 return func(*args, **kwargs)
             except Exception as e:
+                # Bypass fallback for policy rejections
+                if isinstance(e, ValueError) and str(e) == "ABUSIVE_QUERY":
+                    raise e
+                    
                 # Log the error with context
                 log_func = getattr(logger, log_level.lower())
                 log_func(f"{error_type.value.upper()} error in {func.__name__}: {e}")

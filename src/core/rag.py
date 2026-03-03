@@ -541,12 +541,14 @@ class RAGSystem:
                     success=False,
                     error_message=str(e),
                     original_query=query,
-                    enhanced_query=enhanced_query,
-                    classification=classification,
+                    enhanced_query=current_query if 'enhanced_query' not in locals() else enhanced_query,
+                    classification=classification if 'classification' in locals() else "unknown",
                     language=detected_language,
                     model_name=getattr(self.query, 'model_name', 'gemma3:4b-it-qat') if self.query else None
                 )
                 logger.error(f"Query enhancement failed: {e}")
+                if str(e) == "ABUSIVE_QUERY":
+                    raise ValueError("ABUSIVE_QUERY")
             
             detected_language = language
             if not detected_language:
