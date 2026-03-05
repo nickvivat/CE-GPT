@@ -406,14 +406,14 @@ async def generate_response_stream(
                     sm.update_session(session_id, extend_ttl=True)
                 
                 async def reject_stream():
-                    yield f"data: {json.dumps({'type': 'status', 'message': 'Request Rejected'})}\n\n"
-                    yield f"data: {json.dumps({'type': 'chunk', 'content': warning_msg})}\n\n"
-                    yield f"data: {json.dumps({'type': 'complete', 'message': 'Generation complete', 'language_detected': 'en', 'total_sources': 0, 'session_id': session_id})}\n\n"
+                    yield f"data: {json.dumps({'type': 'status', 'message': 'Request Rejected'}, ensure_ascii=False)}\n\n"
+                    yield f"data: {json.dumps({'type': 'chunk', 'content': warning_msg}, ensure_ascii=False)}\n\n"
+                    yield f"data: {json.dumps({'type': 'complete', 'message': 'Generation complete', 'language_detected': 'en', 'total_sources': 0, 'session_id': session_id}, ensure_ascii=False)}\n\n"
                 
                 return StreamingResponse(
                     reject_stream(),
-                    media_type="text/plain",
-                    headers={"Cache-Control": "no-cache", "Connection": "keep-alive", "Content-Type": "text/event-stream"}
+                    media_type="text/event-stream; charset=utf-8",
+                    headers={"Cache-Control": "no-cache", "Connection": "keep-alive"}
                 )
             raise ve
         
@@ -437,8 +437,8 @@ async def generate_response_stream(
             response_text = ""
             assistant_message_saved = False
             try:
-                yield f"data: {json.dumps({'type': 'status', 'message': 'Starting generation...'})}\n\n"
-                yield f"data: {json.dumps({'type': 'search_results', 'count': len(search_results)})}\n\n"
+                yield f"data: {json.dumps({'type': 'status', 'message': 'Starting generation...'}, ensure_ascii=False)}\n\n"
+                yield f"data: {json.dumps({'type': 'search_results', 'count': len(search_results)}, ensure_ascii=False)}\n\n"
                 
                 if generate_request.include_sources and search_results:
                     sources = [
@@ -452,7 +452,7 @@ async def generate_response_stream(
                         }
                         for result in search_results
                     ]
-                    yield f"data: {json.dumps({'type': 'sources', 'sources': sources})}\n\n"
+                    yield f"data: {json.dumps({'type': 'sources', 'sources': sources}, ensure_ascii=False)}\n\n"
                 
                 async for chunk in rag_system.generate_response_stream(
                     query=generate_request.query,
@@ -464,7 +464,7 @@ async def generate_response_stream(
                 ):
                     if chunk:
                         response_text += chunk
-                        yield f"data: {json.dumps({'type': 'chunk', 'content': chunk})}\n\n"
+                        yield f"data: {json.dumps({'type': 'chunk', 'content': chunk}, ensure_ascii=False)}\n\n"
                         await asyncio.sleep(0.01)
                 
                 completion_data = {
@@ -474,11 +474,11 @@ async def generate_response_stream(
                     'total_sources': len(search_results),
                     'session_id': session_id
                 }
-                yield f"data: {json.dumps(completion_data)}\n\n"
+                yield f"data: {json.dumps(completion_data, ensure_ascii=False)}\n\n"
                 
             except Exception as e:
                 logger.error(f"Error in streaming generation: {e}")
-                yield f"data: {json.dumps({'type': 'error', 'message': str(e)})}\n\n"
+                yield f"data: {json.dumps({'type': 'error', 'message': str(e)}, ensure_ascii=False)}\n\n"
             finally:
                 if session_id and not assistant_message_saved:
                     assistant_msg = chm.add_message(
@@ -500,11 +500,10 @@ async def generate_response_stream(
         
         return StreamingResponse(
             generate_stream(),
-            media_type="text/plain",
+            media_type="text/event-stream; charset=utf-8",
             headers={
                 "Cache-Control": "no-cache",
                 "Connection": "keep-alive",
-                "Content-Type": "text/event-stream",
             }
         )
         
