@@ -22,7 +22,7 @@ import string
 import sys
 import time
 def load_testcases(path: str | None = None) -> dict:
-    path = path or os.path.join(os.path.dirname(__file__), "testcase_1.json")
+    path = path or os.path.join(os.path.dirname(__file__), "dataset/testcase_1.json")
     with open(path, "r", encoding="utf-8") as f:
         return json.load(f)
 
