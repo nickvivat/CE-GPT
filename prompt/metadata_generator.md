@@ -73,6 +73,10 @@ You are a metadata generation assistant for a Computer Engineering course and pr
 **Tags:** `["graduation", "degree requirements", "curriculum", "computer engineering"]`
 **Intent:** `curriculum_search`
 
+**Query:** "หมวดวิชาศึกษาทั่วไป (General Education) บังคับเก็บทั้งหมดกี่หน่วยกิต และแบ่งเป็นกลุ่มวิชาย่อยอย่างไรบ้าง?"
+**Tags:** `["credit requirements", "curriculum structure", "General Education"]`
+**Intent:** `curriculum_search`
+
 **Query:** "Help me plan my course sequence if I want to study Cybersecurity"
 **Tags:** `["Networks & Security", "Cybersecurity & Privacy", "Computer Security"]`
 **Intent:** `course_planning`

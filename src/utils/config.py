@@ -58,6 +58,13 @@ class SearchConfig:
     rerank_threshold: float = 0.5
     use_hybrid_search: bool = True  # BM25 + vector (reciprocal rank fusion)
     
+    # BM25 Configurations
+    bm25_k1: float = 1.5
+    bm25_b: float = 0.75
+    rrf_k: int = 60
+    bm25_max_candidates: int = 50
+    bm25_top_k_multiplier: int = 2
+    
     def __post_init__(self):
         """Validate search configurations."""
         if self.top_k <= 0:
@@ -68,6 +75,16 @@ class SearchConfig:
             raise ValueError("similarity_threshold must be between 0 and 1")
         if not 0 <= self.rerank_threshold <= 1:
             raise ValueError("rerank_threshold must be between 0 and 1")
+        if self.bm25_k1 < 0:
+            raise ValueError("bm25_k1 must be non-negative")
+        if not 0 <= self.bm25_b <= 1:
+            raise ValueError("bm25_b must be between 0 and 1")
+        if self.rrf_k <= 0:
+            raise ValueError("rrf_k must be positive")
+        if self.bm25_max_candidates <= 0:
+            raise ValueError("bm25_max_candidates must be positive")
+        if self.bm25_top_k_multiplier <= 0:
+            raise ValueError("bm25_top_k_multiplier must be positive")
     
     @classmethod
     def from_env(cls) -> 'SearchConfig':
@@ -79,6 +96,11 @@ class SearchConfig:
             similarity_threshold=float(os.getenv("SIMILARITY_THRESHOLD", "0.1")),
             rerank_threshold=float(os.getenv("RERANK_THRESHOLD", "0.5")),
             use_hybrid_search=use_hybrid,
+            bm25_k1=float(os.getenv("BM25_K1", "1.5")),
+            bm25_b=float(os.getenv("BM25_B", "0.75")),
+            rrf_k=int(os.getenv("RRF_K", "60")),
+            bm25_max_candidates=int(os.getenv("BM25_MAX_CANDIDATES", "50")),
+            bm25_top_k_multiplier=int(os.getenv("BM25_TOP_K_MULTIPLIER", "2")),
         )
 
 

@@ -169,7 +169,11 @@ class RAGSystem:
             from rank_bm25 import BM25Okapi
             corpus = [get_chunk_content(chunk) for chunk in self.chunks]
             self._bm25_corpus_tokenized = [_bm25_tokenize(doc) for doc in corpus]
-            self._bm25_index = BM25Okapi(self._bm25_corpus_tokenized)
+            self._bm25_index = BM25Okapi(
+                self._bm25_corpus_tokenized,
+                k1=config.search.bm25_k1,
+                b=config.search.bm25_b
+            )
             logger.info(f"Built BM25 index for {len(self.chunks)} chunks (hybrid search)")
         except Exception as e:
             logger.warning(f"Failed to build BM25 index: {e}. Hybrid search disabled.")
@@ -202,9 +206,11 @@ class RAGSystem:
         bm25_indices: List[int],
         filter_metadata: Optional[Dict[str, Any]],
         top_k: int,
-        rrf_k: int = 60,
+        rrf_k: Optional[int] = None,
     ) -> Tuple[List[int], Dict[int, float]]:
         """Merge vector and BM25 results using Reciprocal Rank Fusion. Returns (ordered_indices, index_to_similarity)."""
+        if rrf_k is None:
+            rrf_k = config.search.rrf_k
         rank_v = {idx: (r + 1) for r, idx in enumerate(vector_indices)}
         rank_b = {idx: (r + 1) for r, idx in enumerate(bm25_indices)}
         combined_indices = set(vector_indices) | set(bm25_indices)
@@ -645,7 +651,11 @@ class RAGSystem:
                                 query_tokens = _bm25_tokenize(current_query)
                                 if query_tokens:
                                     bm25_scores = self._bm25_index.get_scores(query_tokens)
-                                    bm25_top_n = min(top_k * 2, len(self.chunks), 50)
+                                    bm25_top_n = min(
+                                        top_k * config.search.bm25_top_k_multiplier, 
+                                        len(self.chunks), 
+                                        config.search.bm25_max_candidates
+                                    )
                                     bm25_ranked = np.argsort(bm25_scores)[::-1][:bm25_top_n]
                                     bm25_indices = [int(i) for i in bm25_ranked if bm25_scores[i] > 0]
                                     ordered_indices, index_to_similarity = self._hybrid_merge_rrf(
@@ -1239,6 +1249,7 @@ class RAGSystem:
             "graduate", "graduation", "complete the program", "finish the course", "degree requirements",
             "จบหลักสูตร", "เรียนจบ", "ต้องทำอย่างไรบ้าง", "จบการศึกษา", "หลักสูตรต้องเรียนอะไร",
             "requirements to graduate", "how to graduate", "what do i need to graduate",
+            "หมวดวิชา", "โครงสร้างหลักสูตร", "หน่วยกิต", "general education", "curriculum structure", "credit requirement"
         ]
         return any(k in q for k in keywords)
 
