@@ -812,7 +812,7 @@ class RAGSystem:
                     rerankable_results = [r for r in results if r.get('data_type') != 'metadata' and not r.get('bypass_score_filter', False) and not r.get('is_exact_match', False)]
                     
                     # Rerank only non-metadata results
-                    reranked_results = self.reranker.rerank_with_metadata(current_query, rerankable_results)
+                    reranked_results = self.reranker.rerank_with_metadata(current_query, rerankable_results, top_k=top_k)
                     results = []
                     for _, score, result_dict in reranked_results:
                         result_dict['rerank_score'] = float(score)
@@ -852,9 +852,8 @@ class RAGSystem:
                         output_count=0,
                         reranker_model=getattr(self.reranker, 'model_name', 'BAAI/bge-reranker-v2-m3')
                     )
-                    logger.error(f"Reranking failed: {e}")
-            
-            return results
+            # Final truncation to strictly respect top_k
+            return results[:top_k]
         
         try:
             results = await _perform_search()

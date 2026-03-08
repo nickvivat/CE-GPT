@@ -94,8 +94,8 @@ class Reranker:
         if not passages:
             return []
         
-        # Use default top_k if not specified
-        top_k = top_k or config.search.top_k_rerank
+        # Use passed top_k, then fallback to global top_k config
+        top_k = top_k or config.search.top_k
         
         # Extract text content for reranking
         passage_texts = [passage.get('content', '') for passage in passages]
