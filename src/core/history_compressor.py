@@ -92,7 +92,7 @@ def compress(
         generate_fn = getattr(llm_client, "generate", None)
         is_available_fn = getattr(llm_client, "is_available", None)
         if llm_client and callable(generate_fn) and callable(is_available_fn) and is_available_fn():
-            raw_summary = generate_fn(prompt, temperature=0.3)
+            raw_summary = generate_fn(prompt, temperature=config.models.temperature_logic)
             if raw_summary and raw_summary.strip():
                 summary = _truncate_summary(raw_summary.strip(), summary_max_tokens)
                 logger.debug("Compressed %d old messages into summary (%d chars)", len(old_messages), len(summary or ""))

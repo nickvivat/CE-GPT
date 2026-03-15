@@ -19,6 +19,8 @@ class ModelConfig:
     ollama_model: str = "gemma3:27b"
     num_predict: int = 8192
     num_predict_short: int = 512
+    temperature_logic: float = 0.0
+    temperature_response: float = 0.1
     
     def __post_init__(self):
         """Validate model configurations."""
@@ -45,6 +47,8 @@ class ModelConfig:
             ollama_model=os.getenv("OLLAMA_MODEL", "gemma3:27b"),
             num_predict=int(os.getenv("NUM_PREDICT", "8192")),
             num_predict_short=int(os.getenv("NUM_PREDICT_SHORT", "512")),
+            temperature_logic=float(os.getenv("LLM_TEMPERATURE_LOGIC", "0.0")),
+            temperature_response=float(os.getenv("LLM_TEMPERATURE_RESPONSE", "0.1")),
         )
 
 

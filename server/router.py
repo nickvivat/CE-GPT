@@ -301,7 +301,6 @@ async def generate_response(
         
         logger.info(f"Found {len(search_results)} search results for query: {generate_request.query}")
         
-        # Generate response using the search results
         response = await rag_system.generate_response(
             query=generate_request.query,
             top_k=generate_request.top_k,
@@ -309,7 +308,8 @@ async def generate_response(
             use_reranking=generate_request.use_reranking,
             stream=generate_request.stream,
             search_results=search_results,
-            session_id=session_id
+            session_id=session_id,
+            temperature=generate_request.temperature
         )
         
         generation_time = (time.time() - start_time) * 1000
@@ -460,7 +460,8 @@ async def generate_response_stream(
                     language=language,
                     use_reranking=generate_request.use_reranking,
                     search_results=search_results,
-                    session_id=session_id
+                    session_id=session_id,
+                    temperature=generate_request.temperature
                 ):
                     if chunk:
                         response_text += chunk

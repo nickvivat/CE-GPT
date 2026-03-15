@@ -891,7 +891,8 @@ class RAGSystem:
         use_reranking: bool = True,
         stream: bool = False,
         search_results: List[Dict[str, Any]] = None,
-        session_id: str = None
+        session_id: str = None,
+        temperature: Optional[float] = None
     ) -> str:
         """Generate a contextual response based on retrieved data with performance logging"""
         response_generation_start = time.time()
@@ -931,7 +932,7 @@ class RAGSystem:
             if not search_results:
                 logger.warning(f"No search results found for query: '{query}'")
                 response = ""
-                for chunk in self.response_generator.generate_response(query, [], language, session_id=session_id):
+                for chunk in self.response_generator.generate_response(query, [], language, session_id=session_id, temperature=temperature):
                     if chunk:
                         response += chunk
                 response_duration = time.time() - response_generation_start
@@ -951,7 +952,7 @@ class RAGSystem:
             
             response = ""
             for chunk in self.response_generator.generate_response(
-                query, search_results, language, session_id=session_id
+                query, search_results, language, session_id=session_id, temperature=temperature
             ):
                 if chunk:
                     response += chunk
@@ -1007,7 +1008,8 @@ class RAGSystem:
         language: str = None,
         use_reranking: bool = True,
         search_results: List[Dict[str, Any]] = None,
-        session_id: str = None
+        session_id: str = None,
+        temperature: Optional[float] = None
     ):
         """Generate a streaming response generator for real-time output"""
         try:
@@ -1033,7 +1035,7 @@ class RAGSystem:
                 logger.warning(f"No search results found for query: '{query}'")
                 conversational_response = ""
                 for chunk in self.response_generator.generate_response(
-                    query, [], language, session_id=session_id
+                    query, [], language, session_id=session_id, temperature=temperature
                 ):
                     if chunk:
                         conversational_response += chunk

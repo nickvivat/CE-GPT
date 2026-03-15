@@ -33,17 +33,17 @@ class BaseLLMClient(ABC):
     """Abstract base class for LLM clients"""
     
     @abstractmethod
-    def generate(self, prompt: str, **kwargs) -> Optional[str]:
+    def generate(self, prompt: str, temperature: Optional[float] = None, **kwargs) -> Optional[str]:
         """Generate response from LLM"""
         pass
     
     @abstractmethod
-    def generate_stream(self, prompt: str, **kwargs) -> Generator[str, None, None]:
+    def generate_stream(self, prompt: str, temperature: Optional[float] = None, **kwargs) -> Generator[str, None, None]:
         """Generate streaming response from LLM"""
         pass
     
     @abstractmethod
-    async def generate_async(self, session: aiohttp.ClientSession, prompt: str, **kwargs) -> Optional[str]:
+    async def generate_async(self, session: aiohttp.ClientSession, prompt: str, temperature: Optional[float] = None, **kwargs) -> Optional[str]:
         """Generate async response from LLM"""
         pass
     
@@ -144,7 +144,7 @@ class OllamaClient(BaseLLMClient):
     def generate(
         self,
         prompt: str,
-        temperature: float = 0.7,
+        temperature: Optional[float] = None,
         format: Optional[str] = None,
         stream: bool = False,
         num_predict: int = 8192,
@@ -164,6 +164,9 @@ class OllamaClient(BaseLLMClient):
         Returns:
             Generated response text or None if failed
         """
+        if temperature is None:
+            temperature = config.models.temperature_response
+
         if not self.available:
             logger.warning("Ollama client not available")
             return None
@@ -259,7 +262,7 @@ class OllamaClient(BaseLLMClient):
     def generate_stream(
         self,
         prompt: str,
-        temperature: float = 0.3,
+        temperature: Optional[float] = None,
         num_predict: int = 8192,
     ) -> Generator[str, None, None]:
         """
@@ -273,6 +276,9 @@ class OllamaClient(BaseLLMClient):
         Yields:
             Response chunks as they arrive
         """
+        if temperature is None:
+            temperature = config.models.temperature_response
+
         if not self.available:
             logger.warning("Ollama client not available for streaming")
             return
@@ -328,7 +334,7 @@ class OllamaClient(BaseLLMClient):
         self, 
         session: aiohttp.ClientSession,
         prompt: str, 
-        temperature: float = 0.7, 
+        temperature: Optional[float] = None, 
         format: Optional[str] = None,
         num_predict: Optional[int] = 8192,
         use_cache: bool = True
@@ -347,6 +353,9 @@ class OllamaClient(BaseLLMClient):
         Returns:
             Generated response text or None if failed
         """
+        if temperature is None:
+            temperature = config.models.temperature_response
+
         if not self.available:
             logger.warning("Ollama client not available for async request")
             return None

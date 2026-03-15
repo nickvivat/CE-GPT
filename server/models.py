@@ -26,6 +26,7 @@ class GenerateRequest(BaseModel):
     use_reranking: bool = Field(default=True, description="Whether to use reranking for better results")
     include_sources: bool = Field(default=True, description="Whether to include source information")
     stream: bool = Field(default=True, description="Whether to stream the response for better UX")
+    temperature: Optional[float] = Field(None, ge=0.0, le=2.0, description="Sampling temperature (overrides global default)")
     
     @validator('query')
     def validate_and_sanitize_query(cls, v):

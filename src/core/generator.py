@@ -453,7 +453,8 @@ class ResponseGenerator:
         query: str,
         results: List[Dict[str, Any]],
         user_language: str = None,
-        session_id: str = None
+        session_id: str = None,
+        temperature: Optional[float] = None
     ):
         """Generate a streaming response generator - the only method needed for all response generation"""
         try:
@@ -498,7 +499,7 @@ class ResponseGenerator:
                 full_prompt = f"Context:\n{context}\n\nUser Query: {query}\n\nPlease provide a helpful response based on the context above."
             
             # Generate streaming response using Ollama with real-time streaming
-            response_chunks = self.llm_client.generate_stream(full_prompt)
+            response_chunks = self.llm_client.generate_stream(full_prompt, temperature=temperature)
             
             if response_chunks:
                 response_text = ""

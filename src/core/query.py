@@ -131,7 +131,7 @@ class Query:
             
             logger.debug(f"Classification prompt length: {len(prompt)} characters")
             
-            response_text = self.llm_client.generate(prompt, temperature=0.0, format=self.CLASSIFY_SCHEMA, num_predict=config.models.num_predict_short)
+            response_text = self.llm_client.generate(prompt, temperature=config.models.temperature_logic, format=self.CLASSIFY_SCHEMA, num_predict=config.models.num_predict_short)
             
             if not response_text.strip():
                 logger.warning("Empty response from Ollama for classification. Assuming enhanced.")
@@ -185,7 +185,7 @@ class Query:
             
             logger.debug(f"Enhancement prompt length: {len(prompt)} characters")
             
-            response_text = self.llm_client.generate(prompt, temperature=0.0, format=self.ENHANCE_SCHEMA, num_predict=config.models.num_predict_short)
+            response_text = self.llm_client.generate(prompt, temperature=config.models.temperature_logic, format=self.ENHANCE_SCHEMA, num_predict=config.models.num_predict_short)
             
             if not response_text.strip():
                 logger.warning("Empty response from Ollama for enhancement. Using original query.")
@@ -242,7 +242,7 @@ class Query:
             
             # Use async session
             async with aiohttp.ClientSession() as session:
-                response_text = await self.llm_client.generate_async(session, prompt, temperature=0.0, format=self.METADATA_SCHEMA, num_predict=config.models.num_predict_short)
+                response_text = await self.llm_client.generate_async(session, prompt, temperature=config.models.temperature_logic, format=self.METADATA_SCHEMA, num_predict=config.models.num_predict_short)
             
             if not response_text.strip():
                 logger.warning("Empty response from Ollama for metadata generation. Using default metadata.")
