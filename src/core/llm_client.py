@@ -58,9 +58,9 @@ class OllamaClient(BaseLLMClient):
     
     def __init__(
         self,
-        ollama_url: str = None,
-        model_name: str = None,
-        num_predict: int = None,
+        ollama_url: Optional[str] = None,
+        model_name: Optional[str] = None,
+        num_predict: Optional[int] = None,
     ):
         """
         Initialize the Ollama client
@@ -145,7 +145,7 @@ class OllamaClient(BaseLLMClient):
         self,
         prompt: str,
         temperature: float = 0.7,
-        format: str = None,
+        format: Optional[str] = None,
         stream: bool = False,
         num_predict: int = 8192,
         use_cache: bool = True,
@@ -329,8 +329,8 @@ class OllamaClient(BaseLLMClient):
         session: aiohttp.ClientSession,
         prompt: str, 
         temperature: float = 0.7, 
-        format: str = None,
-        num_predict: int = 8192,
+        format: Optional[str] = None,
+        num_predict: Optional[int] = 8192,
         use_cache: bool = True
     ) -> Optional[str]:
         """
@@ -351,9 +351,11 @@ class OllamaClient(BaseLLMClient):
             logger.warning("Ollama client not available for async request")
             return None
         
+        n = num_predict if num_predict is not None else self.num_predict
+
         # Check cache first
         if use_cache:
-            cache_key = self._get_cache_key(prompt, temperature, format=format, num_predict=num_predict)
+            cache_key = self._get_cache_key(prompt, temperature, format=format, num_predict=n)
             if cache_key in self.cache:
                 logger.debug("Using cached async Ollama response")
                 return self.cache[cache_key]
