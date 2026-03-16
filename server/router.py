@@ -29,13 +29,6 @@ from typing import Tuple, Optional
 
 logger = get_logger(__name__)
 
-# Create API router
-router = APIRouter(
-    prefix="/api/v1", 
-    tags=["CE RAG System"],
-    dependencies=[Depends(verify_internal_api_key)]
-)
-
 # Global RAG system instance
 rag_system: RAGSystem = None
 system_start_time = time.time()
@@ -60,6 +53,14 @@ async def verify_internal_api_key(x_internal_key: Optional[str] = Header(None, a
 async def get_authenticated_user_id(x_user_id: Optional[str] = Header(None, alias="X-User-ID")):
     """Get the authenticated user ID from the X-User-ID header set by the proxy."""
     return x_user_id
+
+
+# Create API router
+router = APIRouter(
+    prefix="/api/v1", 
+    tags=["CE RAG System"],
+    dependencies=[Depends(verify_internal_api_key)]
+)
 
 
 def get_rag_system() -> RAGSystem:
