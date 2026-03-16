@@ -174,6 +174,7 @@ class APIConfig:
     workers: int = 1
     max_requests: int = 1000
     timeout: int = 30
+    api_key: Optional[str] = None
     
     def __post_init__(self):
         """Validate API configurations."""
@@ -195,7 +196,8 @@ class APIConfig:
             reload=os.getenv("API_RELOAD", "false").lower() == "true",
             workers=int(os.getenv("API_WORKERS", "1")),
             max_requests=int(os.getenv("API_MAX_REQUESTS", "1000")),
-            timeout=int(os.getenv("API_TIMEOUT", "30"))
+            timeout=int(os.getenv("API_TIMEOUT", "30")),
+            api_key=os.getenv("CE_GPT_INTERNAL_KEY") or os.getenv("INTERNAL_API_KEY")
         )
 
 

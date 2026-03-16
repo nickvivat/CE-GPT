@@ -7,7 +7,7 @@ import time
 import os
 import json
 from typing import List, Dict, Any
-from fastapi import APIRouter, HTTPException, Depends, BackgroundTasks, Request
+from fastapi import APIRouter, HTTPException, Depends, BackgroundTasks, Request, Header
 from fastapi.responses import FileResponse, StreamingResponse
 from fastapi.responses import Response
 import asyncio
@@ -30,7 +30,11 @@ from typing import Tuple, Optional
 logger = get_logger(__name__)
 
 # Create API router
-router = APIRouter(prefix="/api/v1", tags=["CE RAG System"])
+router = APIRouter(
+    prefix="/api/v1", 
+    tags=["CE RAG System"],
+    dependencies=[Depends(verify_internal_api_key)]
+)
 
 # Global RAG system instance
 rag_system: RAGSystem = None
@@ -39,6 +43,23 @@ system_start_time = time.time()
 # Global session and chat history managers
 session_manager: SessionManager = None
 chat_history_manager: ChatHistoryManager = None
+
+
+async def verify_internal_api_key(x_internal_key: Optional[str] = Header(None, alias="X-Internal-Key")):
+    """Verify that the request comes from the Go backend proxy."""
+    if config.api.api_key:
+        if not x_internal_key:
+            logger.warning("Missing X-Internal-Key header")
+            raise HTTPException(status_code=401, detail="Missing Internal API Key")
+        if x_internal_key != config.api.api_key:
+            logger.warning(f"Unauthorized access attempt with invalid key: {x_internal_key}")
+            raise HTTPException(status_code=403, detail="Invalid Internal API Key")
+    return x_internal_key
+
+
+async def get_authenticated_user_id(x_user_id: Optional[str] = Header(None, alias="X-User-ID")):
+    """Get the authenticated user ID from the X-User-ID header set by the proxy."""
+    return x_user_id
 
 
 def get_rag_system() -> RAGSystem:
@@ -610,13 +631,19 @@ async def create_session(
 @router.get("/sessions/{session_id}", response_model=SessionResponse, summary="Get Session")
 async def get_session(
     session_id: str,
-    sm: SessionManager = Depends(get_session_manager)
+    sm: SessionManager = Depends(get_session_manager),
+    auth_user_id: Optional[str] = Depends(get_authenticated_user_id)
 ):
     """Get session information."""
     try:
         session = sm.get_session(session_id)
         if not session:
             raise HTTPException(status_code=404, detail="Session not found")
+        
+        # Verify ownership if user_id is available from proxy
+        if auth_user_id and session.user_id and session.user_id != auth_user_id:
+            logger.warning(f"User {auth_user_id} attempted to access session {session_id} belonging to {session.user_id}")
+            raise HTTPException(status_code=403, detail="Session does not belong to this user")
         
         return SessionResponse(
             session_id=session.session_id,
@@ -638,17 +665,24 @@ async def get_session(
 async def update_session(
     session_id: str,
     request: SessionUpdateRequest,
-    sm: SessionManager = Depends(get_session_manager)
+    sm: SessionManager = Depends(get_session_manager),
+    auth_user_id: Optional[str] = Depends(get_authenticated_user_id)
 ):
     """Update session metadata or extend TTL."""
     try:
+        session = sm.get_session(session_id)
+        if not session:
+            raise HTTPException(status_code=404, detail="Session not found")
+            
+        # Verify ownership
+        if auth_user_id and session.user_id and session.user_id != auth_user_id:
+            raise HTTPException(status_code=403, detail="Session does not belong to this user")
+
         success = sm.update_session(
             session_id=session_id,
             metadata=request.metadata,
             extend_ttl=request.extend_ttl
         )
-        if not success:
-            raise HTTPException(status_code=404, detail="Session not found")
         
         session = sm.get_session(session_id)
         return SessionResponse(
@@ -670,13 +704,20 @@ async def update_session(
 @router.delete("/sessions/{session_id}", summary="Delete Session")
 async def delete_session(
     session_id: str,
-    sm: SessionManager = Depends(get_session_manager)
+    sm: SessionManager = Depends(get_session_manager),
+    auth_user_id: Optional[str] = Depends(get_authenticated_user_id)
 ):
     """Delete a session."""
     try:
-        success = sm.delete_session(session_id)
-        if not success:
+        session = sm.get_session(session_id)
+        if not session:
             raise HTTPException(status_code=404, detail="Session not found")
+            
+        # Verify ownership
+        if auth_user_id and session.user_id and session.user_id != auth_user_id:
+            raise HTTPException(status_code=403, detail="Session does not belong to this user")
+
+        success = sm.delete_session(session_id)
         return {"message": "Session deleted successfully"}
     except HTTPException:
         raise
@@ -691,7 +732,8 @@ async def get_chat_history(
     limit: int = 50,
     offset: int = 0,
     sm: SessionManager = Depends(get_session_manager),
-    chm: ChatHistoryManager = Depends(get_chat_history_manager)
+    chm: ChatHistoryManager = Depends(get_chat_history_manager),
+    auth_user_id: Optional[str] = Depends(get_authenticated_user_id)
 ):
     """Get chat history for a session."""
     try:
@@ -699,6 +741,10 @@ async def get_chat_history(
         session = sm.get_session(session_id)
         if not session:
             raise HTTPException(status_code=404, detail="Session not found")
+        
+        # Verify ownership
+        if auth_user_id and session.user_id and session.user_id != auth_user_id:
+            raise HTTPException(status_code=403, detail="Session does not belong to this user")
         
         messages = chm.get_messages(session_id, limit=limit, offset=offset)
         total_count = chm.get_message_count(session_id)
@@ -729,7 +775,8 @@ async def get_chat_history(
 async def clear_chat_history(
     session_id: str,
     sm: SessionManager = Depends(get_session_manager),
-    chm: ChatHistoryManager = Depends(get_chat_history_manager)
+    chm: ChatHistoryManager = Depends(get_chat_history_manager),
+    auth_user_id: Optional[str] = Depends(get_authenticated_user_id)
 ):
     """Clear chat history for a session."""
     try:
@@ -737,6 +784,10 @@ async def clear_chat_history(
         session = sm.get_session(session_id)
         if not session:
             raise HTTPException(status_code=404, detail="Session not found")
+        
+        # Verify ownership
+        if auth_user_id and session.user_id and session.user_id != auth_user_id:
+            raise HTTPException(status_code=403, detail="Session does not belong to this user")
         
         success = chm.clear_history(session_id)
         if success:
