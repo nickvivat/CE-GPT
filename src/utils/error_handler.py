@@ -5,6 +5,7 @@ Implements retry mechanisms, circuit breaker pattern, and comprehensive error ha
 
 import time
 import functools
+import inspect
 import logging
 from typing import Callable, Any, Optional, Type, Union, List
 from enum import Enum
@@ -105,60 +106,82 @@ class RetryHandler:
         raise last_exception
 
 
+def _should_bypass(e: Exception) -> bool:
+    """Check if an exception should bypass error handling and propagate directly."""
+    if isinstance(e, ValueError) and str(e) == "ABUSIVE_QUERY":
+        return True
+    if type(e).__name__ == "GuardrailException":
+        return True
+    return False
+
+
+def _handle_error_details(error_type: ErrorType, func: Callable, e: Exception,
+                          fallback_value: Any, log_level: str) -> Any:
+    """Shared error-handling logic for both sync and async wrappers."""
+    # Log the error with context
+    log_func = getattr(logger, log_level.lower())
+    log_func(f"{error_type.value.upper()} error in {func.__name__}: {e}")
+    
+    # Handle specific error types
+    if error_type == ErrorType.NETWORK:
+        if isinstance(e, requests.exceptions.RequestException):
+            logger.error(f"Network error details: {type(e).__name__}")
+        elif isinstance(e, requests.exceptions.Timeout):
+            logger.error("Request timed out")
+        elif isinstance(e, requests.exceptions.ConnectionError):
+            logger.error("Connection failed")
+    
+    elif error_type == ErrorType.MODEL_LOADING:
+        if isinstance(e, torch.cuda.OutOfMemoryError):
+            logger.error("CUDA out of memory - consider using CPU or smaller batch size")
+        elif isinstance(e, FileNotFoundError):
+            logger.error("Model file not found - check model path")
+    
+    elif error_type == ErrorType.EMBEDDING_GENERATION:
+        if isinstance(e, ValueError):
+            logger.error("Invalid input for embedding generation")
+        elif isinstance(e, RuntimeError):
+            logger.error("Runtime error during embedding generation")
+    
+    elif error_type == ErrorType.VECTOR_SEARCH:
+        if isinstance(e, IndexError):
+            logger.error("Vector index error - check if index is built")
+        elif isinstance(e, ValueError):
+            logger.error("Invalid search parameters")
+    
+    # Return fallback value if provided
+    if fallback_value is not None:
+        logger.info(f"Returning fallback value for {func.__name__}")
+        return fallback_value
+    
+    # Re-raise the exception
+    raise e
+
+
 def handle_errors(error_type: ErrorType, fallback_value: Any = None, 
                   log_level: str = "ERROR") -> Callable:
-    """Decorator for comprehensive error handling."""
+    """Decorator for comprehensive error handling. Supports both sync and async functions."""
     def decorator(func: Callable) -> Callable:
-        @functools.wraps(func)
-        def wrapper(*args, **kwargs):
-            try:
-                return func(*args, **kwargs)
-            except Exception as e:
-                # Bypass fallback for policy rejections or guardrail triggers
-                if (isinstance(e, ValueError) and str(e) == "ABUSIVE_QUERY") or \
-                   (type(e).__name__ == "GuardrailException"):
-                    raise e
-                    
-                # Log the error with context
-                log_func = getattr(logger, log_level.lower())
-                log_func(f"{error_type.value.upper()} error in {func.__name__}: {e}")
-                
-                # Handle specific error types
-                if error_type == ErrorType.NETWORK:
-                    if isinstance(e, requests.exceptions.RequestException):
-                        logger.error(f"Network error details: {type(e).__name__}")
-                    elif isinstance(e, requests.exceptions.Timeout):
-                        logger.error("Request timed out")
-                    elif isinstance(e, requests.exceptions.ConnectionError):
-                        logger.error("Connection failed")
-                
-                elif error_type == ErrorType.MODEL_LOADING:
-                    if isinstance(e, torch.cuda.OutOfMemoryError):
-                        logger.error("CUDA out of memory - consider using CPU or smaller batch size")
-                    elif isinstance(e, FileNotFoundError):
-                        logger.error("Model file not found - check model path")
-                
-                elif error_type == ErrorType.EMBEDDING_GENERATION:
-                    if isinstance(e, ValueError):
-                        logger.error("Invalid input for embedding generation")
-                    elif isinstance(e, RuntimeError):
-                        logger.error("Runtime error during embedding generation")
-                
-                elif error_type == ErrorType.VECTOR_SEARCH:
-                    if isinstance(e, IndexError):
-                        logger.error("Vector index error - check if index is built")
-                    elif isinstance(e, ValueError):
-                        logger.error("Invalid search parameters")
-                
-                # Return fallback value if provided
-                if fallback_value is not None:
-                    logger.info(f"Returning fallback value for {func.__name__}")
-                    return fallback_value
-                
-                # Re-raise the exception
-                raise e
-        
-        return wrapper
+        if inspect.iscoroutinefunction(func):
+            @functools.wraps(func)
+            async def async_wrapper(*args, **kwargs):
+                try:
+                    return await func(*args, **kwargs)
+                except Exception as e:
+                    if _should_bypass(e):
+                        raise
+                    return _handle_error_details(error_type, func, e, fallback_value, log_level)
+            return async_wrapper
+        else:
+            @functools.wraps(func)
+            def sync_wrapper(*args, **kwargs):
+                try:
+                    return func(*args, **kwargs)
+                except Exception as e:
+                    if _should_bypass(e):
+                        raise
+                    return _handle_error_details(error_type, func, e, fallback_value, log_level)
+            return sync_wrapper
     return decorator
 
 

@@ -341,24 +341,42 @@ class PerformanceMonitor:
 performance_monitor = PerformanceMonitor()
 
 
+import inspect
+
+
+
 # Convenience functions for easy usage
 def monitor_operation(operation_name: str = None):
-    """Decorator to monitor function performance."""
+    """Decorator to monitor function performance. Supports both sync and async functions."""
     def decorator(func: Callable) -> Callable:
-        @functools.wraps(func)
-        def wrapper(*args, **kwargs):
-            op_name = operation_name or func.__name__
-            operation_id = performance_monitor.start_operation(op_name)
-            
-            try:
-                result = func(*args, **kwargs)
-                performance_monitor.end_operation(operation_id, success=True)
-                return result
-            except Exception as e:
-                performance_monitor.end_operation(operation_id, success=False, error_message=str(e))
-                raise e
-        
-        return wrapper
+        if inspect.iscoroutinefunction(func):
+            @functools.wraps(func)
+            async def async_wrapper(*args, **kwargs):
+                op_name = operation_name or func.__name__
+                operation_id = performance_monitor.start_operation(op_name)
+                
+                try:
+                    result = await func(*args, **kwargs)
+                    performance_monitor.end_operation(operation_id, success=True)
+                    return result
+                except Exception as e:
+                    performance_monitor.end_operation(operation_id, success=False, error_message=str(e))
+                    raise
+            return async_wrapper
+        else:
+            @functools.wraps(func)
+            def sync_wrapper(*args, **kwargs):
+                op_name = operation_name or func.__name__
+                operation_id = performance_monitor.start_operation(op_name)
+                
+                try:
+                    result = func(*args, **kwargs)
+                    performance_monitor.end_operation(operation_id, success=True)
+                    return result
+                except Exception as e:
+                    performance_monitor.end_operation(operation_id, success=False, error_message=str(e))
+                    raise
+            return sync_wrapper
     return decorator
 
 

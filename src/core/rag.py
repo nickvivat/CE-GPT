@@ -882,6 +882,22 @@ class RAGSystem:
             logger.info(f"Search completed: {len(results)} results in {total_duration:.2f}s")
             self.last_results = results
             return results
+        except GuardrailException:
+            raise
+        except ValueError as ve:
+            if str(ve) == "ABUSIVE_QUERY":
+                raise
+            total_duration = time.time() - start_time
+            csv_logger.log_overall_rag(
+                query=query,
+                duration=total_duration,
+                success=False,
+                error_message=str(ve),
+                total_steps=4,
+                total_duration=total_duration
+            )
+            logger.error(f"Search failed: {ve}")
+            return []
         except Exception as e:
             total_duration = time.time() - start_time
             csv_logger.log_overall_rag(
