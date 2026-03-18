@@ -55,7 +55,7 @@ class Query:
     CLASSIFY_SCHEMA = {
         "type": "object",
         "properties": {
-            "class": {"type": "string", "enum": ["enhanced", "pass", "conversational", "external", "abusing"]},
+            "class": {"type": "string", "enum": ["enhanced", "pass", "conversational"]},
             "is_follow_up": {"type": "boolean", "description": "True if the query is a follow-up question referencing previous conversation (e.g., 'that', 'those courses', 'explain more about it')"}
         },
         "required": ["class", "is_follow_up"]
@@ -104,7 +104,7 @@ class Query:
             query: The user's query
             conversation_context: Optional conversation history to detect follow-up questions
         
-        Returns: (classification, is_follow_up) where classification is 'enhanced', 'pass', 'conversational', 'external', or None
+        Returns: (classification, is_follow_up) where classification is 'enhanced', 'pass', 'conversational', or None
         """
         if not self.available:
             logger.info("Query classification not available, assuming enhanced")
@@ -388,17 +388,7 @@ class Query:
                 else:
                     return original_query, {"tags": ["conversational"], "query_intent": "conversational"}
                 
-            elif classification == "external":
-                logger.info("Query classified as external, keeping original")
-                if course_codes_appended:
-                    logger.info(f"Returning modified query with course codes for external query to enable search: {course_codes}")
-                    return query, {"tags": ["external"], "query_intent": "external"}
-                else:
-                    return original_query, {"tags": ["external"], "query_intent": "external"}
-                
-            elif classification == "abusing":
-                logger.warning("Query classified as abusing. Potential prompt injection or abuse.")
-                return original_query, {"tags": ["abusing"], "query_intent": "abusing"}
+
                 
             else:
                 logger.warning(f"Unknown classification '{classification}', keeping original query")
@@ -505,13 +495,7 @@ class Query:
             logger.info("Query classified as conversational, keeping original")
             return query
             
-        elif classification == "external":
-            logger.info("Query classified as external, keeping original")
-            return query
-            
-        elif classification == "abusing":
-            logger.warning("Query classified as abusing, keeping original")
-            return query
+
             
         else:
             logger.warning(f"Unknown classification '{classification}', keeping original query")
@@ -574,7 +558,7 @@ class Query:
                 return False
                 
             classification = response_json.get("class")
-            if classification not in ["enhanced", "pass", "conversational", "external", "abusing"]:
+            if classification not in ["enhanced", "pass", "conversational"]:
                 return False
             
             if "is_follow_up" not in response_json:

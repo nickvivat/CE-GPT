@@ -19,6 +19,7 @@ from .models import (
     ChatHistoryResponse, Message
 )
 from src.core.rag import RAGSystem
+from src.core.guardrail import GuardrailException
 from src.core.session_manager import SessionManager
 from src.core.chat_history import ChatHistoryManager
 from src.utils.config import config
@@ -294,9 +295,33 @@ async def generate_response(
                 use_reranking=generate_request.use_reranking,
                 session_id=session_id
             )
+        except GuardrailException as ge:
+            logger.warning(f"Guardrail rejection: {ge.message}")
+            warning_msg = ge.message
+            
+            # Store rejection in history if session exists
+            if session_id:
+                chm.add_message_pair(
+                    session_id=session_id,
+                    user_content=generate_request.query,
+                    assistant_content=warning_msg,
+                    user_metadata={"language": generate_request.language},
+                    assistant_metadata={"rejected": True, "reason": ge.reason}
+                )
+                sm.update_session(session_id, extend_ttl=True)
+            
+            return GenerateResponse(
+                query=generate_request.query,
+                response=warning_msg,
+                session_id=session_id,
+                sources=[],
+                language_detected="en",
+                generation_time_ms=(time.time() - start_time) * 1000,
+                total_sources=0
+            )
         except ValueError as ve:
             if str(ve) == "ABUSIVE_QUERY":
-                logger.warning(f"Abusive query rejected: {generate_request.query}")
+                logger.warning(f"Stale abusive query rejected: {generate_request.query}")
                 warning_msg = "Your query has been rejected due to violation of usage policies (prompt injection or abusive content)."
                 
                 # Store rejection in history if session exists
@@ -412,9 +437,33 @@ async def generate_response_stream(
                 use_reranking=generate_request.use_reranking,
                 session_id=session_id
             )
+        except GuardrailException as ge:
+            logger.warning(f"Guardrail rejection in stream: {ge.message}")
+            warning_msg = ge.message
+            
+            if session_id:
+                chm.add_message_pair(
+                    session_id=session_id,
+                    user_content=generate_request.query,
+                    assistant_content=warning_msg,
+                    user_metadata={"language": generate_request.language},
+                    assistant_metadata={"rejected": True, "reason": ge.reason}
+                )
+                sm.update_session(session_id, extend_ttl=True)
+            
+            async def reject_stream():
+                yield f"data: {json.dumps({'type': 'status', 'message': 'Request Rejected'}, ensure_ascii=False)}\n\n"
+                yield f"data: {json.dumps({'type': 'chunk', 'content': warning_msg}, ensure_ascii=False)}\n\n"
+                yield f"data: {json.dumps({'type': 'complete', 'message': 'Generation complete', 'language_detected': 'en', 'total_sources': 0, 'session_id': session_id}, ensure_ascii=False)}\n\n"
+            
+            return StreamingResponse(
+                reject_stream(),
+                media_type="text/event-stream; charset=utf-8",
+                headers={"Cache-Control": "no-cache", "Connection": "keep-alive"}
+            )
         except ValueError as ve:
             if str(ve) == "ABUSIVE_QUERY":
-                logger.warning(f"Abusive query rejected in stream: {generate_request.query}")
+                logger.warning(f"Stale abusive query rejected in stream: {generate_request.query}")
                 warning_msg = "Your query has been rejected due to violation of usage policies (prompt injection or abusive content)."
                 
                 if session_id:

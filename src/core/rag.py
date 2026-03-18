@@ -15,6 +15,7 @@ from ..preprocess.data_processor import DataProcessor
 from .embedder import Embedder
 from .reranker import Reranker
 from .query import Query
+from .guardrail import Guardrail, GuardrailException
 from .vector_store import create_vector_store
 from .generator import ResponseGenerator
 
@@ -109,6 +110,13 @@ class RAGSystem:
             self.vector_store = create_vector_store()
             initialized_components.append("vector_store")
             
+            try:
+                self.guardrail = Guardrail()
+                initialized_components.append("guardrail")
+            except Exception as e:
+                logger.warning(f"Failed to initialize guardrail: {e}. Continuing without guardrail.")
+                self.guardrail = None
+
             try:
                 self.response_generator = ResponseGenerator()
                 initialized_components.append("response_generator")
@@ -485,6 +493,10 @@ class RAGSystem:
                             conversation_context = "\n".join(context_parts)
                             logger.debug(f"Loaded conversation context from session {session_id} for query enhancement ({len(recent_exchange)} messages)")
             
+            # Input Guardrail Check
+            if self.guardrail:
+                await self.guardrail.validate(current_query)
+
             query_enhancement_start = time.time()
             try:
                 if is_professor_query:
@@ -494,10 +506,10 @@ class RAGSystem:
                     enhanced_query, metadata = await self.query.enhance_query_async(current_query, conversation_context)
                     
                     if metadata and metadata.get("query_intent") == "abusing":
-                        logger.warning("Abusive query detected. Rejecting.")
+                        logger.warning("Abusive query detected from stale metadata. Rejecting.")
                         raise ValueError("ABUSIVE_QUERY")
                         
-                    if metadata and metadata.get("query_intent") in ["conversational", "external"]:
+                    if metadata and metadata.get("query_intent") in ["conversational"]:
                         if enhanced_query == current_query:
                             logger.info(f"Query classified as {metadata.get('query_intent')}, returning empty results")
                             classification = metadata.get("query_intent", "pass")
