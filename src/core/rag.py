@@ -495,7 +495,10 @@ class RAGSystem:
             
             # Input Guardrail Check
             if self.guardrail:
+                logger.info("Running input guardrail validation...")
                 await self.guardrail.validate(current_query)
+            else:
+                logger.warning("Guardrail not available (self.guardrail is None), skipping input validation")
 
             query_enhancement_start = time.time()
             try:

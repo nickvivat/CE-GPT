@@ -96,13 +96,15 @@ class Guardrail:
 
             response_json = self._parse_json(response_text)
             if not response_json:
-                logger.warning("Failed to parse Guardrail response. Assuming safe.")
+                logger.warning(f"Failed to parse Guardrail response. Raw: {response_text[:200]}. Assuming safe.")
                 return True
             
             safety = response_json.get("safety", "safe")
             reason = response_json.get("reason", "No reason provided")
+            logger.debug(f"Guardrail LLM response: safety={safety}, reason={reason}")
             
             if safety == "safe":
+                logger.info(f"Guardrail PASSED (safe): {reason}")
                 return True
             
             # Any non-safe label triggers rejection
