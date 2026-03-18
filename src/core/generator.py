@@ -25,7 +25,7 @@ class ResponseGenerator:
         """Initialize the response generator"""
         self.llm_client = LLMClient(
             provider=LLMProvider.OLLAMA,
-            model_name=model_name
+            model_name=model_name or config.models.ollama_model
         )
         self.chat_history_manager = chat_history_manager
     

@@ -16,7 +16,7 @@ class ModelConfig:
     embedding_model: str = "embeddinggemma:latest"
     reranker_model: str = "BAAI/bge-reranker-v2-m3"
     ollama_url: str = "http://localhost:11434"
-    ollama_model: str = "gemma3:27b"
+    ollama_model: str = "scb10x/typhoon2.5-qwen3-4b:latest"
     num_predict: int = 8192
     num_predict_short: int = 512
     temperature_logic: float = 0.0
@@ -44,14 +44,14 @@ class ModelConfig:
             embedding_model=os.getenv("EMBEDDING_MODEL", "embeddinggemma:latest"),
             reranker_model=os.getenv("RERANKER_MODEL", "BAAI/bge-reranker-v2-m3"),
             ollama_url=os.getenv("OLLAMA_URL", "http://localhost:11434"),
-            ollama_model=os.getenv("OLLAMA_MODEL", "gemma3:27b"),
+            ollama_model=os.getenv("OLLAMA_MODEL", "scb10x/typhoon2.5-qwen3-4b:latest"),
             num_predict=int(os.getenv("NUM_PREDICT", "8192")),
             num_predict_short=int(os.getenv("NUM_PREDICT_SHORT", "512")),
             temperature_logic=float(os.getenv("LLM_TEMPERATURE_LOGIC", "0.0")),
             temperature_response=float(os.getenv("LLM_TEMPERATURE_RESPONSE", "0.1")),
         )
-
-
+        
+        
 @dataclass
 class SearchConfig:
     """Configuration for search and retrieval parameters."""

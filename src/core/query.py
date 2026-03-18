@@ -47,7 +47,7 @@ class Query:
         self.llm_client = LLMClient(
             provider=LLMProvider.OLLAMA,
             ollama_url=ollama_url,
-            model_name=model_name
+            model_name=model_name or config.models.ollama_model
         )
         self.available = self.llm_client.is_available()
 
