@@ -84,15 +84,9 @@ class Query:
     METADATA_SCHEMA = {
         "type": "object",
         "properties": {
-            "tags": {
-                "type": "array",
-                "items": {"type": "string", "minLength": 1},
-                "minItems": 3,
-                "maxItems": 8
-            },
-            "query_intent": {"type": "string", "minLength": 1}
+            "metadata": {"type": "string", "minLength": 1}
         },
-        "required": ["tags", "query_intent"]
+        "required": ["metadata"]
     }
     
 
@@ -221,7 +215,7 @@ class Query:
         """
         if not self.available:
             logger.info("Metadata generation not available, returning default metadata")
-            return {"tags": ["general"], "query_intent": "general"}
+            return {"metadata": "general"}
             
         try:
             prompt_file = os.path.join(
@@ -244,26 +238,16 @@ class Query:
             async with aiohttp.ClientSession() as session:
                 response_text = await self.llm_client.generate_async(session, prompt, temperature=config.models.temperature_logic, format=self.METADATA_SCHEMA, num_predict=config.models.num_predict_short)
             
-            if not response_text.strip():
-                logger.warning("Empty response from Ollama for metadata generation. Using default metadata.")
-                return {"tags": ["general"], "query_intent": "general"}
-
             # Parse and validate JSON response
             response_json = self._parse_metadata_response(response_text)
             
-            if not response_json:
-                logger.warning("Failed to parse metadata response, using default metadata")
-                return {"tags": ["general"], "query_intent": "general"}
-            
-            tags = response_json.get("tags", ["general"])
-            query_intent = response_json.get("query_intent", "general")
-            
-            if tags and self._validate_metadata_tags(tags):
-                logger.info(f"Metadata generated: {tags} (intent: {query_intent})")
-                return {"tags": tags, "query_intent": query_intent}
+            if response_json:
+                metadata_intent = response_json.get("metadata", "general")
+                logger.info(f"Metadata generated (intent: {metadata_intent})")
+                return {"metadata": metadata_intent}
             else:
-                logger.warning("Invalid or empty metadata tags, using default metadata")
-                return {"tags": ["general"], "query_intent": "general"}
+                logger.warning("Failed to parse metadata response, using default metadata")
+                return {"metadata": "general"}
                 
         except Exception as e:
             logger.error(f"Error generating metadata: {e}")
@@ -314,7 +298,7 @@ class Query:
         
         if not self.available:
             logger.info("Query processing not available, returning original query with default metadata")
-            return original_query, {"tags": ["general"], "query_intent": "general"}
+            return original_query, {"metadata": "general"}
         
         course_codes_appended = False
         
@@ -329,7 +313,7 @@ class Query:
             
             if not classification:
                 logger.warning("Classification failed, returning original query with default metadata")
-                return original_query, {"tags": ["general"], "query_intent": "general"}
+                return original_query, {"metadata": "general"}
             
             logger.debug(f"Query classified as '{classification}'")
             
@@ -352,7 +336,7 @@ class Query:
                     
                     if isinstance(metadata, Exception):
                         logger.error(f"Metadata generation failed: {metadata}")
-                        metadata = {"tags": ["general"], "query_intent": "general"}
+                        metadata = {"metadata": "general"}
                     
                     if enhanced_terms and len(enhanced_terms) > 0:
                         enhanced_query = f"{original_query} {' '.join(enhanced_terms)}"
@@ -376,29 +360,29 @@ class Query:
                 logger.info("Query classified as pass (clear query - search without enhancement)")
                 if course_codes_appended:
                     logger.info(f"Returning modified query with course codes for search: {course_codes}")
-                    return query, {"tags": ["clear_query"], "query_intent": "course_search"}
+                    return query, {"metadata": "course_search"}
                 else:
-                    return original_query, {"tags": ["clear_query"], "query_intent": "course_search"}
+                    return original_query, {"metadata": "course_search"}
                 
             elif classification == "conversational":
                 logger.info("Query classified as conversational, keeping original")
                 if course_codes_appended:
                     logger.info(f"Returning modified query with course codes for conversational query to enable search: {course_codes}")
-                    return query, {"tags": ["conversational"], "query_intent": "conversational"}
+                    return query, {"metadata": "conversational"}
                 else:
-                    return original_query, {"tags": ["conversational"], "query_intent": "conversational"}
+                    return original_query, {"metadata": "conversational"}
                 
 
                 
             else:
                 logger.warning(f"Unknown classification '{classification}', keeping original query")
-                return original_query, {"tags": ["general"], "query_intent": "general"}
+                return original_query, {"metadata": "general"}
                 
         except Exception as e:
             logger.error(f"Error in async query processing: {e}")
             logger.error(f"Query was: '{query}'")
             logger.error("Falling back to original query with default metadata.")
-            return original_query, {"tags": ["general"], "query_intent": "general"}
+            return original_query, {"metadata": "general"}
 
     async def _enhance_query_terms_async(self, session: aiohttp.ClientSession, query: str, conversation_context: str = None) -> Optional[List[str]]:
         """
@@ -622,20 +606,11 @@ class Query:
     def _validate_metadata_schema(self, response_json: Dict) -> bool:
         """Validate that the metadata response matches our expected schema"""
         try:    
-            if "tags" not in response_json or "query_intent" not in response_json:
+            if "metadata" not in response_json:
                 return False
                 
-            tags = response_json.get("tags", [])
-            if not isinstance(tags, list) or len(tags) < 3 or len(tags) > 8:
-                return False
-                
-            # Check that all tags are non-empty strings
-            for tag in tags:
-                if not isinstance(tag, str) or not tag.strip():
-                    return False
-                    
-            query_intent = response_json.get("query_intent", "")
-            if not isinstance(query_intent, str) or not query_intent.strip():
+            metadata_val = response_json.get("metadata", "")
+            if not isinstance(metadata_val, str) or not metadata_val.strip():
                 return False
                     
             return True
@@ -645,21 +620,8 @@ class Query:
             return False
 
     def _validate_metadata_tags(self, tags: List[str]) -> bool:
-        """Validate that metadata tags are valid"""
-        try:    
-            if len(tags) < 3 or len(tags) > 8:
-                return False
-                
-            # Check that all tags are non-empty strings
-            for tag in tags:
-                if not isinstance(tag, str) or not tag.strip():
-                    return False
-                    
-            return True
-            
-        except Exception as e:
-            logger.warning(f"Error validating metadata tags: {e}")
-            return False
+        """DEPRECATED: Tags are no longer used."""
+        return True
     
     def _validate_expanded_terms(self, expanded_terms: List[str]) -> bool:
         """Validate that expanded terms are valid"""
