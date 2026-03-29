@@ -230,81 +230,7 @@ class ProfessorDataHandler(BaseDataTypeHandler):
         
         return metadata
 
-class ResearchDataHandler(BaseDataTypeHandler):
-    """Handler for research data (example for future expansion)"""
-    
-    def __init__(self):
-        super().__init__("research")
-    
-    def create_content(self, item: Dict[str, Any]) -> str:
-        """Create content string for research"""
-        content_parts = []
-        
-        title = item.get('title', '')
-        if title:
-            content_parts.append(f"Research: {title}")
-        
-        abstract = item.get('abstract', '')
-        if abstract:
-            content_parts.append(f"Abstract: {abstract}")
-        
-        keywords = item.get('keywords', [])
-        if keywords:
-            keywords_text = ", ".join(keywords)
-            content_parts.append(f"Keywords: {keywords_text}")
-        
-        return " | ".join(content_parts)
-    
-    def create_metadata(self, item: Dict[str, Any]) -> Dict[str, Any]:
-        """Create metadata for research"""
-        return {
-            'data_type': 'research',
-            'title': item.get('title', ''),
-            'authors': item.get('authors', []),
-            'keywords': item.get('keywords', []),
-            'year': item.get('year', ''),
-            'language': 'en'
-        }
 
-
-class CurriculumDataHandler(BaseDataTypeHandler):
-    """Handler for curriculum/graduation requirements data"""
-
-    def __init__(self):
-        super().__init__("curriculum")
-
-    def create_content(self, item: Dict[str, Any]) -> str:
-        """Create content string for curriculum"""
-        return item.get("content", "")
-
-    def create_metadata(self, item: Dict[str, Any]) -> Dict[str, Any]:
-        """Create metadata for curriculum"""
-        metadata = dict(item.get("metadata", {}))
-        metadata["data_type"] = "curriculum"
-        if "language" not in metadata:
-            content = item.get("content", "")
-            metadata["language"] = "th" if any("\u0E00" <= c <= "\u0E7F" for c in content) else "en"
-        return metadata
-
-
-class StudyplanDataHandler(BaseDataTypeHandler):
-    """Handler for study plan per semester data"""
-
-    def __init__(self):
-        super().__init__("studyplan")
-
-    def create_content(self, item: Dict[str, Any]) -> str:
-        """Create content string for study plan"""
-        return item.get("content", "")
-
-    def create_metadata(self, item: Dict[str, Any]) -> Dict[str, Any]:
-        """Create metadata for study plan"""
-        metadata = dict(item.get("metadata", {}))
-        metadata["data_type"] = "studyplan"
-        if "language" not in metadata:
-            content = item.get("content", "")
-            metadata["language"] = "th" if any("\u0E00" <= c <= "\u0E7F" for c in content) else "en"
-        return metadata
 
 class DataProcessor:
     """Unified processor that can handle multiple data types"""
@@ -317,9 +243,6 @@ class DataProcessor:
         """Register default data type handlers"""
         self.register_handler(CourseDataHandler())
         self.register_handler(ProfessorDataHandler())
-        self.register_handler(ResearchDataHandler())
-        self.register_handler(CurriculumDataHandler())
-        self.register_handler(StudyplanDataHandler())
     
     def register_handler(self, handler: DataTypeHandler):
         """Register a new data type handler"""

@@ -356,23 +356,18 @@ class Query:
                         else:
                             return original_query, metadata
                         
-            elif classification == "pass":
-                logger.info("Query classified as pass (clear query - search without enhancement)")
-                if course_codes_appended:
-                    logger.info(f"Returning modified query with course codes for search: {course_codes}")
-                    return query, {"metadata": "course_search"}
-                else:
-                    return original_query, {"metadata": "course_search"}
+            elif classification in ["pass", "conversational"]:
+                logger.info(f"Query classified as {classification}, performing metadata generation without enhancement")
+                metadata = await self.generate_metadata(query)
                 
-            elif classification == "conversational":
-                logger.info("Query classified as conversational, keeping original")
+                if not metadata:
+                    metadata = {"metadata": classification if classification == "conversational" else "course_search"}
+                    
                 if course_codes_appended:
-                    logger.info(f"Returning modified query with course codes for conversational query to enable search: {course_codes}")
-                    return query, {"metadata": "conversational"}
+                    logger.info(f"Returning modified query with course codes for {classification}: {course_codes}")
+                    return query, metadata
                 else:
-                    return original_query, {"metadata": "conversational"}
-                
-
+                    return original_query, metadata
                 
             else:
                 logger.warning(f"Unknown classification '{classification}', keeping original query")
