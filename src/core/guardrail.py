@@ -41,7 +41,7 @@ class Guardrail:
         self.llm_client = LLMClient(
             provider=LLMProvider.OLLAMA,
             ollama_url=ollama_url,
-            model_name=model_name or config.models.ollama_model
+            model_name=model_name or config.models.ollama_model_logic
         )
         self.available = self.llm_client.is_available()
         
@@ -62,7 +62,7 @@ class Guardrail:
         }
 
     @monitor_operation("input_guardrail")
-    async def validate(self, query: str) -> bool:
+    async def validate(self, query: str, history: str = "") -> bool:
         """
         Validate that the input query is safe, in-scope, and policy-compliant.
         Returns True if safe, raises GuardrailException if rejected.
@@ -79,7 +79,7 @@ class Guardrail:
             with open(prompt_file, "r", encoding="utf-8") as f:
                 prompt_template = f.read()
 
-            prompt = prompt_template.format(query=query)
+            prompt = prompt_template.format(query=query, history=history)
             
             async with aiohttp.ClientSession() as session:
                 response_text = await self.llm_client.generate_async(

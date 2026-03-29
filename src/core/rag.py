@@ -496,7 +496,7 @@ class RAGSystem:
             # Input Guardrail Check
             if self.guardrail:
                 logger.info("Running input guardrail validation...")
-                await self.guardrail.validate(current_query)
+                await self.guardrail.validate(current_query, history=conversation_context or "")
             else:
                 logger.warning("Guardrail not available (self.guardrail is None), skipping input validation")
 

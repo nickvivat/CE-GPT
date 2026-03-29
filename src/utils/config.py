@@ -17,6 +17,7 @@ class ModelConfig:
     reranker_model: str = "BAAI/bge-reranker-v2-m3"
     ollama_url: str = "http://localhost:11434"
     ollama_model: str = "scb10x/typhoon2.5-qwen3-4b:latest"
+    ollama_model_logic: str = "gemma3:4b"
     num_predict: int = 8192
     num_predict_short: int = 512
     temperature_logic: float = 0.0
@@ -32,6 +33,8 @@ class ModelConfig:
             raise ValueError("Ollama URL must be specified")
         if not self.ollama_model:
             raise ValueError("Ollama model must be specified")
+        if not self.ollama_model_logic:
+            raise ValueError("Ollama logic model must be specified")
         if self.num_predict <= 0:
             raise ValueError("num_predict must be positive")
         if self.num_predict_short <= 0:
@@ -45,6 +48,7 @@ class ModelConfig:
             reranker_model=os.getenv("RERANKER_MODEL", "BAAI/bge-reranker-v2-m3"),
             ollama_url=os.getenv("OLLAMA_URL", "http://localhost:11434"),
             ollama_model=os.getenv("OLLAMA_MODEL", "scb10x/typhoon2.5-qwen3-4b:latest"),
+            ollama_model_logic=os.getenv("OLLAMA_MODEL_LOGIC", "gemma3:4b"),
             num_predict=int(os.getenv("NUM_PREDICT", "8192")),
             num_predict_short=int(os.getenv("NUM_PREDICT_SHORT", "512")),
             temperature_logic=float(os.getenv("LLM_TEMPERATURE_LOGIC", "0.0")),
@@ -274,7 +278,7 @@ class SessionConfig:
     max_messages_per_session: int = 1000
     context_window_tokens: int = 8192
     chat_history_compression_enabled: bool = True
-    compression_recent_messages_full: int = 5
+    compression_recent_messages_full: int = 10
     compression_summary_max_tokens: int = 8192
     compression_trigger_after_messages: int = 10
     compression_max_messages_to_consider: int = 100
