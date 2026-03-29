@@ -605,9 +605,17 @@ class RAGSystem:
                         logger.info("Applying professor filter")
                     elif query_intent == "curriculum_search":
                         filter_metadata["data_type"] = "curriculum"
+                        # Don't restrict by language for curriculum/studyplan as data is very limited
+                        if "language" in filter_metadata:
+                            logger.info(f"Removing language filter for curriculum_search to broaden results")
+                            del filter_metadata["language"]
                         logger.info("Applying curriculum filter")
                     elif query_intent == "studyplan_search":
                         filter_metadata["data_type"] = "studyplan"
+                        # Don't restrict by language for curriculum/studyplan as data is very limited
+                        if "language" in filter_metadata:
+                            logger.info(f"Removing language filter for studyplan_search to broaden results")
+                            del filter_metadata["language"]
                         logger.info("Applying studyplan filter")
                     else:
                         filter_metadata["data_type"] = "course"
