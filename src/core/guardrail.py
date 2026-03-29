@@ -79,7 +79,12 @@ class Guardrail:
             with open(prompt_file, "r", encoding="utf-8") as f:
                 prompt_template = f.read()
 
-            prompt = prompt_template.format(query=query, history=history)
+            escaped_template = prompt_template.replace("{", "{{").replace("}", "}}")
+
+            escaped_template = escaped_template.replace("{{query}}", "{query}")
+            escaped_template = escaped_template.replace("{{history}}", "{history}")
+            
+            prompt = escaped_template.format(query=query, history=history)
             
             async with aiohttp.ClientSession() as session:
                 response_text = await self.llm_client.generate_async(

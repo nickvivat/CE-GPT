@@ -275,6 +275,10 @@ class Query:
                 seen.add(code)
                 unique_codes.append(code)
         
+        if len(unique_codes) > 10:
+            logger.info(f"Skipping course code extraction: found too many codes ({len(unique_codes)}), likely a curriculum list")
+            return []
+            
         if unique_codes:
             logger.info(f"Extracted course codes from conversation: {unique_codes}")
         
@@ -358,14 +362,17 @@ class Query:
                         
             elif classification in ["pass", "conversational"]:
                 logger.info(f"Query classified as {classification}, performing metadata generation without enhancement")
-                metadata = await self.generate_metadata(query)
+                metadata = await self.generate_metadata(original_query)
                 
                 if not metadata:
                     metadata = {"metadata": classification if classification == "conversational" else "course_search"}
                     
-                if course_codes_appended:
-                    logger.info(f"Returning modified query with course codes for {classification}: {course_codes}")
-                    return query, metadata
+                if classification == "conversational":
+                    return original_query, metadata
+                    
+                if is_follow_up and course_codes:
+                    query_with_codes = f"{original_query} {' '.join(course_codes)}"
+                    return query_with_codes, metadata
                 else:
                     return original_query, metadata
                 
