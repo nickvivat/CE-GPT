@@ -3,32 +3,32 @@ import json
 import ast
 import os
 from openai import OpenAI
+from pathlib import Path
 
 client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
+
+# Path to context-relative prompt directory
+PROMPT_DIR = Path(__file__).parent.parent / "prompt" / "evaluation"
+
+def load_prompt(filename):
+    """Utility to load prompt from file system."""
+    with open(PROMPT_DIR / filename, "r", encoding="utf-8") as f:
+        return f.read()
 
 def evaluate_source(query, source_content):
     """
     Calls OpenAI to evaluate if a single source is a True Positive (relevant) 
     or False Positive (irrelevant) for the given query.
     """
-    prompt = f"""
-    You are an expert evaluator for a Retrieval-Augmented Generation (RAG) system.
-    
-    Query: "{query}"
-    
-    Source Document:
-    "{source_content}"
-    
-    Task: Determine if the Source Document contains relevant information to answer the Query.
-    Reply ONLY with "TP" (True Positive - Relevant) or "FP" (False Positive - Irrelevant).
-    """
+    prompt_template = load_prompt("source_evaluation.md")
+    user_prompt = prompt_template.format(query=query, source_content=source_content)
     
     try:
         response = client.chat.completions.create(
             model="gpt-5-mini",
             messages=[
                 {"role": "system", "content": "You are a strict evaluator for search relevance. Output only 'TP' or 'FP'."},
-                {"role": "user", "content": prompt}
+                {"role": "user", "content": user_prompt}
             ],
         )
         return response.choices[0].message.content.strip()
