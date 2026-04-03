@@ -163,10 +163,8 @@ CE-GPT/
 │   │   ├── session_manager.py # User session lifecycle
 │   │   ├── chat_history.py # Chat context fetching/storage
 │   │   └── history_compressor.py # Context summary compression logic
-│   ├── preprocess/         # Data ingestion pipelines
-│   │   ├── data_processor.py
-│   │   ├── course_processor.py
-│   │   └── professor_processor.py
+│   ├── preprocess/         # Unified data ingestion pipeline
+│   │   └── data_processor.py # Handles Course, Professor, and generic data
 │   └── utils/              # Observers, DB logic & Error Handling
 │       ├── config.py
 │       ├── database.py
