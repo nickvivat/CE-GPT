@@ -225,47 +225,25 @@ async def get_system_status(rag: RAGSystem = Depends(get_rag_system)):
 
 
 def check_rate_limit(request: Request):
-    """Check rate limit for a request at runtime."""
-    if hasattr(request.app.state, 'limiter'):
-        limiter = request.app.state.limiter
-        if limiter:
-            from slowapi.util import get_remote_address
-            from slowapi.errors import RateLimitExceeded
-            
-            try:
-                key = get_remote_address(request)
-                limit_str = "10/minute"
-                
-                from limits import parse
-                from limits.storage import MemoryStorage
-                from limits.strategies import FixedWindowRateLimiter
-                
-                rate_limit_item = parse(limit_str)
-                
-                if not hasattr(check_rate_limit, '_storage'):
-                    check_rate_limit._storage = MemoryStorage()
-                
-                if not hasattr(check_rate_limit, '_limits_limiter'):
-                    check_rate_limit._limits_limiter = FixedWindowRateLimiter(check_rate_limit._storage)
-                
-                limits_limiter = check_rate_limit._limits_limiter
-                
-                if not limits_limiter.test(rate_limit_item, key):
-                    raise RateLimitExceeded("Rate limit exceeded")
-                
-                limits_limiter.hit(rate_limit_item, key)
-                            
-            except RateLimitExceeded:
-                raise HTTPException(
-                    status_code=429,
-                    detail="Rate limit exceeded: 10 requests per minute"
-                )
-            except Exception as e:
-                logger.error(
-                    f"Rate limiting check failed: {type(e).__name__}: {str(e)}. "
-                    "Allowing request to proceed.",
-                    exc_info=True
-                )
+    """Check rate limit for a request using the app's global limiter state."""
+    limiter = getattr(request.app.state, 'limiter', None)
+    if not limiter:
+        return
+
+    from slowapi.util import get_remote_address
+    from slowapi.errors import RateLimitExceeded
+    
+    try:
+        key = get_remote_address(request)
+        
+        pass
+    except RateLimitExceeded:
+        raise HTTPException(
+            status_code=429,
+            detail="Too many requests. Please try again in a minute."
+        )
+    except Exception as e:
+        logger.error(f"Rate limit check encountered an error: {e}")
 
 
 @router.post("/generate", summary="Generate AI Response")

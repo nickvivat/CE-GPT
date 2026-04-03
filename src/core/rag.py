@@ -238,41 +238,6 @@ class RAGSystem:
         index_to_similarity = {x[0]: x[2] for x in rrf_scores[:top_k]}
         return ordered, index_to_similarity
         
-    @monitor_operation("data_loading")
-    @handle_errors(ErrorType.DATA_PROCESSING, fallback_value=False)
-    def load_and_process_data(self, data_file: str, data_type: str = "course") -> bool:
-        """Load and process data using unified processor"""
-        logger.info(f"Loading and processing {data_type} data...")
-        
-        base_name = os.path.splitext(os.path.basename(data_file))[0]
-        processed_dir = os.path.join(os.path.dirname(os.path.dirname(data_file)), "processed")
-        os.makedirs(processed_dir, exist_ok=True)
-        
-        if data_type == "course":
-            cache_file = os.path.join(processed_dir, "course_detail_processed.json")
-        elif data_type == "professor":
-            cache_file = os.path.join(processed_dir, "professor_detail_processed.json")
-        else:
-            cache_file = os.path.join(processed_dir, f"{base_name}_{data_type}_processed.json")
-        
-        if os.path.exists(cache_file):
-            self.chunks = self.data_processor.load_processed_chunks(cache_file)
-            if self.chunks:
-                stats = self.data_processor.get_statistics(self.chunks)
-                logger.info(f"Loaded {len(self.chunks)} processed chunks from cache - {stats}")
-                return True
-        
-        self.chunks = self.data_processor.process_file(data_file, data_type)
-        if not self.chunks:
-            logger.error(f"Failed to process {data_type} data")
-            return False
-            
-        self.data_processor.save_processed_chunks(self.chunks, cache_file)
-        
-        stats = self.data_processor.get_statistics(self.chunks)
-        logger.info(f"Data statistics: {stats}")
-        
-        return True
     
     def load_multiple_data_sources(self, data_sources: List[Dict[str, str]]) -> bool:
         """Load multiple data sources of different types with caching"""
@@ -325,13 +290,6 @@ class RAGSystem:
         
         return True
     
-    def find_links_between_data_types(self, source_type: str, target_type: str) -> Dict[str, List[Dict[str, Any]]]:
-        """Find links between different data types"""
-        if not self.chunks:
-            logger.error("No data loaded")
-            return {}
-        
-        return self.data_processor.find_links(self.chunks, source_type, target_type)
     
     def build_vector_index(self) -> bool:
         """Build vector index from processed chunks"""
